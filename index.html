@@ -42,6 +42,10 @@
       rel="stylesheet"
     />
 
+    <!-- Mapbox GL JS -->
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+
     <!-- External Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
@@ -120,6 +124,7 @@
           <nav class="desktop-nav" id="desktop-nav">
             <div style="display: flex; align-items: center; gap: 2rem;">
               <a href="index.html" class="nav-link active">Trang chủ</a>
+              <a href="#ban-do" class="nav-link">Bản Đồ</a>
               <a href="bac-hoc.html" class="nav-link">Bậc Học</a>
               <a href="sinh-hoat.html" class="nav-link">Sinh Hoạt</a>
               <a href="nhac.html" class="nav-link">Nhạc GĐPT</a>
@@ -139,6 +144,7 @@
       <!-- Mobile Menu -->
       <div id="mobile-menu" class="hidden">
         <a href="index.html" class="nav-link-mobile active">Trang chủ</a>
+        <a href="#ban-do" class="nav-link-mobile">Bản Đồ</a>
         <a href="bac-hoc.html" class="nav-link-mobile">Bậc Học</a>
         <a href="sinh-hoat.html" class="nav-link-mobile">Sinh Hoạt</a>
         <a href="nhac.html" class="nav-link-mobile">Nhạc GĐPT</a>
@@ -372,6 +378,33 @@
           </div>
         </div>
       </section>
+
+    <!-- ===== BẢN ĐỒ MAPBOX SECTION ===== -->
+    <section id="ban-do" class="section">
+      <div class="container">
+        <h2 class="section-title reveal" style="text-align: center; margin-bottom: 3rem;">
+          Bản Đồ Hệ Thống <span style="font-family: 'Dancing Script', cursive; color: var(--brand-primary); font-weight: normal; font-size: 1.2em;">GĐPT</span>
+        </h2>
+        
+        <div class="map-layout reveal">
+          <!-- Sidebar: Danh sách địa điểm -->
+          <div class="map-sidebar">
+            <div class="map-sidebar-header">
+              <h3>Các Đơn Vị GĐPT</h3>
+              <p>Khám phá vị trí các đơn vị GĐPT trên địa bàn TP. Đà Nẵng</p>
+            </div>
+            <div id="map-locations-list" class="locations-list">
+              <!-- Danh sách sẽ được render qua JS -->
+            </div>
+          </div>
+          
+          <!-- Mapbox Container -->
+          <div class="map-container-wrapper">
+            <div id="map-container"></div>
+          </div>
+        </div>
+      </div>
+    </section>
     </main>
 
     <!-- ===== FOOTER ===== -->

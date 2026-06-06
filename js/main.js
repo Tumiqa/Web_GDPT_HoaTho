@@ -40,6 +40,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===== TAGLINE TYPEWRITER =====
   initTaglineTypewriter();
 
+  // ===== MAPBOX =====
+  if (document.getElementById("map-container")) {
+    initMapbox();
+  }
+
   // ===== LUCIDE ICONS =====
   if (typeof lucide !== "undefined") {
     lucide.createIcons();
@@ -497,4 +502,130 @@ function initTaglineTypewriter() {
 
   // Start after a short delay
   setTimeout(type, 1500);
+}
+
+/* =====================
+   MAPBOX INTEGRATION
+   ===================== */
+async function initMapbox() {
+  // BẠN CẦN THAY THẾ CHUỖI BÊN DƯỚI BẰNG MAPBOX ACCESS TOKEN CỦA BẠN
+  // Lấy token miễn phí tại: https://account.mapbox.com/
+  mapboxgl.accessToken = "pk.YOUR_MAPBOX_ACCESS_TOKEN_HERE";
+  
+  const map = new mapboxgl.Map({
+    container: "map-container",
+    style: "mapbox://styles/mapbox/dark-v11",
+    center: [108.2208, 16.0678], // Da Nang center
+    zoom: 11.5,
+  });
+
+  let markers = [];
+  let activePopup = null;
+
+  try {
+    const response = await fetch("data/gdpt_locations.json");
+    const locations = await response.json();
+    const listContainer = document.getElementById("map-locations-list");
+
+    map.on("load", () => {
+      locations.forEach((loc) => {
+        // Create custom marker element
+        const el = document.createElement("div");
+        el.className = "custom-marker";
+        if (loc.isPrimary) el.classList.add("marker-primary");
+        el.dataset.id = loc.id;
+
+        // Create list item
+        const listItem = document.createElement("div");
+        listItem.className = "location-item";
+        if (loc.isPrimary) listItem.classList.add("active");
+        listItem.dataset.id = loc.id;
+        
+        listItem.innerHTML = `
+          <div class="location-district">${loc.district}</div>
+          <div class="location-title">${loc.title}</div>
+          <div class="location-address"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12" style="margin-right: 4px; display: inline-block; vertical-align: middle;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>${loc.address}</div>
+        `;
+        listContainer.appendChild(listItem);
+
+        const flyToLocation = () => {
+          if (activePopup) {
+            activePopup.remove();
+            activePopup = null;
+          }
+          document.querySelectorAll(".custom-marker, .location-item").forEach((item) => item.classList.remove("active"));
+
+          map.flyTo({
+            center: loc.coords,
+            zoom: loc.zoom || 15,
+            essential: true,
+            speed: 1.2,
+            curve: 1.4,
+            easing: (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2),
+          });
+
+          setTimeout(() => {
+            const popupContent = `
+              <div class="popup-inner">
+                <h4>${loc.title}</h4>
+                <p><strong>Địa chỉ:</strong> ${loc.address}</p>
+                <div style="margin: 8px 0; border-top: 1px solid rgba(138, 176, 151, 0.2);"></div>
+                <p>${loc.description}</p>
+              </div>
+            `;
+            activePopup = new mapboxgl.Popup({
+              offset: 15,
+              closeOnClick: false,
+              anchor: "bottom",
+            })
+              .setLngLat(loc.coords)
+              .setHTML(popupContent)
+              .addTo(map);
+
+            activePopup.on("close", () => {
+              el.classList.remove("active");
+              listItem.classList.remove("active");
+              activePopup = null;
+            });
+          }, 300);
+
+          el.classList.add("active");
+          listItem.classList.add("active");
+          
+          // Scroll list to item
+          listItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        };
+
+        const marker = new mapboxgl.Marker(el)
+          .setLngLat(loc.coords)
+          .addTo(map);
+        markers.push(marker);
+
+        el.addEventListener("click", (e) => {
+          e.stopPropagation();
+          flyToLocation();
+        });
+        listItem.addEventListener("click", flyToLocation);
+        
+        // Auto focus primary marker on load
+        if (loc.isPrimary) {
+          setTimeout(() => {
+            flyToLocation();
+          }, 1000); // Wait for map to settle
+        }
+      });
+
+      // Clear selection on map click
+      map.on("click", () => {
+        if (activePopup) {
+          activePopup.remove();
+          activePopup = null;
+          document.querySelectorAll(".custom-marker, .location-item").forEach((item) => item.classList.remove("active"));
+        }
+      });
+    });
+
+  } catch (error) {
+    console.error("Error loading map data:", error);
+  }
 }
