@@ -40,9 +40,31 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===== TAGLINE TYPEWRITER =====
   initTaglineTypewriter();
 
+  // ===== COMPASS =====
+  if (document.getElementById("culture-compass")) {
+    initCompass();
+  }
+
   // ===== MAPBOX =====
-  if (document.getElementById("map-container")) {
-    initMapbox();
+  const showMapBtn = document.getElementById("show-map-btn");
+  if (showMapBtn) {
+    showMapBtn.addEventListener("click", () => {
+      // Hide button container
+      showMapBtn.closest(".text-center").style.display = "none";
+      
+      // Show map container
+      const mapLayout = document.getElementById("map-layout-container");
+      mapLayout.style.display = "flex";
+      
+      // Small delay to allow CSS display:flex to apply before animating opacity
+      setTimeout(() => {
+        mapLayout.style.opacity = "1";
+        mapLayout.style.transform = "translateY(0)";
+      }, 50);
+
+      // Initialize mapbox
+      initMapbox();
+    });
   }
 
   // ===== LUCIDE ICONS =====
@@ -508,9 +530,8 @@ function initTaglineTypewriter() {
    MAPBOX INTEGRATION
    ===================== */
 async function initMapbox() {
-  // BẠN CẦN THAY THẾ CHUỖI BÊN DƯỚI BẰNG MAPBOX ACCESS TOKEN CỦA BẠN
-  // Lấy token miễn phí tại: https://account.mapbox.com/
-  mapboxgl.accessToken = "pk.YOUR_MAPBOX_ACCESS_TOKEN_HERE";
+  // Lấy API key thật từ hệ thống Danasoul
+  mapboxgl.accessToken = "pk.TEMP";
   
   const map = new mapboxgl.Map({
     container: "map-container",
@@ -627,5 +648,172 @@ async function initMapbox() {
 
   } catch (error) {
     console.error("Error loading map data:", error);
+  }
+}
+
+/* =====================
+   ROTATING COMPASS
+   ===================== */
+function initCompass() {
+  const compassPoints = [
+    {
+      id: "sinh-hoat",
+      label: "Hình Ảnh",
+      title: "Hình Ảnh Sinh Hoạt",
+      desc: "Thư viện hình ảnh và video ghi lại những khoảnh khắc đáng nhớ, các kỳ trại và hoạt động ý nghĩa của đoàn.",
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>',
+      link: "sinh-hoat.html"
+    },
+    {
+      id: "nhac",
+      label: "Nhạc Lễ",
+      title: "Nhạc Sinh Hoạt GĐPT",
+      desc: "Bộ sưu tập nhạc lễ, nhạc sinh hoạt, ca khúc GĐPT truyền thống — nghe trực tuyến và tải về dễ dàng.",
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>',
+      link: "nhac.html"
+    },
+    {
+      id: "tai-lieu",
+      label: "Tài Liệu",
+      title: "Tài Liệu Tu Học",
+      desc: "Kho tài liệu Phật pháp, giáo án sinh hoạt, sách hướng dẫn các bậc học từ Mở Mắt đến Hướng Thiện.",
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>',
+      link: "tai-lieu.html"
+    },
+    {
+      id: "ky-nang",
+      label: "Kỹ Năng",
+      title: "Kỹ Năng",
+      desc: "Khám phá la bàn kỹ năng: nút dây, morse, dựng trại, sơ cấp cứu và phương hướng trên đường tu học.",
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>',
+      link: "ky-nang.html"
+    },
+    {
+      id: "lien-he",
+      label: "Liên Hệ",
+      title: "Liên Hệ & Góp Ý",
+      desc: "Gửi lời nhắn, đóng góp ý kiến hoặc liên hệ trực tiếp với Ban Huynh Trưởng GĐPT Hòa Thọ.",
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
+      link: "lien-he.html"
+    }
+  ];
+
+  const container = document.getElementById("compass-points");
+  const compass = document.getElementById("culture-compass");
+  const contentDisplay = document.getElementById("culture-content-display");
+  const ring = document.querySelector(".compass-ring");
+
+  const radius = window.innerWidth < 768 ? 150 : 250; 
+  const centerX = radius;
+  const centerY = radius;
+
+  // Xóa nội dung cũ nếu có
+  container.innerHTML = "";
+
+  // Thêm các điểm vào la bàn
+  compassPoints.forEach((point, index) => {
+    // Góc bắt đầu từ trên cùng (-90 độ)
+    const angle = (index * (360 / compassPoints.length)) - 90;
+    const radian = angle * (Math.PI / 180);
+
+    const x = centerX + radius * Math.cos(radian);
+    const y = centerY + radius * Math.sin(radian);
+
+    const pointEl = document.createElement("div");
+    pointEl.className = "compass-point";
+    pointEl.style.left = `${x}px`;
+    pointEl.style.top = `${y}px`;
+
+    pointEl.innerHTML = `
+      <div class="compass-point-icon">${point.icon}</div>
+      <div class="compass-point-text">${point.label}</div>
+    `;
+
+    // Sự kiện click vào điểm la bàn
+    pointEl.addEventListener("click", (e) => {
+      e.stopPropagation();
+      showCompassContent(point);
+    });
+
+    container.appendChild(pointEl);
+  });
+
+  // Tạm dừng xoay khi hover vào la bàn
+  compass.addEventListener("mouseenter", () => {
+    ring.style.animationPlayState = "paused";
+    document.querySelectorAll('.compass-point, .compass-center').forEach(el => {
+      el.style.animationPlayState = "paused";
+    });
+  });
+
+  compass.addEventListener("mouseleave", () => {
+    ring.style.animationPlayState = "running";
+    document.querySelectorAll('.compass-point, .compass-center').forEach(el => {
+      el.style.animationPlayState = "running";
+    });
+  });
+
+  // Sự kiện click ra ngoài để đóng nội dung
+  document.addEventListener("click", (e) => {
+    if (contentDisplay.style.opacity === "1") {
+      const card = document.querySelector(".compass-content-card");
+      if (card && !card.contains(e.target) && !compass.contains(e.target)) {
+        hideCompassContent();
+      }
+    }
+  });
+
+  function showCompassContent(point) {
+    // Render nội dung
+    contentDisplay.innerHTML = `
+      <div class="compass-content-card">
+        <button class="compass-close-btn" aria-label="Đóng">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <div class="compass-content-icon">${point.icon}</div>
+        <h3>${point.title}</h3>
+        <p>${point.desc}</p>
+        <a href="${point.link}" class="hero-cta" style="display: inline-block;">Khám Phá Ngay</a>
+      </div>
+    `;
+
+    // Gắn sự kiện cho nút đóng
+    setTimeout(() => {
+      document.querySelector(".compass-close-btn").addEventListener("click", hideCompassContent);
+    }, 100);
+
+    // Dừng la bàn và mờ đi
+    ring.style.animationPlayState = "paused";
+    document.querySelectorAll('.compass-point, .compass-center').forEach(el => {
+      el.style.animationPlayState = "paused";
+    });
+
+    compass.style.opacity = "0";
+    compass.style.transform = "scale(0.8)";
+    compass.style.pointerEvents = "none";
+
+    // Hiện nội dung
+    contentDisplay.style.opacity = "1";
+    contentDisplay.style.transform = "scale(1)";
+    contentDisplay.style.pointerEvents = "auto";
+  }
+
+  function hideCompassContent() {
+    // Ẩn nội dung
+    contentDisplay.style.opacity = "0";
+    contentDisplay.style.transform = "scale(0.95)";
+    contentDisplay.style.pointerEvents = "none";
+
+    // Phục hồi la bàn
+    compass.style.opacity = "1";
+    compass.style.transform = "scale(1)";
+    compass.style.pointerEvents = "auto";
+    
+    setTimeout(() => {
+      ring.style.animationPlayState = "running";
+      document.querySelectorAll('.compass-point, .compass-center').forEach(el => {
+        el.style.animationPlayState = "running";
+      });
+    }, 500); // Đợi animation CSS chạy xong
   }
 }

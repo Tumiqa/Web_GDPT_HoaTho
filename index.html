@@ -273,107 +273,29 @@
             </p>
           </div>
 
-          <div class="highlights-grid">
-            <!-- Card: Bậc Học -->
-            <div class="highlight-card reveal">
-              <div class="highlight-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 6 3 12 0v-5"/>
-                </svg>
-              </div>
-              <h3>Bậc Học & Ngành Đoàn</h3>
-              <p>Tìm hiểu hệ thống bậc học từ Mở Mắt đến Hướng Thiện qua 3 ngành: Đồng, Thiếu, Thanh.</p>
-              <a href="bac-hoc.html" class="highlight-btn">
-                <span>Xem chi tiết</span>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
-                </svg>
-              </a>
-            </div>
+          <div id="culture-interactive-wrapper" class="compass-wrapper reveal">
+            <!-- Thẻ hiển thị nội dung chi tiết -->
+            <div id="culture-content-display" class="compass-content-display"></div>
 
-            <!-- Card: Sinh Hoạt -->
-            <div class="highlight-card reveal">
-              <div class="highlight-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+            <!-- Khung la bàn xoay -->
+            <div id="culture-compass" class="compass-container">
+              <div class="compass-ring">
+                <!-- Vòng tròn background -->
+                <svg class="compass-svg" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="250" cy="250" r="249" stroke="var(--brand-secondary)" stroke-width="2" />
+                  <circle cx="250" cy="250" r="160" stroke="var(--brand-secondary)" stroke-width="1" stroke-dasharray="4 8" />
+                  <line x1="250" y1="50" x2="250" y2="450" stroke="var(--brand-secondary)" stroke-width="1" opacity="0.5" />
+                  <line x1="50" y1="250" x2="450" y2="250" stroke="var(--brand-secondary)" stroke-width="1" opacity="0.5" />
                 </svg>
-              </div>
-              <h3>Hình Ảnh Sinh Hoạt</h3>
-              <p>Thư viện hình ảnh và video ghi lại những khoảnh khắc đáng nhớ của đoàn.</p>
-              <a href="sinh-hoat.html" class="highlight-btn">
-                <span>Xem Gallery</span>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
-                </svg>
-              </a>
-            </div>
 
-            <!-- Card: Nhạc GĐPT -->
-            <div class="highlight-card reveal">
-              <div class="highlight-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
-                </svg>
-              </div>
-              <h3>Nhạc Sinh Hoạt GĐPT</h3>
-              <p>Bộ sưu tập nhạc lễ, nhạc sinh hoạt, ca khúc GĐPT — nghe trực tuyến ngay trên web.</p>
-              <a href="nhac.html" class="highlight-btn">
-                <span>Nghe nhạc</span>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
-                </svg>
-              </a>
-            </div>
+                <!-- Tâm la bàn -->
+                <div class="compass-center">
+                  <div class="compass-center-text" style="font-family: 'Dancing Script', cursive;">GĐPT<br>Hòa Thọ</div>
+                </div>
 
-            <!-- Card: Tài Liệu -->
-            <div class="highlight-card reveal">
-              <div class="highlight-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
-                </svg>
+                <!-- Chứa các điểm la bàn (tạo bằng JS) -->
+                <div id="compass-points" class="compass-points-container"></div>
               </div>
-              <h3>Tài Liệu Tu Học</h3>
-              <p>Kho tài liệu Phật pháp, giáo án sinh hoạt, sách hướng dẫn bậc học dành cho huynh trưởng và đoàn sinh.</p>
-              <a href="tai-lieu.html" class="highlight-btn">
-                <span>Tải tài liệu</span>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
-                </svg>
-              </a>
-            </div>
-
-            <!-- Card: Kỹ Năng -->
-            <div class="highlight-card reveal">
-              <div class="highlight-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
-                </svg>
-              </div>
-              <h3>Kỹ Năng Scouting</h3>
-              <p>Khám phá la bàn kỹ năng: kết dây, morse, dựng trại, cứu thương — qua giao diện tương tác.</p>
-              <a href="ky-nang.html" class="highlight-btn">
-                <span>Khám phá</span>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
-                </svg>
-              </a>
-            </div>
-
-            <!-- Card: Liên Hệ -->
-            <div class="highlight-card reveal">
-              <div class="highlight-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                </svg>
-              </div>
-              <h3>Liên Hệ & Góp Ý</h3>
-              <p>Gửi lời nhắn, đóng góp ý kiến hoặc liên hệ với Ban Huynh Trưởng GĐPT Hòa Thọ.</p>
-              <a href="lien-he.html" class="highlight-btn">
-                <span>Liên hệ ngay</span>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
-                </svg>
-              </a>
             </div>
           </div>
         </div>
@@ -382,11 +304,20 @@
     <!-- ===== BẢN ĐỒ MAPBOX SECTION ===== -->
     <section id="ban-do" class="section">
       <div class="container">
-        <h2 class="section-title reveal" style="text-align: center; margin-bottom: 3rem;">
+        <h2 class="section-title reveal" style="text-align: center; margin-bottom: 1rem;">
           Bản Đồ Hệ Thống <span style="font-family: 'Dancing Script', cursive; color: var(--brand-primary); font-weight: normal; font-size: 1.2em;">GĐPT</span>
         </h2>
         
-        <div class="map-layout reveal">
+        <div class="text-center mb-12 reveal" style="text-align: center; margin-bottom: 3rem;">
+          <button id="show-map-btn" class="hero-cta" style="border: none; cursor: pointer; padding: 15px 30px; font-size: 1rem; border-radius: 50px; background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary)); color: #fff; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(138, 176, 151, 0.4); display: inline-flex; align-items: center; gap: 10px;">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+            </svg>
+            Xem Bản Đồ Hệ Thống GĐPT
+          </button>
+        </div>
+
+        <div class="map-layout" id="map-layout-container" style="display: none; opacity: 0; transform: translateY(20px); transition: all 0.5s ease;">
           <!-- Sidebar: Danh sách địa điểm -->
           <div class="map-sidebar">
             <div class="map-sidebar-header">
