@@ -1411,23 +1411,28 @@ footer {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 160px;
-  height: 160px;
+  width: 200px;
+  height: 200px;
   background: var(--bg-dark);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  box-shadow: 0 0 30px rgba(0,0,0,0.5);
-  border: 2px solid var(--brand-secondary);
+  box-shadow: 0 0 40px rgba(0,0,0,0.6);
+  border: 3px solid var(--brand-secondary);
   z-index: 10;
-  /* Chống xoay cho tâm la bàn để chữ luôn đứng thẳng */
-  animation: counterRotateCompass 40s linear infinite;
+  /* Bỏ animation counterRotateCompass đi vì đã tách ra khỏi vòng quay */
+}
+
+.compass-center-logo {
+  width: 140px;
+  height: auto;
+  object-fit: contain;
 }
 
 .compass-center-text {
-  font-size: 2rem;
+  font-size: 2.5rem;
   color: var(--brand-primary);
   line-height: 1.2;
 }

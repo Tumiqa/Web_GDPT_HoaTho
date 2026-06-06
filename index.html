@@ -279,6 +279,7 @@
 
             <!-- Khung la bàn xoay -->
             <div id="culture-compass" class="compass-container">
+              
               <div class="compass-ring">
                 <!-- Vòng tròn background -->
                 <svg class="compass-svg" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -288,14 +289,17 @@
                   <line x1="50" y1="250" x2="450" y2="250" stroke="var(--brand-secondary)" stroke-width="1" opacity="0.5" />
                 </svg>
 
-                <!-- Tâm la bàn -->
-                <div class="compass-center">
-                  <div class="compass-center-text" style="font-family: 'Dancing Script', cursive;">GĐPT<br>Hòa Thọ</div>
-                </div>
-
                 <!-- Chứa các điểm la bàn (tạo bằng JS) -->
                 <div id="compass-points" class="compass-points-container"></div>
               </div>
+
+              <!-- Tâm la bàn (Đặt ngoài vòng xoay để không bị lệch) -->
+              <div class="compass-center">
+                <!-- Sử dụng hình ảnh Hoa Sen thay vì chỉ text để nhìn to và đẹp hơn -->
+                <img src="images/logo.png" alt="Logo" class="compass-center-logo" onerror="this.style.display='none'; document.getElementById('fallback-center-text').style.display='block';" />
+                <div id="fallback-center-text" class="compass-center-text" style="font-family: 'Dancing Script', cursive;">GĐPT<br>Hòa Thọ</div>
+              </div>
+
             </div>
           </div>
         </div>
