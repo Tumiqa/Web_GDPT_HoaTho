@@ -369,7 +369,12 @@
           postEls.forEach(post => {
             const show = filter === "all" || post.dataset.year === filter;
             post.style.display = show ? "" : "none";
-            if (show) visibleCount++;
+            if (show) {
+              post.classList.add("revealed");
+              visibleCount++;
+            } else {
+              post.classList.remove("revealed");
+            }
           });
 
           resultCount.textContent = visibleCount + " bài viết";
@@ -378,9 +383,22 @@
           // Animate the shown items
           if (typeof gsap !== "undefined") {
             const shownPosts = Array.from(postEls).filter(p => p.style.display !== "none");
+            gsap.killTweensOf(shownPosts);
             gsap.fromTo(shownPosts,
               { opacity: 0, y: 30 },
-              { opacity: 1, y: 0, duration: 0.6, stagger: 0.1, ease: "power2.out", clearProps: "all" }
+              { 
+                opacity: 1, 
+                y: 0, 
+                duration: 0.6, 
+                stagger: 0.1, 
+                ease: "power2.out", 
+                clearProps: "transform,opacity",
+                onComplete: () => {
+                  if (typeof ScrollTrigger !== "undefined") {
+                    ScrollTrigger.refresh();
+                  }
+                }
+              }
             );
           } else if (typeof ScrollTrigger !== "undefined") {
             ScrollTrigger.refresh();
