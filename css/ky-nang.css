@@ -23,7 +23,7 @@
 }
 
 .kynang-hero h1 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Inter', sans-serif;
   font-size: clamp(2rem, 5vw, 3rem);
   margin-bottom: 0.75rem;
   position: relative;
@@ -58,7 +58,7 @@
 }
 
 .kn-sidebar h3 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1.2rem;
   margin-bottom: 1rem;
   padding-bottom: 0.75rem;

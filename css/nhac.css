@@ -49,7 +49,7 @@
 }
 
 .music-hero-content h1 {
-  font-family: "Playfair Display", serif;
+  font-family: "Inter", sans-serif;
   font-size: clamp(2.2rem, 6vw, 3.5rem);
   margin-bottom: 0.75rem;
   text-shadow: 0 0 30px rgba(138, 176, 151, 0.2);
@@ -169,7 +169,7 @@
 }
 
 .player-track-title {
-  font-family: "Playfair Display", serif;
+  font-family: "Inter", sans-serif;
   font-size: clamp(1.3rem, 3vw, 1.8rem);
   font-weight: 700;
   color: #fff;

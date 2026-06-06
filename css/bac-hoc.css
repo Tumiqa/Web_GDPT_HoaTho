@@ -23,7 +23,7 @@
 }
 
 .bachoc-hero h1 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Inter', sans-serif;
   font-size: clamp(2rem, 5vw, 3rem);
   margin-bottom: 0.75rem;
   position: relative;
@@ -99,7 +99,7 @@
 }
 
 .nganh-header h2 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Inter', sans-serif;
   margin-bottom: 0.5rem;
 }
 

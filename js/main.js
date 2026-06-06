@@ -299,7 +299,8 @@ function initScrollReveal() {
         opacity: 1, x: 0, y: 0, scale: 1,
         duration: 0.8,
         ease: "power3.out",
-        delay: (i % 3) * 0.15, // Stagger within viewport
+        delay: (i % 3) * 0.15,
+        clearProps: "will-change",
         scrollTrigger: {
           trigger: el,
           start: "top 85%",

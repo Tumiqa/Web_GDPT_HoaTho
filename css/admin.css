@@ -54,7 +54,7 @@
 }
 
 .admin-login h2 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
 }
@@ -142,7 +142,7 @@
 }
 
 .admin-header h2 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1.2rem;
   display: flex;
   align-items: center;
