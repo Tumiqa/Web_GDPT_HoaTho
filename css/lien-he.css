@@ -1,0 +1,239 @@
+/* ============================================================
+   LIÊN HỆ — Page Styles
+   ============================================================ */
+
+/* ===== HERO ===== */
+.lienhe-hero {
+  position: relative;
+  min-height: 40vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: linear-gradient(135deg, var(--bg-dark), var(--bg-medium));
+  overflow: hidden;
+  padding: 8rem 2rem 4rem;
+}
+
+.lienhe-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(138, 176, 151, 0.08) 0%, transparent 60%);
+}
+
+.lienhe-hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 5vw, 3rem);
+  margin-bottom: 0.75rem;
+  position: relative;
+}
+
+.lienhe-hero p {
+  font-size: 1.05rem;
+  color: var(--text-dark);
+  max-width: 600px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* ===== CONTENT ===== */
+.lh-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  padding: 4rem 0;
+}
+
+/* ===== INFO SECTION ===== */
+.lh-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.lh-info-card {
+  background: rgba(138, 176, 151, 0.04);
+  border: 1px solid rgba(138, 176, 151, 0.1);
+  border-radius: 1rem;
+  padding: 2rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  transition: transform 0.3s, background 0.3s;
+}
+
+.lh-info-card:hover {
+  transform: translateY(-4px);
+  background: rgba(138, 176, 151, 0.08);
+}
+
+.lh-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(138, 176, 151, 0.2), rgba(138, 176, 151, 0.05));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--brand-primary);
+  border: 1px solid rgba(138, 176, 151, 0.2);
+}
+
+.lh-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.lh-details h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.lh-details p {
+  color: var(--text-dark);
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+
+.lh-details a {
+  color: var(--brand-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: color 0.3s;
+}
+
+.lh-details a:hover {
+  color: var(--brand-primary);
+}
+
+/* ===== MAP ===== */
+.lh-map {
+  border-radius: 1rem;
+  overflow: hidden;
+  border: 1px solid rgba(138, 176, 151, 0.1);
+  height: 300px;
+  background: rgba(138, 176, 151, 0.05);
+}
+
+.lh-map iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  filter: invert(90%) hue-rotate(180deg);
+}
+
+/* ===== FORM SECTION ===== */
+.lh-form-container {
+  background: rgba(138, 176, 151, 0.03);
+  border: 1px solid rgba(138, 176, 151, 0.1);
+  border-radius: 1rem;
+  padding: 3rem;
+}
+
+.lh-form-container h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.lh-form-container p {
+  color: var(--text-dark);
+  margin-bottom: 2rem;
+}
+
+.lh-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.lh-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.lh-group label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.lh-input {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(138, 176, 151, 0.2);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  color: #fff;
+  font-family: inherit;
+  font-size: 1rem;
+  transition: all 0.3s;
+}
+
+.lh-input:focus {
+  outline: none;
+  border-color: var(--brand-primary);
+  background: rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 0 3px rgba(138, 176, 151, 0.1);
+}
+
+textarea.lh-input {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.lh-submit {
+  background: linear-gradient(135deg, var(--brand-secondary), var(--brand-primary));
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  transition: all 0.3s;
+}
+
+.lh-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(138, 176, 151, 0.4);
+}
+
+.lh-submit svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 992px) {
+  .lh-container {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .lienhe-hero {
+    min-height: 30vh;
+    padding: 7rem 1.5rem 2rem;
+  }
+  .lh-form-container {
+    padding: 2rem 1.5rem;
+  }
+  .lh-info-card {
+    padding: 1.5rem;
+    flex-direction: column;
+    gap: 1rem;
+  }
+}

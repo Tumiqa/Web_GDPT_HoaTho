@@ -1,0 +1,40 @@
+{
+  "nganh": [
+    {
+      "id": "oanh-vu",
+      "name": "Ngành Đồng (Oanh Vũ)",
+      "emoji": "🐦",
+      "description": "Dành cho các em từ 7-12 tuổi. Ngành Đồng với tên gọi Oanh Vũ - những chú chim non đầy năng động và vui tươi.",
+      "bacHoc": [
+        { "name": "Mở Mắt", "description": "Bậc đầu tiên, giúp em nhỏ làm quen với sinh hoạt GĐPT." },
+        { "name": "Cánh Mềm", "description": "Bắt đầu học các bài Phật pháp cơ bản và kỹ năng đơn giản." },
+        { "name": "Chân Cứng", "description": "Rèn luyện thêm kỹ năng, Phật pháp và tinh thần đoàn kết." },
+        { "name": "Tung Bay", "description": "Bậc cao nhất ngành Đồng, chuẩn bị chuyển lên ngành Thiếu." }
+      ]
+    },
+    {
+      "id": "thieu",
+      "name": "Ngành Thiếu",
+      "emoji": "🏕️",
+      "description": "Dành cho các em từ 13-17 tuổi. Ngành Thiếu là giai đoạn phát triển toàn diện về trí tuệ, kỹ năng và đạo đức.",
+      "bacHoc": [
+        { "name": "Hướng Thiện", "description": "Bậc khởi đầu ngành Thiếu, hướng về điều thiện." },
+        { "name": "Sơ Thiện", "description": "Đi sâu hơn vào Phật pháp và rèn luyện bản thân." },
+        { "name": "Trung Thiện", "description": "Nâng cao kiến thức Phật pháp và kỹ năng lãnh đạo." },
+        { "name": "Chánh Thiện", "description": "Bậc cao nhất ngành Thiếu, trở thành gương mẫu cho đàn em." }
+      ]
+    },
+    {
+      "id": "thanh",
+      "name": "Ngành Thanh",
+      "emoji": "🌸",
+      "description": "Dành cho thanh niên từ 18 tuổi trở lên. Ngành Thanh là giai đoạn trưởng thành, phụng sự và chuẩn bị trở thành Huynh Trưởng.",
+      "bacHoc": [
+        { "name": "Hòa", "description": "Sống hòa hợp với mọi người và môi trường xung quanh." },
+        { "name": "Minh", "description": "Sáng suốt trong nhận thức, hiểu biết sâu sắc về giáo lý." },
+        { "name": "Kiên", "description": "Kiên định trên con đường tu học và phụng sự." },
+        { "name": "Trực", "description": "Ngay thẳng, chân chính trong mọi hành động và suy nghĩ." }
+      ]
+    }
+  ]
+}

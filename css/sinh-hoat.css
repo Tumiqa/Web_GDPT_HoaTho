@@ -1,0 +1,477 @@
+/* ============================================================
+   SINH HOẠT — Activities Page Styles
+   Mỗi mục là 1 bài viết (post) chứa text + video + ảnh.
+   Filter theo năm.
+   ============================================================ */
+
+/* ===== PAGE HERO ===== */
+.sh-hero {
+  position: relative;
+  min-height: 40vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--bg-dark) 0%, #0d1a12 30%, #162a1e 60%, var(--bg-dark) 100%);
+}
+
+.sh-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 40%, rgba(138, 176, 151, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 60%, rgba(58, 95, 75, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.sh-hero::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: linear-gradient(to bottom, transparent, var(--bg-dark));
+  pointer-events: none;
+}
+
+.sh-hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 2rem;
+}
+
+.sh-hero-content h1 {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(2.2rem, 6vw, 3.5rem);
+  margin-bottom: 0.75rem;
+  text-shadow: 0 0 30px rgba(138, 176, 151, 0.2);
+}
+
+.sh-hero-content p {
+  max-width: 600px;
+  margin: 0 auto;
+  color: var(--text-dark);
+  font-size: 1.05rem;
+}
+
+/* Floating lotus */
+.sh-lotus-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.lotus-float {
+  position: absolute;
+  font-size: 1.5rem;
+  color: rgba(138, 176, 151, 0.1);
+  animation: lotusFloat linear infinite;
+}
+
+@keyframes lotusFloat {
+  0% { transform: translateY(100%) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 0.4; }
+  100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+}
+
+/* ============================================================
+   YEAR FILTER BAR
+   ============================================================ */
+.sh-filter-section {
+  padding: 2rem 0 0.5rem;
+  position: sticky;
+  top: 64px;
+  z-index: 50;
+  background: linear-gradient(to bottom, var(--bg-dark) 80%, transparent);
+}
+
+.sh-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-bottom: 0.5rem;
+}
+
+.sh-filter-bar::-webkit-scrollbar { display: none; }
+
+.sh-filter-btn {
+  padding: 0.45rem 1.1rem;
+  border-radius: 50px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: inherit;
+  border: 1px solid rgba(138, 176, 151, 0.15);
+  color: var(--text-dark);
+  background: rgba(138, 176, 151, 0.05);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sh-filter-btn:hover {
+  background: rgba(138, 176, 151, 0.12);
+  color: var(--brand-primary);
+  border-color: rgba(138, 176, 151, 0.3);
+}
+
+.sh-filter-btn.active {
+  background: linear-gradient(135deg, var(--brand-secondary), var(--brand-primary));
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(138, 176, 151, 0.2);
+}
+
+.sh-filter-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.sh-result-count {
+  margin-left: auto;
+  font-size: 0.8rem;
+  color: var(--text-dark);
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   POST LIST
+   ============================================================ */
+.sh-posts-section {
+  padding: 1.5rem 0 6rem;
+}
+
+.sh-posts {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+/* ============================================================
+   POST — A single article / bài viết
+   ============================================================ */
+.sh-post {
+  background: linear-gradient(145deg, rgba(26, 43, 34, 0.6), rgba(18, 30, 23, 0.85));
+  border-radius: 1.5rem;
+  border: 1px solid rgba(138, 176, 151, 0.1);
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  transition: border-color 0.3s ease;
+}
+
+.sh-post:hover {
+  border-color: rgba(138, 176, 151, 0.2);
+}
+
+/* ── Post Header ── */
+.sh-post__header {
+  padding: 1.75rem 2rem 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.sh-post__year-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0.3rem 0.8rem;
+  border-radius: 50px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: rgba(138, 176, 151, 0.12);
+  color: var(--brand-primary);
+  border: 1px solid rgba(138, 176, 151, 0.2);
+  flex-shrink: 0;
+}
+
+.sh-post__year-badge svg {
+  width: 12px;
+  height: 12px;
+}
+
+.sh-post__header-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.sh-post__title {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(1.25rem, 3vw, 1.65rem);
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.35;
+  margin-bottom: 0.3rem;
+}
+
+.sh-post__date {
+  font-size: 0.82rem;
+  color: var(--text-dark);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.sh-post__date svg {
+  width: 13px;
+  height: 13px;
+  opacity: 0.6;
+}
+
+/* ── Post Body (text + media) ── */
+.sh-post__body {
+  padding: 1.25rem 2rem 2rem;
+}
+
+.sh-post__text {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+  line-height: 1.75;
+  margin-bottom: 1.25rem;
+}
+
+.sh-post__text:last-child {
+  margin-bottom: 0;
+}
+
+/* ── Embedded Video ── */
+.sh-post__video {
+  margin: 1.25rem 0;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* ── Photo Gallery ── */
+.sh-post__gallery {
+  margin: 1.25rem 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 6px;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.sh-post__gallery img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.4s ease, filter 0.3s ease;
+}
+
+.sh-post__gallery img:hover {
+  transform: scale(1.04);
+  filter: brightness(1.15);
+}
+
+/* ── Tags ── */
+.sh-post__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(138, 176, 151, 0.07);
+}
+
+.sh-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0.22rem 0.6rem;
+  border-radius: 50px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  background: rgba(138, 176, 151, 0.08);
+  border: 1px solid rgba(138, 176, 151, 0.1);
+  color: var(--text-dark);
+  transition: all 0.3s ease;
+}
+
+.sh-tag:hover {
+  background: rgba(138, 176, 151, 0.15);
+  color: var(--brand-primary);
+}
+
+/* ── Actions (Chia sẻ, Xem YT...) ── */
+.sh-post__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.sh-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0.4rem 0.9rem;
+  border-radius: 50px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: inherit;
+  text-decoration: none;
+  border: 1px solid rgba(138, 176, 151, 0.18);
+  color: var(--text-dark);
+  background: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.sh-action-btn:hover {
+  background: var(--brand-primary);
+  border-color: var(--brand-primary);
+  color: var(--bg-dark);
+  transform: translateY(-1px);
+}
+
+.sh-action-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+.sh-empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  display: none;
+}
+
+.sh-empty.visible { display: block; }
+
+.sh-empty svg {
+  width: 64px;
+  height: 64px;
+  color: rgba(138, 176, 151, 0.15);
+  margin-bottom: 1.25rem;
+}
+
+.sh-empty h3 {
+  font-size: 1.1rem;
+  color: #fff;
+  margin-bottom: 0.4rem;
+}
+
+.sh-empty p {
+  color: var(--text-dark);
+  font-size: 0.9rem;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+  .sh-hero { min-height: 35vh; }
+
+  .sh-post__header { padding: 1.25rem 1.25rem 0; }
+  .sh-post__body { padding: 1rem 1.25rem 1.5rem; }
+
+  .sh-post__gallery {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+
+  .sh-filter-section { padding: 1.5rem 0 0.25rem; }
+}
+
+@media (max-width: 480px) {
+  .sh-post__header {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .sh-post__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .sh-action-btn { justify-content: center; }
+
+  .sh-post__gallery {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ============================================================
+   LIGHTBOX MODAL
+   ============================================================ */
+.sh-lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(15px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sh-lightbox.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sh-lightbox__content {
+  max-width: 90%;
+  max-height: 85vh;
+  position: relative;
+  transform: scale(0.95);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sh-lightbox.visible .sh-lightbox__content {
+  transform: scale(1);
+}
+
+.sh-lightbox__content img {
+  width: 100%;
+  height: auto;
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.sh-lightbox__close {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s;
+}
+
+.sh-lightbox__close:hover {
+  color: var(--brand-primary);
+}
+

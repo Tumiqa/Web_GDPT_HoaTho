@@ -1,0 +1,275 @@
+/* ============================================================
+   KỸ NĂNG — Page Styles
+   ============================================================ */
+
+/* ===== HERO ===== */
+.kynang-hero {
+  position: relative;
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: linear-gradient(135deg, var(--bg-dark), var(--bg-medium));
+  overflow: hidden;
+  padding: 8rem 2rem 4rem;
+}
+
+.kynang-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(138, 176, 151, 0.08) 0%, transparent 60%);
+}
+
+.kynang-hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 5vw, 3rem);
+  margin-bottom: 0.75rem;
+  position: relative;
+}
+
+.kynang-hero p {
+  font-size: 1.05rem;
+  color: var(--text-dark);
+  max-width: 600px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* ===== LAYOUT ===== */
+.kn-container {
+  display: flex;
+  gap: 2rem;
+  padding: 3rem 0 5rem;
+  align-items: flex-start;
+}
+
+/* ===== SIDEBAR ===== */
+.kn-sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 90px;
+  background: rgba(138, 176, 151, 0.03);
+  border: 1px solid rgba(138, 176, 151, 0.1);
+  border-radius: 1rem;
+  padding: 1.5rem;
+}
+
+.kn-sidebar h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(138, 176, 151, 0.1);
+}
+
+.kn-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.kn-nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  color: var(--text-dark);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 0.95rem;
+  text-align: left;
+}
+
+.kn-nav-item:hover {
+  background: rgba(138, 176, 151, 0.08);
+  color: #fff;
+}
+
+.kn-nav-item.active {
+  background: linear-gradient(135deg, var(--brand-secondary), var(--brand-primary));
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(138, 176, 151, 0.2);
+}
+
+.kn-badge {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+}
+
+/* ===== CONTENT ===== */
+.kn-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.kn-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.kn-article {
+  background: rgba(138, 176, 151, 0.03);
+  border: 1px solid rgba(138, 176, 151, 0.08);
+  border-radius: 1rem;
+  padding: 2rem;
+}
+
+.kn-article__header {
+  margin-bottom: 1.5rem;
+  border-bottom: 1px dashed rgba(138, 176, 151, 0.15);
+  padding-bottom: 1.5rem;
+}
+
+.kn-article__category {
+  display: inline-block;
+  padding: 4px 12px;
+  background: rgba(138, 176, 151, 0.1);
+  color: var(--brand-primary);
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.kn-article__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.kn-article__meta {
+  font-size: 0.85rem;
+  color: var(--text-dark);
+}
+
+.kn-article__body {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 2rem;
+  white-space: pre-wrap;
+}
+
+/* MEDIA */
+.kn-article__media {
+  margin-top: 1.5rem;
+}
+
+.kn-video {
+  border-radius: 0.75rem;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.kn-images {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.kn-image {
+  border-radius: 0.75rem;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  aspect-ratio: 4/3;
+}
+
+.kn-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s;
+}
+
+.kn-image:hover img {
+  transform: scale(1.05);
+}
+
+.kn-image-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.kn-image:hover .kn-image-overlay {
+  opacity: 1;
+}
+
+.kn-image-overlay svg {
+  width: 32px;
+  height: 32px;
+  color: #fff;
+}
+
+/* ===== EMPTY STATE ===== */
+.kn-empty {
+  text-align: center;
+  padding: 4rem 1rem;
+  color: var(--text-dark);
+  background: rgba(138, 176, 151, 0.02);
+  border: 1px dashed rgba(138, 176, 151, 0.15);
+  border-radius: 1rem;
+  display: none;
+}
+
+.kn-empty.visible {
+  display: block;
+}
+
+.kn-empty svg {
+  width: 48px;
+  height: 48px;
+  opacity: 0.4;
+  margin-bottom: 1rem;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 992px) {
+  .kn-container {
+    flex-direction: column;
+  }
+  .kn-sidebar {
+    width: 100%;
+    position: static;
+    margin-bottom: 2rem;
+  }
+  .kn-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .kn-nav-item {
+    flex: 1 1 calc(50% - 0.5rem);
+  }
+}
+
+@media (max-width: 768px) {
+  .kynang-hero {
+    min-height: 40vh;
+    padding: 7rem 1.5rem 3rem;
+  }
+  .kn-nav-item {
+    flex: 1 1 100%;
+  }
+  .kn-article {
+    padding: 1.5rem;
+  }
+}

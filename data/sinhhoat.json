@@ -1,0 +1,27 @@
+[
+  {
+    "id": "post-2026-phat-dan",
+    "title": "Kỷ Niệm Phật Đản PL 2570 - DL 2026",
+    "year": "2026",
+    "date": "Tháng 5, 2026",
+    "content": "Video và hình ảnh ghi lại những khoảnh khắc trang nghiêm và ý nghĩa trong đại lễ kỷ niệm Phật Đản Phật Lịch 2570 - Dương lịch 2026 của Gia Đình Phật Tử Hòa Thọ. Một mùa Phật Đản an lành, hạnh phúc trong ánh sáng từ bi và trí tuệ của Đức Thế Tôn.",
+    "videos": ["https://www.youtube.com/watch?v=Ok8R5b75bf4"],
+    "images": [],
+    "tags": ["Lễ Phật Đản", "Sự Kiện", "GĐPT Hòa Thọ"]
+  },
+  {
+    "id": "post-2025-dieu-dinh",
+    "title": "Trại Họp Bạn Ngành Nữ Diệu Định 2025 - PL 2569",
+    "year": "2025",
+    "date": "Năm 2025",
+    "content": "Tổng hợp khoảnh khắc sinh hoạt Trại Họp Bạn Ngành Nữ Diệu Định năm 2025, Phật lịch 2569 của Gia Đình Phật Tử Hòa Thọ. Trại họp bạn là dịp để các đoàn sinh ngành Nữ giao lưu, học hỏi, và thắt chặt tình lam qua các hoạt động kỹ năng, lửa trại, trò chơi lớn và các buổi chia sẻ ấm cúng.",
+    "videos": ["https://www.youtube.com/watch?v=0hGx0Dvxqgo"],
+    "images": [
+      "images/sinh-hoat/dieu-dinh-1.png",
+      "images/sinh-hoat/dieu-dinh-2.png",
+      "images/sinh-hoat/dieu-dinh-3.png",
+      "images/sinh-hoat/dieu-dinh-4.png"
+    ],
+    "tags": ["Trại Họp Bạn", "Ngành Nữ", "Diệu Định", "Kỷ Niệm"]
+  }
+]

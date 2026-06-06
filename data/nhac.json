@@ -1,0 +1,12 @@
+[
+  { "id": 1, "title": "Hồn Lửa Thiêng", "artist": "Nhạc Lửa Trại GĐPT", "src": "https://archive.org/download/01-hon-lua-thieng/01_HonLuaThieng.mp3", "duration": "3:19" },
+  { "id": 2, "title": "Vui Ánh Lửa Trại", "artist": "Nhạc Lửa Trại GĐPT", "src": "https://archive.org/download/01-hon-lua-thieng/02.%20Vui%20Anh%20Lua%20Trai%20-%20F5.mp3", "duration": "3:21" },
+  { "id": 3, "title": "Nhảy Lửa", "artist": "Nhạc Lửa Trại GĐPT", "src": "https://archive.org/download/01-hon-lua-thieng/03_NhayLua.mp3", "duration": "2:52" },
+  { "id": 4, "title": "Hướng Phật Đài", "artist": "Nhạc Lửa Trại GĐPT", "src": "https://archive.org/download/01-hon-lua-thieng/04_HuongPhatDai.mp3", "duration": "2:09" },
+  { "id": 5, "title": "Gia Đình Thân Ái", "artist": "Nhạc Lửa Trại GĐPT", "src": "https://archive.org/download/01-hon-lua-thieng/05_GiaDinhThanAi.mp3", "duration": "3:15" },
+  { "id": 6, "title": "Dòng A Nô Ma & Thành Ca Tỳ La", "artist": "Nhạc Lửa Trại GĐPT", "src": "https://archive.org/download/01-hon-lua-thieng/06_DongANoMa_ThanhCaTyLa.mp3", "duration": "2:55" },
+  { "id": 7, "title": "Chí Hướng", "artist": "Nhạc Lửa Trại GĐPT", "src": "https://archive.org/download/01-hon-lua-thieng/07.%20ChiHuong.mp3", "duration": "1:05" },
+  { "id": 8, "title": "Trại Áo Lam", "artist": "Nhạc Lửa Trại GĐPT", "src": "https://archive.org/download/01-hon-lua-thieng/08_TraiAoLam.mp3", "duration": "2:36" },
+  { "id": 9, "title": "Anh Em Ta Về", "artist": "Nhạc Lửa Trại GĐPT", "src": "https://archive.org/download/01-hon-lua-thieng/09.AnhEmTaVe.mp3", "duration": "0:55" },
+  { "id": 10, "title": "Ghồ Ghê", "artist": "Nhạc Lửa Trại GĐPT", "src": "https://archive.org/download/01-hon-lua-thieng/10.%20GhoGhe.mp3", "duration": "0:51" }
+]

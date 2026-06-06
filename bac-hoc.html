@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bậc Học — GĐPT Hòa Thọ</title>
+    <link rel="icon" type="image/png" href="images/logo.png" />
+
+    <meta name="description" content="Hệ thống bậc học GĐPT: Ngành Đồng (Oanh Vũ), Ngành Thiếu, Ngành Thanh — từ Mở Mắt đến Hướng Thiện." />
+    <meta name="author" content="GĐPT Hòa Thọ" />
+    <meta property="og:title" content="Bậc Học — GĐPT Hòa Thọ" />
+    <meta property="og:description" content="Tìm hiểu hệ thống bậc học từ Mở Mắt đến Hướng Thiện qua 3 ngành: Đồng, Thiếu, Thanh." />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=Dancing+Script:wght@700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/bac-hoc.css" />
+    <link rel="stylesheet" href="css/admin.css" />
+  </head>
+
+  <body class="loading">
+    <div class="grain-overlay" aria-hidden="true"></div>
+    <div class="page-transition-overlay"></div>
+
+    <!-- PRELOADER -->
+    <div id="preloader">
+      <div class="preloader-particle" style="left: 15%; top: 70%; animation-delay: 0s"></div>
+      <div class="preloader-particle" style="left: 30%; top: 80%; animation-delay: 0.8s"></div>
+      <div class="preloader-particle" style="left: 55%; top: 75%; animation-delay: 1.6s"></div>
+      <div class="preloader-particle" style="left: 75%; top: 85%; animation-delay: 0.4s"></div>
+      <div class="preloader-particle" style="left: 85%; top: 70%; animation-delay: 1.2s"></div>
+      <div class="preloader-particle" style="left: 40%; top: 90%; animation-delay: 2s"></div>
+      <div class="preloader-logo-wrap">
+        <div class="preloader-logo-ring"></div>
+        <div class="preloader-logo-ring-2"></div>
+        <div class="preloader-logo-circle">
+          <img src="images/logo.png" alt="GĐPT Hòa Thọ" onerror="this.style.display='none'" />
+        </div>
+      </div>
+      <h1 class="preloader-title" style="font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3rem); color: #fff;">GĐPT Hòa Thọ</h1>
+      <p class="preloader-subtitle">Kỷ Luật · Tinh Tấn · Lợi Tha</p>
+      <div class="preloader-progress">
+        <div class="preloader-progress-track"><div class="preloader-progress-fill" id="preloader-fill"></div></div>
+        <span class="preloader-progress-text" id="preloader-percent">0%</span>
+      </div>
+    </div>
+
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <button id="back-to-top" aria-label="Về đầu trang">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 10l7-7m0 0l7 7m-7-7v18" /></svg>
+    </button>
+
+    <!-- HEADER -->
+    <header id="main-header">
+      <div class="container">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 0;">
+          <a href="index.html" style="display: flex; align-items: center; gap: 12px;">
+            <span class="logo-circle logo-circle--header"><img src="images/logo.png" alt="GĐPT Hòa Thọ" onerror="this.style.display='none'" /></span>
+            <span class="logo-text">GĐPT Hòa Thọ</span>
+          </a>
+          <nav style="display: none;" class="desktop-nav" id="desktop-nav">
+            <div style="display: flex; align-items: center; gap: 2rem;">
+              <a href="index.html" class="nav-link">Trang chủ</a>
+              <a href="bac-hoc.html" class="nav-link active">Bậc Học</a>
+              <a href="sinh-hoat.html" class="nav-link">Sinh Hoạt</a>
+              <a href="nhac.html" class="nav-link">Nhạc GĐPT</a>
+              <a href="tai-lieu.html" class="nav-link">Tài Liệu</a>
+              <a href="ky-nang.html" class="nav-link">Kỹ Năng</a>
+              <a href="lien-he.html" class="nav-link">Liên Hệ</a>
+            </div>
+          </nav>
+          <button id="mobile-menu-button" class="mobile-menu-btn" aria-label="Menu">
+            <i data-lucide="menu" style="width: 24px; height: 24px; color: #fff;"></i>
+          </button>
+        </div>
+      </div>
+      <div id="mobile-menu" class="hidden">
+        <a href="index.html" class="nav-link-mobile">Trang chủ</a>
+        <a href="bac-hoc.html" class="nav-link-mobile active">Bậc Học</a>
+        <a href="sinh-hoat.html" class="nav-link-mobile">Sinh Hoạt</a>
+        <a href="nhac.html" class="nav-link-mobile">Nhạc GĐPT</a>
+        <a href="tai-lieu.html" class="nav-link-mobile">Tài Liệu</a>
+        <a href="ky-nang.html" class="nav-link-mobile">Kỹ Năng</a>
+        <a href="lien-he.html" class="nav-link-mobile">Liên Hệ</a>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main>
+      <!-- HERO -->
+      <section class="bachoc-hero" id="bachoc-hero">
+        <div>
+          <h1>🎓 Bậc Học & Ngành Đoàn</h1>
+          <p>Hệ thống bậc học tu tiến của GĐPT — rèn luyện Bi · Trí · Dũng qua từng giai đoạn trưởng thành.</p>
+        </div>
+      </section>
+
+      <!-- TABS -->
+      <section class="bg-dark" id="bachoc-content">
+        <div class="container">
+          <div class="nganh-tabs" id="nganh-tabs">
+            <!-- Rendered by JS -->
+          </div>
+          <div id="nganh-sections">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="footer-glow"></div>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-logo-section">
+            <a href="index.html"><span class="logo-circle logo-circle--footer"><img src="images/logo.png" alt="GĐPT Hòa Thọ" onerror="this.style.display='none'" /></span></a>
+            <span class="logo-text" style="margin-bottom: 0.25rem;">GĐPT Hòa Thọ</span>
+            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.4); font-style: italic; max-width: none;">Trưởng thành trong ánh sáng Phật pháp</p>
+          </div>
+          <div class="footer-links">
+            <a href="index.html">Trang chủ</a><a href="bac-hoc.html">Bậc Học</a><a href="sinh-hoat.html">Sinh Hoạt</a>
+            <a href="nhac.html">Nhạc GĐPT</a><a href="tai-lieu.html">Tài Liệu</a><a href="ky-nang.html">Kỹ Năng</a><a href="lien-he.html">Liên Hệ</a>
+          </div>
+          <div class="footer-divider"></div>
+          <div class="footer-bottom">
+            <p>© 2025 GĐPT Hòa Thọ. Xây dựng với tâm nguyện lan tỏa tình lam.</p>
+            <div class="footer-social">
+              <a href="https://www.facebook.com/GDPTHOATHO" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+              <a href="mailto:gdpthoathodn@gmail.com" aria-label="Email"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/admin.js"></script>
+    <script>
+      (async function() {
+        // Fetch bac hoc data
+        let data = null;
+        try {
+          const res = await fetch('data/bachoc.json');
+          if (res.ok) data = await res.json();
+        } catch(e) {}
+
+        if (!data || !data.nganh) return;
+
+        const tabsEl = document.getElementById('nganh-tabs');
+        const sectionsEl = document.getElementById('nganh-sections');
+
+        // Build tabs
+        data.nganh.forEach((nganh, i) => {
+          const btn = document.createElement('button');
+          btn.className = 'nganh-tab' + (i === 0 ? ' active' : '');
+          btn.dataset.index = i;
+          btn.textContent = nganh.emoji + ' ' + nganh.name;
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('.nganh-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nganh-section').forEach(s => s.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('nganh-' + i).classList.add('active');
+          });
+          tabsEl.appendChild(btn);
+        });
+
+        // Build sections
+        data.nganh.forEach((nganh, i) => {
+          const section = document.createElement('div');
+          section.className = 'nganh-section' + (i === 0 ? ' active' : '');
+          section.id = 'nganh-' + i;
+
+          let cardsHTML = '';
+          nganh.bacHoc.forEach((bac, bi) => {
+            cardsHTML += `
+              <div class="bachoc-card reveal">
+                <div class="bachoc-card__number">${bi + 1}</div>
+                <h3>${bac.name}</h3>
+                <p>${bac.description}</p>
+              </div>
+            `;
+          });
+
+          section.innerHTML = `
+            <div class="nganh-header">
+              <span class="nganh-emoji">${nganh.emoji}</span>
+              <h2>${nganh.name}</h2>
+              <p>${nganh.description}</p>
+            </div>
+            <div class="bachoc-grid">${cardsHTML}</div>
+          `;
+          sectionsEl.appendChild(section);
+        });
+      })();
+    </script>
+  </body>
+</html>
