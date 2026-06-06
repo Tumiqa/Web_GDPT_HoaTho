@@ -2,191 +2,282 @@
   {
     "id": "hoa-tho",
     "title": "GĐPT Hòa Thọ",
-    "address": "Chùa Hòa Thọ, Đà Nẵng",
-    "district": "Cẩm Lệ",
-    "description": "Kỷ Luật · Tinh Tấn · Lợi Tha. Nơi đoàn viên và tình lam, giáo dục thanh thiếu niên theo tinh thần Phật giáo.",
-    "coords": [108.2045, 16.0210],
+    "address": "Chùa Hòa Thọ",
+    "coords": [
+      108.19259425337512,
+      16.012781223375814
+    ],
     "zoom": 16,
     "isPrimary": true
   },
   {
-    "id": "trung-luong",
-    "title": "GĐPT Trung Lương",
-    "address": "Đà Nẵng",
-    "district": "Cẩm Lệ",
-    "description": "Đơn vị sinh hoạt GĐPT tại Đà Nẵng.",
-    "coords": [108.2120, 16.0150],
+    "id": "bau-sen",
+    "title": "GĐPT Bàu Sen",
+    "address": "Chùa Bàu Sen",
+    "coords": [
+      108.19252669755147,
+      16.00547078234602
+    ],
     "zoom": 15
   },
   {
     "id": "hue-quang",
     "title": "GĐPT Huệ Quang",
-    "address": "Đà Nẵng",
-    "district": "Ngũ Hành Sơn",
-    "description": "Đơn vị sinh hoạt GĐPT tại Đà Nẵng.",
-    "coords": [108.2450, 16.0100],
+    "address": "Chùa Huệ Quang",
+    "coords": [
+      108.17823740184724,
+      16.04740924930731
+    ],
     "zoom": 15
   },
   {
     "id": "hoa-xuan",
     "title": "GĐPT Hòa Xuân",
-    "address": "Đà Nẵng",
-    "district": "Cẩm Lệ",
-    "description": "Đơn vị sinh hoạt GĐPT tại phường Hòa Xuân.",
-    "coords": [108.2250, 16.0020],
+    "address": "Chùa Hòa Xuân",
+    "coords": [
+      108.21878391526211,
+      16.005877914857425
+    ],
     "zoom": 15
   },
   {
-    "id": "bau-sen",
-    "title": "GĐPT Bàu Sen",
-    "address": "Đà Nẵng",
-    "district": "Thanh Khê",
-    "description": "Đơn vị sinh hoạt GĐPT tại Đà Nẵng.",
-    "coords": [108.1950, 16.0620],
+    "id": "pho-hien",
+    "title": "GĐPT Phổ Hiền",
+    "address": "Chùa Phổ Hiền",
+    "coords": [
+      108.20580502873173,
+      16.017860302179166
+    ],
+    "zoom": 15
+  },
+  {
+    "id": "trung-luong",
+    "title": "GĐPT Trung Lương",
+    "address": "Chùa Trung Lương",
+    "coords": [
+      108.21492195573975,
+      16.002797105049027
+    ],
+    "zoom": 15
+  },
+  {
+    "id": "an-hai",
+    "title": "GĐPT An Hải",
+    "address": "Chùa An Hải",
+    "coords": [
+      108.23362997240784,
+      16.068085219787246
+    ],
     "zoom": 15
   },
   {
     "id": "phap-lam",
-    "title": "Trụ sở Trung tâm Phân ban GĐPT",
-    "address": "Chùa Pháp Lâm, 574 Ông Ích Khiêm, phường Nam Dương",
-    "district": "Hải Châu",
-    "description": "Văn phòng chính của BHD Phân ban Đà Nẵng. Điểm tổ chức lễ khai khóa bậc Lực, lễ thọ cấp Tập/Tín, hiến máu Vu Lan, điểm tập kết Tiếp sức mùa thi.",
-    "coords": [108.2155, 16.0652],
-    "zoom": 16
+    "title": "GĐPT Pháp Lâm",
+    "address": "Chùa Pháp Lâm",
+    "coords": [
+      108.21615644353034,
+      16.062502154841297
+    ],
+    "zoom": 15
   },
   {
     "id": "cat-tuong",
     "title": "GĐPT Cát Tường",
-    "address": "Chùa Cát Tường, K266/H79/24 Hoàng Diệu",
-    "district": "Hải Châu",
-    "description": "Đơn vị trẻ nhất, chính thức công bố thành lập ngày 25/1/2024. Gia trưởng: Tâm Khởi - Trần Định, Liên đoàn trưởng: Nhật Vũ - Hoàng Tuấn.",
-    "coords": [108.2180, 16.0590],
-    "zoom": 16
+    "address": "Chùa Cát Tường",
+    "coords": [
+      108.21454175703333,
+      16.058342718412245
+    ],
+    "zoom": 15
   },
   {
     "id": "tan-ninh",
     "title": "GĐPT Tân Ninh",
-    "address": "Chùa Tân Ninh, 119 Nguyễn Chí Thanh",
-    "district": "Hải Châu",
-    "description": "Nổi bật với phong trào từ thiện đương đại, tiên phong trong chiến dịch đoàn sinh ngành Nữ cắt hiến tóc cho bệnh nhân ung thư vú.",
-    "coords": [108.2240, 16.0720],
-    "zoom": 16
-  },
-  {
-    "id": "bao-an",
-    "title": "Địa điểm Hành chính Đại hội",
-    "address": "Chùa Báo Ân, 388 Nguyễn Tri Phương, phường Hòa Thuận Tây",
-    "district": "Hải Châu",
-    "description": "Trung tâm tổ chức các phiên họp khoáng đại và Đại hội Huynh trưởng GĐPT Đà Nẵng nhiệm kỳ 2024-2028. Do Hòa thượng Thích Từ Nguyện chứng minh.",
-    "coords": [108.2085, 16.0490],
-    "zoom": 16
-  },
-  {
-    "id": "bat-nha",
-    "title": "Trung tâm tu học Thanh niên",
-    "address": "Chùa Bát Nhã, 176 Triệu Nữ Vương, phường Hải Châu 2",
-    "district": "Hải Châu",
-    "description": "Tự viện thường xuyên mở các khóa tu tuổi trẻ quy mô lớn, thu hút đông đảo đoàn sinh thanh niên các GĐPT tham gia.",
-    "coords": [108.2170, 16.0680],
-    "zoom": 16
+    "address": "Chùa Tân Ninh",
+    "coords": [
+      108.2215711379117,
+      16.073669814725605
+    ],
+    "zoom": 15
   },
   {
     "id": "tan-thai",
     "title": "GĐPT Tân Thái",
-    "address": "Chùa Tân Thái, 63 Trương Định (hoặc Tổ 12 / Tổ 24C, phường Mân Thái, 31 Lê Văn Thứ)",
-    "district": "Sơn Trà",
-    "description": "Đơn vị cổ thụ, cơ cấu tổ chức cực kỳ hoàn thiện với Ban Bảo trợ riêng biệt. Có truyền thống tặng quà Tết cho đoàn sinh liên tục.",
-    "coords": [108.2510, 16.0820],
-    "zoom": 16
+    "address": "Chùa Tân Thái",
+    "coords": [
+      108.24740015701474,
+      16.08966163456006
+    ],
+    "zoom": 15
   },
   {
-    "id": "an-hai",
-    "title": "Căn cứ Huấn luyện Huynh trưởng",
-    "address": "Chùa An Hải, 87 Nguyễn Công Trứ",
-    "district": "Sơn Trà",
-    "description": "Nơi Thường trực Phân ban GĐPT chọn để tổ chức các khóa tu Bát Quan Trai cho huynh trưởng Trì - Định - Lực và cử hành nghi thức thọ cấp Tập linh thiêng lúc rạng sáng.",
-    "coords": [108.2320, 16.0670],
-    "zoom": 16
+    "id": "tan-an",
+    "title": "GĐPT Tân An",
+    "address": "Chùa Tân An",
+    "coords": [
+      108.20790173744595,
+      16.070543079242302
+    ],
+    "zoom": 15
+  },
+  {
+    "id": "vinh-an",
+    "title": "GĐPT Vĩnh An",
+    "address": "Chùa Vĩnh An",
+    "coords": [
+      108.21207153376184,
+      16.06517539285584
+    ],
+    "zoom": 15
+  },
+  {
+    "id": "bao-an",
+    "title": "GĐPT Báo Ân",
+    "address": "Chùa Báo Ân",
+    "coords": [
+      108.21014863004743,
+      16.05289980207795
+    ],
+    "zoom": 15
+  },
+  {
+    "id": "bat-nha",
+    "title": "GĐPT Bát Nhã",
+    "address": "Chùa Bát Nhã",
+    "coords": [
+      108.21747346256312,
+      16.061736335580413
+    ],
+    "zoom": 15
   },
   {
     "id": "thanh-hai",
     "title": "GĐPT Thanh Hải",
     "address": "Chùa Thanh Hải",
-    "district": "Thanh Khê",
-    "description": "Hình mẫu của sự liên kết: Đơn vị được thành lập nhờ sự hỗ trợ nhân sự và vật chất từ các đơn vị GĐPT lân cận trong quận Thanh Khê theo nguyện vọng của Ni sư Thích Nữ Diệu Quả.",
-    "coords": [108.1880, 16.0680],
+    "coords": [
+      108.17764631840947,
+      16.0752694226068
+    ],
     "zoom": 15
   },
   {
     "id": "pho-quang",
     "title": "GĐPT Phổ Quang",
-    "address": "Chùa Phổ Quang, P. An Khê",
-    "district": "Thanh Khê",
-    "description": "Trung tâm sức mạnh của Thanh Khê với hơn 11 đơn vị cơ sở liên kết. Điểm tổ chức trại huấn luyện Anoma - Ni Liên - Tuyết Sơn với gần 190 trại sinh.",
-    "coords": [108.1750, 16.0590],
+    "address": "Chùa Phổ Quang",
+    "coords": [
+      108.22980115889307,
+      16.081401198689832
+    ],
     "zoom": 15
   },
   {
-    "id": "quan-the-am",
-    "title": "Trung tâm Huấn luyện dã ngoại",
-    "address": "Chùa Quán Thế Âm, 48 Sư Vạn Hạnh, thôn Sơn Thủy, phường Hòa Hải",
-    "district": "Ngũ Hành Sơn",
-    "description": "Nhờ không gian rộng lớn, đây là bãi đáp lý tưởng cho các kỳ trại huấn luyện Đội chúng trưởng/Phó của Phân ban GĐPT quận Hải Châu (hơn 111 trại sinh).",
-    "coords": [108.2625, 16.0045],
+    "id": "ba-a",
+    "title": "GĐPT Bà Đa",
+    "address": "Chùa Bà Đa",
+    "coords": [
+      108.24119221654372,
+      16.037746047282152
+    ],
     "zoom": 15
-  },
-  {
-    "id": "ba-da",
-    "title": "Trung tâm Hỗ trợ Từ thiện",
-    "address": "Chùa Bà Đa, 2 An Tư Công Chúa, phường Bắc Mỹ An",
-    "district": "Ngũ Hành Sơn",
-    "description": "Đầu mối viện trợ tài chính cho Phân ban, tổ chức Bát Quan Trai quy mô 300 người, và là bệ phóng cho các hoạt động từ thiện vùng sâu vùng xa do TT. Thích Thông Đạo chủ trì.",
-    "coords": [108.2430, 16.0350],
-    "zoom": 16
-  },
-  {
-    "id": "hoa-cuong",
-    "title": "GĐPT Hòa Cường",
-    "address": "Chùa Phổ Hiền, 260 Cách mạng tháng 8",
-    "district": "Cẩm Lệ",
-    "description": "Đơn vị mang tính di sản với lễ chu niên kỷ niệm 55 năm thành lập, quy tụ nhiều thế hệ huynh trưởng cao niên trên 70-80 tuổi vẫn tiếp tục gắn bó.",
-    "coords": [108.2090, 16.0270],
-    "zoom": 16
   },
   {
     "id": "quang-minh",
-    "title": "Không gian Phật sự vùng ven",
-    "address": "Chùa Quang Minh, 412 Tôn Đức Thắng",
-    "district": "Liên Chiểu",
-    "description": "Tự viện có sức chứa lớn, tổ chức các đại lễ Phật Đản, Thành Đạo với sự góp mặt hùng hậu của GĐPT toàn quận Liên Chiểu.",
-    "coords": [108.1520, 16.0620],
-    "zoom": 16
-  },
-  {
-    "id": "tinh-quang",
-    "title": "Cứ điểm sinh hoạt Phật tử",
-    "address": "Chùa Tịnh Quang, Phường Hòa Minh",
-    "district": "Liên Chiểu",
-    "description": "Tự viện có mối liên kết hữu cơ sâu sắc với lực lượng đoàn sinh GĐPT khu vực dân cư Hòa Minh.",
-    "coords": [108.1650, 16.0680],
+    "title": "GĐPT Quang Minh",
+    "address": "Chùa Quang Minh",
+    "coords": [
+      108.16520535517124,
+      16.059527594223255
+    ],
     "zoom": 15
   },
   {
-    "id": "tu-an",
-    "title": "GĐPT Từ Ân",
-    "address": "Chùa Từ Ân, Đà Nẵng",
-    "district": "Toàn Thành",
-    "description": "Đơn vị đã hoàn tất quá trình khảo sát và được BHD GĐPT Đà Nẵng chính thức ban hành quyết định công nhận tư cách sinh hoạt.",
-    "coords": [108.2150, 16.0600],
-    "zoom": 14
+    "id": "tinh-quang",
+    "title": "GĐPT Tịnh Quang",
+    "address": "Chùa Tịnh Quang",
+    "coords": [
+      108.17441315026026,
+      16.05411969513214
+    ],
+    "zoom": 15
   },
   {
-    "id": "vinh-an",
-    "title": "GĐPT Vĩnh An",
-    "address": "Vĩnh An, Đà Nẵng",
-    "district": "Toàn Thành",
-    "description": "Đơn vị giàu tính nghệ thuật và truyền thống, thường xuyên đảm nhận trọng trách dâng hoa cúng dường tại các hội nghị lớn của thành phố.",
-    "coords": [108.2100, 16.0500],
-    "zoom": 14
+    "id": "thuan-an",
+    "title": "GĐPT Thuận An",
+    "address": "Chùa Thuận An",
+    "coords": [
+      107.65247385333357,
+      16.55437975636832
+    ],
+    "zoom": 15
+  },
+  {
+    "id": "lien-tri",
+    "title": "GĐPT Liên Trì",
+    "address": "Chùa Liên Trì",
+    "coords": [
+      108.24230467051028,
+      16.08951958314302
+    ],
+    "zoom": 15
+  },
+  {
+    "id": "thuan-chau",
+    "title": "GĐPT Thuận Châu",
+    "address": "Chùa Thuận Châu",
+    "coords": [
+      108.22023128745994,
+      16.07914086201906
+    ],
+    "zoom": 15
+  },
+  {
+    "id": "thuan-thanh",
+    "title": "GĐPT Thuận Thành",
+    "address": "Chùa Thuận Thành",
+    "coords": [
+      108.20959381045276,
+      16.074604423244914
+    ],
+    "zoom": 15
+  },
+  {
+    "id": "nam-thanh",
+    "title": "GĐPT Nam Thành",
+    "address": "Chùa Nam Thành",
+    "coords": [
+      108.12664351525027,
+      16.117173668041357
+    ],
+    "zoom": 15
+  },
+  {
+    "id": "kinh-quang",
+    "title": "GĐPT Kinh Quang",
+    "address": "Chùa Kinh Quang",
+    "coords": [
+      108.12034292211138,
+      16.135469752340935
+    ],
+    "zoom": 15
+  },
+  {
+    "id": "minh-phuoc",
+    "title": "GĐPT Minh Phước",
+    "address": "Chùa Minh Phước",
+    "coords": [
+      108.15457764908761,
+      16.066189252888716
+    ],
+    "zoom": 15
+  },
+  {
+    "id": "thanh-binh",
+    "title": "Chùa Thanh Bình (Đoàn nữ Phật tử)",
+    "address": "Chùa Thanh Bình (Đoàn nữ Phật tử)",
+    "coords": [
+      108.21644749326788,
+      16.0812203349511
+    ],
+    "zoom": 15
   }
 ]
