@@ -46,25 +46,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ===== MAPBOX =====
-  const showMapBtn = document.getElementById("show-map-btn");
-  if (showMapBtn) {
-    showMapBtn.addEventListener("click", () => {
-      // Hide button container
-      showMapBtn.closest(".text-center").style.display = "none";
-      
-      // Show map container
-      const mapLayout = document.getElementById("map-layout-container");
-      mapLayout.style.display = "flex";
-      
-      // Small delay to allow CSS display:flex to apply before animating opacity
-      setTimeout(() => {
-        mapLayout.style.opacity = "1";
-        mapLayout.style.transform = "translateY(0)";
-      }, 50);
-
-      // Initialize mapbox
-      initMapbox();
-    });
+  if (document.getElementById("map-container")) {
+    initMapbox();
   }
 
   // ===== LUCIDE ICONS =====

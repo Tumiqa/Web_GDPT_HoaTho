@@ -295,9 +295,7 @@
 
               <!-- Tâm la bàn (Đặt ngoài vòng xoay để không bị lệch) -->
               <div class="compass-center">
-                <!-- Sử dụng hình ảnh Hoa Sen thay vì chỉ text để nhìn to và đẹp hơn -->
-                <img src="images/logo.png" alt="Logo" class="compass-center-logo" onerror="this.style.display='none'; document.getElementById('fallback-center-text').style.display='block';" />
-                <div id="fallback-center-text" class="compass-center-text" style="font-family: 'Dancing Script', cursive;">GĐPT<br>Hòa Thọ</div>
+                <img src="images/logo.png" alt="Logo GĐPT Hòa Thọ" class="compass-center-logo" />
               </div>
 
             </div>
@@ -308,20 +306,11 @@
     <!-- ===== BẢN ĐỒ MAPBOX SECTION ===== -->
     <section id="ban-do" class="section">
       <div class="container">
-        <h2 class="section-title reveal" style="text-align: center; margin-bottom: 1rem;">
+        <h2 class="section-title reveal" style="text-align: center; margin-bottom: 3rem;">
           Bản Đồ Hệ Thống <span style="font-family: 'Dancing Script', cursive; color: var(--brand-primary); font-weight: normal; font-size: 1.2em;">GĐPT</span>
         </h2>
         
-        <div class="text-center mb-12 reveal" style="text-align: center; margin-bottom: 3rem;">
-          <button id="show-map-btn" class="hero-cta" style="border: none; cursor: pointer; padding: 15px 30px; font-size: 1rem; border-radius: 50px; background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary)); color: #fff; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(138, 176, 151, 0.4); display: inline-flex; align-items: center; gap: 10px;">
-            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
-            </svg>
-            Xem Bản Đồ Hệ Thống GĐPT
-          </button>
-        </div>
-
-        <div class="map-layout" id="map-layout-container" style="display: none; opacity: 0; transform: translateY(20px); transition: all 0.5s ease;">
+        <div class="map-layout reveal" id="map-layout-container">
           <!-- Sidebar: Danh sách địa điểm -->
           <div class="map-sidebar">
             <div class="map-sidebar-header">
