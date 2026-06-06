@@ -1,7 +1,6 @@
 /* ============================================================
    SINH HOẠT — Activities Page Styles
-   Mỗi mục là 1 bài viết (post) chứa text + video + ảnh.
-   Filter theo năm.
+   Card Grid + Fullscreen Modal Layout
    ============================================================ */
 
 /* ===== PAGE HERO ===== */
@@ -139,62 +138,304 @@
   height: 14px;
 }
 
-.sh-result-count {
-  margin-left: auto;
-  font-size: 0.8rem;
-  color: var(--text-dark);
-  opacity: 0.6;
-  flex-shrink: 0;
-}
-
 /* ============================================================
-   POST LIST
+   CARD GRID
    ============================================================ */
 .sh-posts-section {
   padding: 1.5rem 0 6rem;
 }
 
-.sh-posts {
-  display: flex;
-  flex-direction: column;
-  gap: 2.5rem;
+.sh-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+  .sh-card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .sh-card-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
 }
 
 /* ============================================================
-   POST — A single article / bài viết
+   CARD
    ============================================================ */
-.sh-post {
-  background: linear-gradient(145deg, rgba(26, 43, 34, 0.6), rgba(18, 30, 23, 0.85));
-  border-radius: 1.5rem;
-  border: 1px solid rgba(138, 176, 151, 0.1);
+.sh-card {
+  position: relative;
+  border-radius: 1.25rem;
   overflow: hidden;
+  background: linear-gradient(145deg, rgba(26, 43, 34, 0.6), rgba(18, 30, 23, 0.85));
+  border: 1px solid rgba(138, 176, 151, 0.1);
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.3s ease,
+              box-shadow 0.4s ease;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-  transition: border-color 0.3s ease;
-  opacity: 0;
-  transform: translateY(30px);
 }
 
-.sh-post.revealed {
+.sh-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(138, 176, 151, 0.25);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35), 0 0 40px rgba(138, 176, 151, 0.06);
+}
+
+/* ── Card Thumbnail ── */
+.sh-card__thumb {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.sh-card__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sh-card:hover .sh-card__thumb img {
+  transform: scale(1.08);
+}
+
+/* Thumbnail overlay on hover */
+.sh-card__thumb-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(18, 30, 23, 0.8) 0%, transparent 60%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 1rem;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.sh-card:hover .sh-card__thumb-overlay {
   opacity: 1;
+}
+
+.sh-card__view-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.4rem 1rem;
+  border-radius: 50px;
+  background: rgba(138, 176, 151, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(138, 176, 151, 0.25);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transform: translateY(8px);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sh-card:hover .sh-card__view-label {
   transform: translateY(0);
 }
 
-.sh-post:hover {
-  border-color: rgba(138, 176, 151, 0.2);
+.sh-card__view-label svg {
+  width: 14px;
+  height: 14px;
 }
 
-/* ── Post Header ── */
-.sh-post__header {
-  padding: 1.75rem 2rem 0;
+/* Media count badge on thumbnail */
+.sh-card__media-badge {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
   display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  flex-wrap: wrap;
+  gap: 0.4rem;
+  z-index: 2;
 }
 
-.sh-post__year-badge {
+.sh-card__badge-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0.2rem 0.55rem;
+  border-radius: 50px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sh-card__badge-item svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* No thumbnail placeholder */
+.sh-card__thumb-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, rgba(26, 43, 34, 0.4), rgba(18, 30, 23, 0.6));
+}
+
+.sh-card__thumb-placeholder svg {
+  width: 48px;
+  height: 48px;
+  color: rgba(138, 176, 151, 0.2);
+}
+
+/* ── Card Info ── */
+.sh-card__info {
+  padding: 1.1rem 1.25rem 1.25rem;
+}
+
+.sh-card__year {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--brand-primary);
+  margin-bottom: 0.5rem;
+  opacity: 0.8;
+}
+
+.sh-card__year svg {
+  width: 11px;
+  height: 11px;
+}
+
+.sh-card__title {
+  font-family: "Playfair Display", serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.sh-card__excerpt {
+  font-size: 0.82rem;
+  color: var(--text-dark);
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.sh-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.75rem;
+}
+
+.sh-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0.2rem 0.55rem;
+  border-radius: 50px;
+  font-size: 0.68rem;
+  font-weight: 500;
+  background: rgba(138, 176, 151, 0.08);
+  border: 1px solid rgba(138, 176, 151, 0.1);
+  color: var(--text-dark);
+  transition: all 0.3s ease;
+}
+
+/* ============================================================
+   FULLSCREEN MODAL
+   ============================================================ */
+.sh-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 10000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.sh-modal-backdrop.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sh-modal {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  transform: translateY(30px) scale(0.97);
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sh-modal-backdrop.visible .sh-modal {
+  transform: translateY(0) scale(1);
+}
+
+.sh-modal__close {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.25rem;
+  z-index: 10001;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.sh-modal__close:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: rotate(90deg);
+}
+
+.sh-modal__close svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ── Modal Header ── */
+.sh-modal__header {
+  padding: 2rem 0 1.5rem;
+  border-bottom: 1px solid rgba(138, 176, 151, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+.sh-modal__year-badge {
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -207,218 +448,259 @@
   background: rgba(138, 176, 151, 0.12);
   color: var(--brand-primary);
   border: 1px solid rgba(138, 176, 151, 0.2);
-  flex-shrink: 0;
+  margin-bottom: 0.75rem;
 }
 
-.sh-post__year-badge svg {
+.sh-modal__year-badge svg {
   width: 12px;
   height: 12px;
 }
 
-.sh-post__header-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.sh-post__title {
+.sh-modal__title {
   font-family: "Playfair Display", serif;
-  font-size: clamp(1.25rem, 3vw, 1.65rem);
+  font-size: clamp(1.5rem, 4vw, 2.2rem);
   font-weight: 700;
   color: #fff;
   line-height: 1.35;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.5rem;
 }
 
-.sh-post__date {
-  font-size: 0.82rem;
+.sh-modal__date {
+  font-size: 0.85rem;
   color: var(--text-dark);
   display: inline-flex;
   align-items: center;
   gap: 5px;
 }
 
-.sh-post__date svg {
-  width: 13px;
-  height: 13px;
-  opacity: 0.6;
+.sh-modal__date svg {
+  width: 14px;
+  height: 14px;
+  opacity: 0.5;
 }
 
-/* ── Post Body (text + media) ── */
-.sh-post__body {
-  padding: 1.25rem 2rem 2rem;
+.sh-modal__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
 }
 
-.sh-post__text {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.95rem;
-  line-height: 1.75;
-  margin-bottom: 1.25rem;
+/* ── Modal Content ── */
+.sh-modal__content {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 1rem;
+  line-height: 1.85;
+  margin-bottom: 2rem;
 }
 
-.sh-post__text:last-child {
-  margin-bottom: 0;
-}
-
-/* ── Embedded Video ── */
-.sh-post__video {
-  margin: 1.25rem 0;
+/* ── Modal Video ── */
+.sh-modal__video {
+  margin-bottom: 2rem;
   border-radius: 0.75rem;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
-/* ── Photo Gallery ── */
-.sh-image-grid {
-  display: grid;
-  gap: 8px;
-  margin: 1.25rem 0;
-}
-.sh-grid-1 {
-  grid-template-columns: 1fr;
-}
-.sh-grid-2 {
-  grid-template-columns: repeat(2, 1fr);
-}
-.sh-grid-3 {
-  grid-template-columns: repeat(3, 1fr);
-}
-.sh-grid-4 {
-  grid-template-columns: repeat(4, 1fr);
+/* ── Modal Gallery ── */
+.sh-modal__gallery {
+  margin-bottom: 2rem;
 }
 
-@media (max-width: 768px) {
-  .sh-grid-3, .sh-grid-4 {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-@media (max-width: 480px) {
-  .sh-grid-2, .sh-grid-3, .sh-grid-4 {
-    grid-template-columns: 1fr;
-  }
-}
-
-.sh-image-item {
+.sh-modal__gallery-main {
   position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
   border-radius: 0.75rem;
   overflow: hidden;
-  aspect-ratio: 4/3;
-  cursor: pointer;
+  background: rgba(0, 0, 0, 0.2);
+  margin-bottom: 0.75rem;
+}
+
+.sh-modal__gallery-main img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
   background: rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: opacity 0.3s ease;
 }
 
-.sh-grid-1 .sh-image-item {
-  aspect-ratio: 16/9;
-  max-height: 450px;
+/* Navigation arrows */
+.sh-gallery-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 2;
 }
 
-.sh-image-item img {
+.sh-gallery-nav:hover {
+  background: rgba(138, 176, 151, 0.3);
+  border-color: rgba(138, 176, 151, 0.4);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.sh-gallery-nav svg {
+  width: 18px;
+  height: 18px;
+}
+
+.sh-gallery-prev { left: 0.75rem; }
+.sh-gallery-next { right: 0.75rem; }
+
+/* Image counter */
+.sh-gallery-counter {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.25rem 0.75rem;
+  border-radius: 50px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.75rem;
+  font-weight: 600;
+  z-index: 2;
+}
+
+/* Thumbnail strip */
+.sh-gallery-thumbs {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.25rem 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.sh-gallery-thumbs::-webkit-scrollbar { display: none; }
+
+.sh-gallery-thumb {
+  flex-shrink: 0;
+  width: 72px;
+  height: 52px;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  opacity: 0.5;
+}
+
+.sh-gallery-thumb:hover {
+  opacity: 0.8;
+}
+
+.sh-gallery-thumb.active {
+  border-color: var(--brand-primary);
+  opacity: 1;
+  box-shadow: 0 0 12px rgba(138, 176, 151, 0.3);
+}
+
+.sh-gallery-thumb img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  display: block;
 }
 
-.sh-image-overlay {
-  position: absolute;
+/* ============================================================
+   IMAGE LIGHTBOX (from modal gallery click)
+   ============================================================ */
+.sh-lightbox {
+  position: fixed;
   inset: 0;
-  background: rgba(18, 30, 23, 0.6);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.97);
+  z-index: 10002;
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: opacity 0.3s ease;
-  z-index: 1;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
 }
 
-.sh-image-overlay svg {
-  width: 28px;
-  height: 28px;
-  color: #fff;
-  transform: scale(0.8);
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.sh-image-item:hover img {
-  transform: scale(1.06);
-}
-
-.sh-image-item:hover .sh-image-overlay {
+.sh-lightbox.visible {
   opacity: 1;
+  pointer-events: auto;
 }
 
-.sh-image-item:hover .sh-image-overlay svg {
-  transform: scale(1.1);
+.sh-lightbox-content {
+  max-width: 95vw;
+  max-height: 95vh;
+  position: relative;
 }
 
-/* ── Tags ── */
-.sh-post__tags {
+.sh-lightbox-content img {
+  max-width: 95vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.sh-lightbox-close {
+  position: absolute;
+  top: -44px;
+  right: 0;
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 8px;
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  margin-top: 1.25rem;
-  padding-top: 1.25rem;
-  border-top: 1px solid rgba(138, 176, 151, 0.07);
-}
-
-.sh-tag {
-  display: inline-flex;
   align-items: center;
-  gap: 3px;
-  padding: 0.22rem 0.6rem;
-  border-radius: 50px;
-  font-size: 0.72rem;
-  font-weight: 500;
-  background: rgba(138, 176, 151, 0.08);
-  border: 1px solid rgba(138, 176, 151, 0.1);
-  color: var(--text-dark);
-  transition: all 0.3s ease;
+  justify-content: center;
+  transition: color 0.3s;
 }
 
-.sh-tag:hover {
-  background: rgba(138, 176, 151, 0.15);
+.sh-lightbox-close:hover {
   color: var(--brand-primary);
 }
 
-/* ── Actions (Chia sẻ, Xem YT...) ── */
-.sh-post__actions {
+/* Lightbox nav arrows */
+.sh-lightbox-nav {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #fff;
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem;
-  margin-top: 1rem;
-}
-
-.sh-action-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 0.4rem 0.9rem;
-  border-radius: 50px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  font-family: inherit;
-  text-decoration: none;
-  border: 1px solid rgba(138, 176, 151, 0.18);
-  color: var(--text-dark);
-  background: none;
+  justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
+  z-index: 10003;
 }
 
-.sh-action-btn:hover {
-  background: var(--brand-primary);
-  border-color: var(--brand-primary);
-  color: var(--bg-dark);
-  transform: translateY(-1px);
+.sh-lightbox-nav:hover {
+  background: rgba(138, 176, 151, 0.25);
 }
 
-.sh-action-btn svg {
-  width: 14px;
-  height: 14px;
+.sh-lightbox-nav svg {
+  width: 22px;
+  height: 22px;
 }
+
+.sh-lightbox-prev { left: 1rem; }
+.sh-lightbox-next { right: 1rem; }
 
 /* ============================================================
    EMPTY STATE
@@ -438,12 +720,6 @@
   margin-bottom: 1.25rem;
 }
 
-.sh-empty h3 {
-  font-size: 1.1rem;
-  color: #fff;
-  margin-bottom: 0.4rem;
-}
-
 .sh-empty p {
   color: var(--text-dark);
   font-size: 0.9rem;
@@ -454,96 +730,34 @@
    ============================================================ */
 @media (max-width: 768px) {
   .sh-hero { min-height: 35vh; }
-
-  .sh-post__header { padding: 1.25rem 1.25rem 0; }
-  .sh-post__body { padding: 1rem 1.25rem 1.5rem; }
-
-  .sh-post__gallery {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  }
-
   .sh-filter-section { padding: 1.5rem 0 0.25rem; }
-}
 
-@media (max-width: 480px) {
-  .sh-post__header {
-    flex-direction: column;
-    gap: 0.5rem;
+  .sh-modal {
+    margin: 1rem auto;
+    padding: 0 0.5rem;
   }
 
-  .sh-post__actions {
-    flex-direction: column;
-    align-items: stretch;
+  .sh-modal__close {
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 38px;
+    height: 38px;
   }
 
-  .sh-action-btn { justify-content: center; }
+  .sh-modal__header {
+    padding: 1.5rem 0 1rem;
+  }
 
-  .sh-post__gallery {
-    grid-template-columns: repeat(2, 1fr);
+  .sh-gallery-nav {
+    width: 36px;
+    height: 36px;
+  }
+
+  .sh-gallery-prev { left: 0.5rem; }
+  .sh-gallery-next { right: 0.5rem; }
+
+  .sh-gallery-thumb {
+    width: 56px;
+    height: 40px;
   }
 }
-
-/* ============================================================
-   LIGHTBOX MODAL
-   ============================================================ */
-.sh-lightbox {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.95);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.sh-lightbox.visible {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.sh-lightbox__content {
-  max-width: 90%;
-  max-height: 85vh;
-  position: relative;
-  transform: scale(0.95);
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.sh-lightbox.visible .sh-lightbox__content {
-  transform: scale(1);
-}
-
-.sh-lightbox__content img {
-  width: 100%;
-  height: auto;
-  max-height: 85vh;
-  object-fit: contain;
-  border-radius: 8px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-}
-
-.sh-lightbox__close {
-  position: absolute;
-  top: -40px;
-  right: 0;
-  background: none;
-  border: none;
-  color: #fff;
-  font-size: 24px;
-  cursor: pointer;
-  padding: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 0.3s;
-}
-
-.sh-lightbox__close:hover {
-  color: var(--brand-primary);
-}
-
