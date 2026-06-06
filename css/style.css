@@ -1159,6 +1159,7 @@ footer {
   transition: all 0.3s var(--ease-smooth);
   box-shadow: 0 4px 20px rgba(138, 176, 151, 0.3);
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 #back-to-top.show {
