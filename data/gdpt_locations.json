@@ -8,7 +8,8 @@
       16.012781223375814
     ],
     "zoom": 16,
-    "isPrimary": true
+    "isPrimary": true,
+    "description": "GĐPT Hòa Thọ là môi trường sinh hoạt tu học thường xuyên của thanh thiếu niên Phật tử tại khu vực Cẩm Lệ, giúp các em trau dồi đạo đức, học hỏi giáo lý và rèn luyện kỹ năng sống thông qua các hoạt động vòng tròn và dã ngoại."
   },
   {
     "id": "bau-sen",
@@ -18,7 +19,8 @@
       108.19252669755147,
       16.00547078234602
     ],
-    "zoom": 15
+    "zoom": 15,
+    "description": "Nổi bật với sự gắn kết và tinh thần lục hòa, GĐPT Bàu Sen duy trì đều đặn các bậc học cho đoàn sinh. Đây là nơi kết nối các bạn trẻ yêu mến đạo Phật tại địa phương với nhiều hoạt động thiện nguyện và văn nghệ Phật giáo."
   },
   {
     "id": "hue-quang",
@@ -28,7 +30,8 @@
       108.17823740184724,
       16.04740924930731
     ],
-    "zoom": 15
+    "zoom": 15,
+    "description": "GĐPT Huệ Quang có truyền thống sinh hoạt nề nếp từ nhiều năm nay. Đơn vị chú trọng đào tạo thanh thiếu niên Phật tử hiểu sâu về nhân quả, hiếu đạo và thường xuyên cử đoàn sinh tham gia các trại huấn luyện của Ban Hướng dẫn GĐPT."
   },
   {
     "id": "hoa-xuan",
@@ -38,7 +41,8 @@
       108.21878391526211,
       16.005877914857425
     ],
-    "zoom": 15
+    "zoom": 15,
+    "description": "Là điểm tựa tinh thần vững chắc cho thanh thiếu niên phường Hòa Xuân, GĐPT tại đây thường xuyên tổ chức các kỳ trại, dã ngoại và các lớp học Phật pháp vào dịp cuối tuần để nuôi dưỡng tâm hồn trẻ thơ."
   },
   {
     "id": "pho-hien",
@@ -48,7 +52,8 @@
       108.20580502873173,
       16.017860302179166
     ],
-    "zoom": 15
+    "zoom": 15,
+    "description": "GĐPT Phổ Hiền nổi bật với các hoạt động thanh niên sôi nổi và số lượng đoàn sinh đông đảo. Đây là môi trường giáo dục Phật giáo lành mạnh, giúp các em rèn luyện oai nghi, đạo hạnh và kỹ năng sinh tồn."
   },
   {
     "id": "trung-luong",
@@ -58,7 +63,8 @@
       108.21492195573975,
       16.002797105049027
     ],
-    "zoom": 15
+    "zoom": 15,
+    "description": "Dù nằm ở khu vực tương đối yên tĩnh, GĐPT Trung Lương luôn duy trì đều đặn các khóa tu học, sinh hoạt và chú trọng công tác huấn luyện đội ngũ huynh trưởng trẻ để kế thừa và phát triển tổ chức."
   },
   {
     "id": "an-hai",
@@ -68,7 +74,8 @@
       108.23362997240784,
       16.068085219787246
     ],
-    "zoom": 15
+    "zoom": 15,
+    "description": "Là một trong những đơn vị có bề dày lịch sử tại quận Sơn Trà, GĐPT An Hải luôn đóng góp tích cực vào các đại lễ như Phật Đản, Vu Lan và thực hiện nhiều hoạt động an sinh xã hội tại địa phương."
   },
   {
     "id": "phap-lam",
@@ -78,7 +85,8 @@
       108.21615644353034,
       16.062502154841297
     ],
-    "zoom": 15
+    "zoom": 15,
+    "description": "Trú đóng tại trụ sở Giáo hội Phật giáo Việt Nam TP. Đà Nẵng, GĐPT Pháp Lâm là một trong những đơn vị lớn mạnh và tiêu biểu nhất thành phố. Nơi đây thường xuyên đăng cai các sự kiện quy mô lớn và đào tạo ra nhiều thế hệ Huynh trưởng tài năng."
   },
   {
     "id": "cat-tuong",
@@ -88,7 +96,8 @@
       108.21454175703333,
       16.058342718412245
     ],
-    "zoom": 15
+    "zoom": 15,
+    "description": "GĐPT Cát Tường thu hút nhiều thanh thiếu niên tại khu vực trung tâm với các hình thức sinh hoạt đổi mới, lồng ghép học đàn, hát, võ thuật và kỹ năng mềm cùng các bài giảng giáo lý nhà Phật."
   },
   {
     "id": "tan-ninh",
@@ -98,7 +107,8 @@
       108.2215711379117,
       16.073669814725605
     ],
-    "zoom": 15
+    "zoom": 15,
+    "description": "Với các bậc học từ Oanh vũ đến Ngành Thiếu được tổ chức bài bản, GĐPT Tân Ninh là sân chơi bổ ích mỗi Chủ nhật, giúp các em nhỏ rời xa các thiết bị điện tử để hòa mình vào nếp sống tỉnh thức."
   },
   {
     "id": "tan-thai",
@@ -108,7 +118,8 @@
       108.24740015701474,
       16.08966163456006
     ],
-    "zoom": 15
+    "zoom": 15,
+    "description": "Luôn là lá cờ đầu trong phong trào thanh thiếu niên Phật tử ở quận Sơn Trà, GĐPT Tân Thái rất mạnh về các hoạt động cắm trại, làm lồng đèn Trung thu và các phong trào đền ơn đáp nghĩa hàng năm."
   },
   {
     "id": "tan-an",
@@ -118,7 +129,8 @@
       108.20790173744595,
       16.070543079242302
     ],
-    "zoom": 15
+    "zoom": 15,
+    "description": "GĐPT Tân An tập trung rèn luyện cho đoàn sinh các kỹ năng chuyên môn của hoạt động thanh niên (như nút dây, mật thư, sơ cấp cứu) và trau dồi ngũ giới, hướng các em trở thành những công dân tốt cho xã hội."
   },
   {
     "id": "vinh-an",
@@ -128,7 +140,8 @@
       108.21207153376184,
       16.06517539285584
     ],
-    "zoom": 15
+    "zoom": 15,
+    "description": "Đơn vị thu hút sự quan tâm của nhiều bậc phụ huynh khi gửi gắm con em đến sinh hoạt, phần lớn nhờ vào sự tận tâm của các anh chị Huynh trưởng trong việc rèn luyện nhân cách, sự lễ phép và tính tự lập cho trẻ."
   },
   {
     "id": "bao-an",
@@ -138,7 +151,8 @@
       108.21014863004743,
       16.05289980207795
     ],
-    "zoom": 15
+    "zoom": 15,
+    "description": "GĐPT Báo Ân là mái nhà lam ấm áp, nơi các đoàn sinh được học cách hiếu kính cha mẹ, tôn trọng sư trưởng và giữ gìn nếp sống đạo đức thông qua các buổi tụng kinh, tọa thiền và trò chơi lớn."
   },
   {
     "id": "bat-nha",
@@ -148,7 +162,8 @@
       108.21747346256312,
       16.061736335580413
     ],
-    "zoom": 15
+    "zoom": 15,
+    "description": "Nổi tiếng với đạo tràng trang nghiêm, GĐPT Bát Nhã sở hữu lực lượng đoàn sinh đầy nhiệt huyết, luôn đi đầu trong các công tác Phật sự, diễu hành xe hoa, nghi lễ và văn hóa văn nghệ Phật giáo tại Đà Nẵng."
   },
   {
     "id": "thanh-hai",
@@ -158,7 +173,8 @@
       108.17764631840947,
       16.0752694226068
     ],
-    "zoom": 15
+    "zoom": 15,
+    "description": "GĐPT Thanh Hải thể hiện sự gắn kết chặt chẽ giữa các thế hệ Huynh trưởng và đoàn sinh. Đơn vị chú trọng việc ứng dụng lời Phật dạy vào cuộc sống học đường của thanh thiếu nhi hiện đại."
   },
   {
     "id": "pho-quang",
@@ -168,7 +184,8 @@
       108.22980115889307,
       16.081401198689832
     ],
-    "zoom": 15
+    "zoom": 15,
+    "description": "Luôn biết cách tạo ra không gian sinh hoạt tươi vui, GĐPT Phổ Quang thường tổ chức các trò chơi giải mật thư, thi kiến thức Phật pháp và học lịch sử Phật giáo nhằm khơi dậy tình yêu đạo pháp trong giới trẻ."
   },
   {
     "id": "ba-a",
@@ -178,7 +195,8 @@
       108.24119221654372,
       16.037746047282152
     ],
-    "zoom": 15
+    "zoom": 15,
+    "description": "Là một tổ chức đoàn kết vững mạnh, tại GĐPT Bà Đa, các em không chỉ học giáo lý mà còn được rèn luyện sức khỏe, kỹ năng dã ngoại tại các bãi biển và danh thắng gần kề khu vực Ngũ Hành Sơn."
   },
   {
     "id": "quang-minh",
@@ -188,7 +206,8 @@
       108.16520535517124,
       16.059527594223255
     ],
-    "zoom": 15
+    "zoom": 15,
+    "description": "GĐPT Quang Minh là điểm sáng ở khu vực Liên Chiểu, giúp định hướng đạo đức cho thanh thiếu niên thông qua các chương trình hội trại truyền thống, lửa trại và các khóa tu mùa hè bổ ích."
   },
   {
     "id": "tinh-quang",
@@ -198,7 +217,8 @@
       108.17441315026026,
       16.05411969513214
     ],
-    "zoom": 15
+    "zoom": 15,
+    "description": "Sở hữu đội ngũ Huynh trưởng trẻ trung, năng động, GĐPT Tịnh Quang thường xuyên đổi mới phương pháp sinh hoạt (như ứng dụng công nghệ, trò chơi team building) để tiếp cận tâm lý thanh thiếu niên thời đại mới."
   },
   {
     "id": "thuan-an",
@@ -208,7 +228,8 @@
       107.65247385333357,
       16.55437975636832
     ],
-    "zoom": 15
+    "zoom": 15,
+    "description": "Là đơn vị nằm ở khu vực ven biển Huế, GĐPT Thuận An mang đậm nét truyền thống của GĐPT vùng đất Thần Kinh: chú trọng nề nếp, sự trang nghiêm, rèn luyện cho đoàn sinh về các nghi lễ truyền thống và tình yêu quê hương."
   },
   {
     "id": "lien-tri",
@@ -218,7 +239,8 @@
       108.24230467051028,
       16.08951958314302
     ],
-    "zoom": 15
+    "zoom": 15,
+    "description": "GĐPT Liên Trì là nơi ươm mầm Bồ đề cho thế hệ trẻ với các hoạt động đố vui Phật pháp, thực hành ăn chay, phóng sanh và bảo vệ môi trường, mang lại năng lượng tích cực cho cộng đồng dân cư."
   },
   {
     "id": "thuan-chau",
@@ -228,7 +250,8 @@
       108.22023128745994,
       16.07914086201906
     ],
-    "zoom": 15
+    "zoom": 15,
+    "description": "Luôn giữ vững ngọn lửa truyền thống của màu áo Lam, GĐPT Thuận Châu chú trọng tình đoàn kết anh chị em trong đơn vị và tạo điều kiện cho các đoàn sinh tham gia tích cực các kỳ thi vượt bậc do Ban Hướng dẫn tổ chức."
   },
   {
     "id": "thuan-thanh",
@@ -238,7 +261,8 @@
       108.20959381045276,
       16.074604423244914
     ],
-    "zoom": 15
+    "zoom": 15,
+    "description": "GĐPT Thuận Thành nổi bật với các chương trình an sinh xã hội và thiện nguyện như phát cơm chay, tặng quà người nghèo. Đây là môi trường để đoàn sinh thực hành hạnh nguyện từ bi ngay trong thực tiễn."
   },
   {
     "id": "nam-thanh",
@@ -248,7 +272,8 @@
       108.12664351525027,
       16.117173668041357
     ],
-    "zoom": 15
+    "zoom": 15,
+    "description": "Nằm ở khu vực ngoại ô gần đèo Hải Vân, GĐPT Nam Thành có các buổi sinh hoạt gắn liền với thiên nhiên, giúp các em nhỏ khu vực Nam Ô có môi trường học tập đạo đức, vui chơi lành mạnh, tránh xa các tệ nạn."
   },
   {
     "id": "kinh-quang",
@@ -258,7 +283,8 @@
       108.12034292211138,
       16.135469752340935
     ],
-    "zoom": 15
+    "zoom": 15,
+    "description": "Dù quy mô có thể không quá lớn, GĐPT Kinh Quang duy trì sinh hoạt bền bỉ vào ngày Chủ nhật, kết hợp giữa việc học thuộc các bài kinh cơ bản và các trò chơi dân gian để nuôi dưỡng tình anh em."
   },
   {
     "id": "minh-phuoc",
@@ -268,7 +294,8 @@
       108.15457764908761,
       16.066189252888716
     ],
-    "zoom": 15
+    "zoom": 15,
+    "description": "GĐPT Minh Phước là đơn vị có tinh thần vượt khó, duy trì rất tốt các tổ học tập, lớp đàn, múa Phật giáo, tạo sân chơi an toàn, bổ ích cho con em Phật tử quanh khu vực Hòa Khánh."
   },
   {
     "id": "thanh-binh",
@@ -278,6 +305,7 @@
       108.21644749326788,
       16.0812203349511
     ],
-    "zoom": 15
+    "zoom": 15,
+    "description": "Khác với mô hình GĐPT thông thường, Đoàn nữ Phật tử Thanh Bình tập trung sinh hoạt vào giới nữ, rèn luyện các đức tính Công - Dung - Ngôn - Hạnh dưới góc nhìn Phật giáo, thể hiện vai trò đảm đang, dịu dàng và từ bi của người nữ Phật tử thời nay."
   }
 ]
