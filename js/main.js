@@ -187,25 +187,21 @@ function initHeader() {
   const header = document.getElementById("main-header");
   if (!header) return;
 
-  let lastScroll = 0;
+  let ticking = false;
 
   window.addEventListener("scroll", () => {
-    const currentScroll = window.scrollY;
-
-    if (currentScroll > 80) {
-      header.classList.add("header-scrolled");
-    } else {
-      header.classList.remove("header-scrolled");
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        // Khi cuộn xuống quá 80px, thêm class để làm mờ/đổi màu nền
+        if (window.scrollY > 80) {
+          header.classList.add("header-scrolled");
+        } else {
+          header.classList.remove("header-scrolled");
+        }
+        ticking = false;
+      });
+      ticking = true;
     }
-
-    // Auto-hide header on scroll down, show on scroll up
-    if (currentScroll > 600 && currentScroll > lastScroll) {
-      header.style.transform = "translateY(-100%)";
-    } else {
-      header.style.transform = "translateY(0)";
-    }
-
-    lastScroll = currentScroll;
   });
 }
 
@@ -471,7 +467,7 @@ function initTaglineTypewriter() {
 
   const phrases = [
     "Trưởng thành trong ánh sáng Phật pháp...",
-    "Kỷ Luật · Tinh Tấn · Lợi Tha",
+    "Bi · Trí · Dũng",
     "Một gia đình, một lý tưởng...",
     "Nơi đoàn viên và tình lam...",
   ];
@@ -514,7 +510,7 @@ function initTaglineTypewriter() {
    ===================== */
 async function initMapbox() {
   // Lấy API key thật từ hệ thống Danasoul
-  mapboxgl.accessToken = "pk.TEMP";
+  mapboxgl.accessToken = "pk.eyJ1IjoiY3VxdWFuYmFsYTEyMyIsImEiOiJjbWJwNXB5ODkwMTBjMmxxMnkyMDJvMmp3In0.tyApat-yhPZrf3SsdvMEFw";
   
   const map = new mapboxgl.Map({
     container: "map-container",
@@ -552,7 +548,7 @@ async function initMapbox() {
         `;
         listContainer.appendChild(listItem);
 
-        const flyToLocation = () => {
+        const flyToLocation = (isUserInteraction = true) => {
           if (activePopup) {
             activePopup.remove();
             activePopup = null;
@@ -581,6 +577,7 @@ async function initMapbox() {
               offset: 15,
               closeOnClick: false,
               anchor: "bottom",
+              focusAfterOpen: false
             })
               .setLngLat(loc.coords)
               .setHTML(popupContent)
@@ -596,8 +593,10 @@ async function initMapbox() {
           el.classList.add("active");
           listItem.classList.add("active");
           
-          // Scroll list to item
-          listItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          // Only scroll if it's user interaction
+          if (isUserInteraction) {
+            listItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
         };
 
         const marker = new mapboxgl.Marker(el)
@@ -607,14 +606,14 @@ async function initMapbox() {
 
         el.addEventListener("click", (e) => {
           e.stopPropagation();
-          flyToLocation();
+          flyToLocation(true);
         });
-        listItem.addEventListener("click", flyToLocation);
+        listItem.addEventListener("click", () => flyToLocation(true));
         
-        // Auto focus primary marker on load
+        // Auto focus primary marker on load (isUserInteraction = false)
         if (loc.isPrimary) {
           setTimeout(() => {
-            flyToLocation();
+            flyToLocation(false);
           }, 1000); // Wait for map to settle
         }
       });

@@ -255,10 +255,9 @@ section {
   opacity: 0;
   transform: translateY(8px);
   animation: fadeUp 0.8s 0.6s ease-out forwards;
-  font-size: 0.85rem;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  color: var(--text-dark);
+  font-family: "Dancing Script", cursive;
+  font-size: 1.6rem;
+  color: var(--brand-primary);
   margin-top: 8px;
 }
 
@@ -665,28 +664,8 @@ section {
   50% { background-position: 100% 50%; }
 }
 
-/* ===== SECTION GRADIENT TRANSITIONS ===== */
-section::before {
-  content: "";
-  position: absolute;
-  top: -60px;
-  left: 0;
-  right: 0;
-  height: 120px;
-  z-index: 0;
-  pointer-events: none;
-}
-
 .bg-dark { background-color: var(--bg-dark); }
 .bg-medium { background-color: var(--bg-medium); }
-
-.section-dark-to-medium::before {
-  background: linear-gradient(to bottom, var(--bg-dark) 0%, rgba(138, 176, 151, 0.06) 40%, var(--bg-medium) 100%);
-}
-
-.section-medium-to-dark::before {
-  background: linear-gradient(to bottom, var(--bg-medium) 0%, rgba(138, 176, 151, 0.06) 40%, var(--bg-dark) 100%);
-}
 
 /* ===== PREMIUM CARDS ===== */
 .card {
@@ -1588,25 +1567,33 @@ footer {
     padding: 1rem;
   }
   .compass-ring {
-    width: 300px;
-    height: 300px;
+    width: 85vw;
+    max-width: 300px;
+    height: 85vw;
+    max-height: 300px;
   }
   .compass-center {
-    width: 100px;
-    height: 100px;
+    width: 25vw;
+    max-width: 100px;
+    height: 25vw;
+    max-height: 100px;
   }
   .compass-center-text {
-    font-size: 1.2rem;
+    font-size: clamp(0.8rem, 4vw, 1.2rem);
   }
   .compass-point {
-    width: 80px;
-    height: 80px;
-    margin-top: -40px;
-    margin-left: -40px;
+    width: 20vw;
+    max-width: 80px;
+    height: 20vw;
+    max-height: 80px;
+    margin-top: calc(-10vw); /* Tự căn giữa theo kích thước */
+    margin-left: calc(-10vw);
   }
   .compass-point-icon {
-    width: 40px;
-    height: 40px;
+    width: 10vw;
+    max-width: 40px;
+    height: 10vw;
+    max-height: 40px;
   }
   .compass-point-text {
     font-size: 0.75rem;
@@ -1827,5 +1814,63 @@ footer {
   .map-container-wrapper {
     flex: 1;
     height: 100%;
+  }
+}
+
+/* ===== LANDSCAPE FIX (Chống kẹt nội dung khi xoay ngang) ===== */
+@media (max-height: 500px) and (orientation: landscape) {
+  .hero {
+    min-height: auto;
+    padding: 120px 0 60px; /* Nhường chỗ cho header */
+  }
+  
+  .preloader-logo-wrap {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 20px;
+  }
+  
+  .compass-wrapper {
+    min-height: 450px; /* Thu gọn không gian bao quanh la bàn */
+  }
+  
+  /* Giảm kích thước khối nội dung la bàn để không tràn viền */
+  .compass-content-card {
+    padding: 1.5rem;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  
+  .hero-particle-layer { 
+    display: none; /* Ẩn hạt bay để đỡ rối mắt trên màn hình dẹt */
+  }
+}
+
+/* ===== ULTRA-WIDE 4K FIX (Tối ưu màn hình lớn) ===== */
+@media (min-width: 1920px) {
+  .container {
+    max-width: 1600px; /* Mở rộng giới hạn container */
+  }
+  
+  /* Căn chỉnh lại điểm lấy nét (focus point) để ảnh không bị vỡ/nhoè khi stretch */
+  .hero-bg {
+    object-position: center 30%; 
+  }
+  
+  .hero-title {
+    font-size: 6.5rem; 
+  }
+  
+  .hero-subtitle {
+    font-size: 1.8rem;
+  }
+  
+  /* Ép hiển thị 4 thẻ trên 1 hàng ngang thay vì 3 */
+  .highlights-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .about-stat-number {
+    font-size: 3rem; /* Tăng độ lớn của số đếm thống kê */
   }
 }

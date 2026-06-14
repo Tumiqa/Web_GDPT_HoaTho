@@ -1,15 +1,15 @@
 {
   "siteName": "GĐPT Hòa Thọ",
-  "motto": "Kỷ Luật · Tinh Tấn · Lợi Tha",
+  "motto": "Bi · Trí · Dũng",
   "email": "gdpthoathodn@gmail.com",
   "facebook": "https://www.facebook.com/GDPTHOATHO",
   "address": "Chùa Hòa Thọ, Đà Nẵng",
   "mapCoords": { "lat": 16.0125853, "lng": 108.1925728 },
   "mapEmbed": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3834.5!2d108.1899979!3d16.0125853!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31421a2d038b3269%3A0x664db0380d88b782!2zQ2jDuWEgSMOyYSBUaOG7jQ!5e0!3m2!1svi!2s!4v1717624000000!5m2!1svi!2s",
   "stats": {
-    "years": { "value": 20, "suffix": "+" },
+    "years": { "value": 1958, "suffix": "" },
     "members": { "value": 100, "suffix": "+" },
-    "leaders": { "value": 15, "suffix": "+" }
+    "leaders": { "value": 30, "suffix": "+" }
   },
   "adminPasswordHash": "01605ce847750fb711735ff97e9ec2b34f3ce69763efe91c0eb04d94ba61c583"
 }
