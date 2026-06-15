@@ -50,6 +50,9 @@ document.addEventListener("DOMContentLoaded", () => {
     initMapbox();
   }
 
+  // ===== HERO SLIDESHOW =====
+  initHeroSlideshow();
+
   // ===== LUCIDE ICONS =====
   if (typeof lucide !== "undefined") {
     lucide.createIcons();
@@ -60,6 +63,11 @@ document.addEventListener("DOMContentLoaded", () => {
    PRELOADER
    ===================== */
 function initPreloader() {
+  // Skip regular preloader if cinematic intro is active (first visit)
+  if (window.__introActive) {
+    return;
+  }
+
   const preloader = document.getElementById("preloader");
   const fill = document.getElementById("preloader-fill");
   const percent = document.getElementById("preloader-percent");
@@ -798,4 +806,61 @@ function initCompass() {
       });
     }, 500); // Đợi animation CSS chạy xong
   }
+}
+
+/* =====================
+   HERO SLIDESHOW
+   ===================== */
+function initHeroSlideshow() {
+  const slides = document.querySelectorAll(".hero-slide");
+  if (!slides.length) return;
+
+  // Create an array of indices [0, 1, 2, ... N-1]
+  let indices = Array.from(slides.keys());
+  
+  // Fisher-Yates shuffle function
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+  }
+
+  // Initial shuffle
+  shuffle(indices);
+  
+  // Make the first random slide active immediately
+  slides.forEach(slide => slide.classList.remove("active"));
+  let currentPos = 0;
+  let currentSlide = indices[currentPos];
+  slides[currentSlide].classList.add("active");
+  
+  // Start cycling slides every 6 seconds
+  setInterval(() => {
+    // Remove active class from current slide
+    slides[currentSlide].classList.remove("active");
+    
+    // Move to next position in the shuffled array
+    currentPos++;
+    
+    // If we've shown all slides, reshuffle and start over
+    if (currentPos >= indices.length) {
+      // Keep track of the last shown slide to prevent it from being the first in the new shuffle
+      const lastSlide = indices[indices.length - 1];
+      
+      shuffle(indices);
+      
+      // If the new first slide is the same as the last shown slide, swap it with the second one
+      if (indices[0] === lastSlide && indices.length > 1) {
+        [indices[0], indices[1]] = [indices[1], indices[0]];
+      }
+      
+      currentPos = 0;
+    }
+    
+    currentSlide = indices[currentPos];
+    
+    // Add active class to new slide
+    slides[currentSlide].classList.add("active");
+  }, 6000);
 }

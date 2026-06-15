@@ -95,31 +95,32 @@
               </div>
             </div>
 
-            <div class="lh-map">
-              <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1m3!1d3834.739455325983!2d108.19038411536034!3d16.01258528891823!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31421a221f737525%3A0xb3cf5bb5f9227f27!2zQ2jDuWEgSMOyYSBUaOG7jQ!5e0!3m2!1svi!2s!4v1687611848529!5m2!1svi!2s" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-            </div>
           </div>
 
-          <!-- Form -->
           <div class="lh-form-container reveal" style="transition-delay: 0.2s;">
             <h2>Gửi Lời Nhắn</h2>
             <p>Điền thông tin bên dưới, chúng tôi sẽ phản hồi lại bạn qua email.</p>
-            <form class="lh-form" onsubmit="event.preventDefault(); alert('Cảm ơn bạn đã liên hệ! Tính năng gửi email đang được cập nhật.');">
+            <form class="lh-form" action="https://api.web3forms.com/submit" method="POST">
+              <!-- Web3Forms Config -->
+              <input type="hidden" name="access_key" value="42e336c8-0edf-44cb-bf0f-9445d4d6470b">
+              <input type="hidden" name="subject" value="Website GĐPT: Có lời nhắn mới từ biểu mẫu liên hệ">
+              <input type="hidden" name="redirect" value="http://localhost:8888/lien-he.html">
+
               <div class="lh-group">
                 <label for="name">Họ và Tên</label>
-                <input type="text" id="name" class="lh-input" placeholder="Nhập tên của bạn" required />
+                <input type="text" id="name" name="name" class="lh-input" placeholder="Nhập tên của bạn" required />
               </div>
               <div class="lh-group">
                 <label for="email">Email liên hệ</label>
-                <input type="email" id="email" class="lh-input" placeholder="ví dụ: abc@gmail.com" required />
+                <input type="email" id="email" name="email" class="lh-input" placeholder="ví dụ: abc@gmail.com" required />
               </div>
               <div class="lh-group">
                 <label for="subject">Chủ đề</label>
-                <input type="text" id="subject" class="lh-input" placeholder="Bạn muốn hỏi về vấn đề gì?" required />
+                <input type="text" id="subject" name="subject" class="lh-input" placeholder="Bạn muốn hỏi về vấn đề gì?" required />
               </div>
               <div class="lh-group">
                 <label for="message">Nội dung</label>
-                <textarea id="message" class="lh-input" placeholder="Viết lời nhắn..." required></textarea>
+                <textarea id="message" name="message" class="lh-input" placeholder="Viết lời nhắn..." required></textarea>
               </div>
               <button type="submit" class="lh-submit">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>

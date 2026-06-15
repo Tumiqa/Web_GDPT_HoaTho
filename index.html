@@ -53,6 +53,7 @@
 
     <!-- Project CSS -->
     <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/intro-preloader.css" />
     <link rel="stylesheet" href="css/admin.css" />
   </head>
 
@@ -62,6 +63,92 @@
 
     <!-- Page Transition Overlay -->
     <div class="page-transition-overlay"></div>
+
+    <!-- ===== CINEMATIC INTRO PRELOADER V6 ===== -->
+    <div id="intro-preloader">
+
+      <!-- Letterbox bars -->
+      <div class="intro-lb intro-lb-top" id="intro-lb-top"></div>
+      <div class="intro-lb intro-lb-bot" id="intro-lb-bot"></div>
+
+      <!-- Particle canvas -->
+      <canvas id="intro-particles"></canvas>
+
+      <!-- Vignette -->
+      <div class="intro-vig"></div>
+
+      <!-- Scanline overlay -->
+      <div class="intro-scanline" id="intro-scanline"></div>
+
+      <!-- Decorative horizontal lines -->
+      <div class="intro-deco intro-dh intro-dh1"></div>
+      <div class="intro-deco intro-dh intro-dh2"></div>
+
+      <!-- Decorative vertical lines -->
+      <div class="intro-deco intro-dv intro-dv1"></div>
+      <div class="intro-deco intro-dv intro-dv2"></div>
+
+      <!-- Decorative corners -->
+      <div class="intro-corner intro-ctl"></div>
+      <div class="intro-corner intro-ctr"></div>
+      <div class="intro-corner intro-cbl"></div>
+      <div class="intro-corner intro-cbr"></div>
+
+      <!-- ═══ STAGE 1: LOTUS — Full screen ═══ -->
+      <div id="intro-stage-lotus">
+        <!-- Sacred geometry rings -->
+        <div class="intro-sacred-ring intro-sacred-ring-1" id="intro-ring-1"></div>
+        <div class="intro-sacred-ring intro-sacred-ring-2" id="intro-ring-2"></div>
+        <div class="intro-sacred-ring intro-sacred-ring-3" id="intro-ring-3"></div>
+
+        <!-- Light rays -->
+        <div class="intro-light-rays" id="intro-light-rays"></div>
+
+        <!-- Light burst -->
+        <div class="intro-light-burst" id="intro-light-burst"></div>
+
+        <!-- Floating orbs -->
+        <div class="intro-orb intro-orb-1" id="intro-orb-1"></div>
+        <div class="intro-orb intro-orb-2" id="intro-orb-2"></div>
+        <div class="intro-orb intro-orb-3" id="intro-orb-3"></div>
+        <div class="intro-orb intro-orb-4" id="intro-orb-4"></div>
+        <div class="intro-orb intro-orb-5" id="intro-orb-5"></div>
+        <div class="intro-orb intro-orb-6" id="intro-orb-6"></div>
+
+        <!-- Lotus image -->
+        <img src="images/intro/lotus-golden.png" class="intro-lotus-main" id="intro-lotus-img" alt="Hoa Sen" />
+
+        <!-- Lotus subtitle -->
+        <div class="intro-lotus-text" id="intro-lotus-text">Từ Bi · Trí Tuệ · Dũng Mãnh</div>
+      </div>
+
+      <!-- ═══ STAGE 2: LOGO + SCOUTS COMBINED — Full screen ═══ -->
+      <div id="intro-stage-combined">
+        <div class="intro-combined-logo">
+          <div class="intro-logo-halo" id="intro-halo-ring"></div>
+          <div class="intro-logo-glow" id="intro-glow-ring"></div>
+          <img src="images/logo.png" class="intro-logo-main" id="intro-logo-img" alt="GĐPT Hòa Thọ" />
+          <div class="intro-org-name" id="intro-org-name">Gia Đình Phật Tử Hòa Thọ</div>
+        </div>
+        <div class="intro-combined-scouts">
+          <img src="images/intro/scouts-group.png" class="intro-scouts-main" id="intro-scouts-img" alt="Đoàn sinh và huynh trưởng GĐPT Hòa Thọ" />
+        </div>
+      </div>
+
+      <!-- Gold separator -->
+      <div class="intro-sep" id="intro-sep">
+        <div class="intro-sep-line"></div>
+        <div class="intro-sep-diamond"></div>
+        <div class="intro-sep-line intro-sep-line-r"></div>
+      </div>
+
+      <!-- Typewriter text -->
+      <div class="intro-typewriter" id="intro-typewriter"></div>
+
+      <!-- Final overlay for transition -->
+      <div class="intro-final-overlay" id="intro-final"></div>
+
+    </div>
 
     <!-- ===== PRELOADER ===== -->
     <div id="preloader">
@@ -158,12 +245,21 @@
     <main>
       <!-- ===== HERO SECTION ===== -->
       <section class="hero" id="hero">
-        <img
-          src="images/hero/hero-bg.png"
-          alt="GĐPT Hòa Thọ sinh hoạt"
-          class="hero-bg"
-          style="filter: brightness(0.6) contrast(1.1);"
-        />
+        <!-- Hero Slideshow -->
+        <div class="hero-slideshow" id="hero-slideshow">
+          <img src="images/hero/hero-slide-1.jpg" alt="GĐPT Hòa Thọ sinh hoạt" class="hero-slide active" />
+          <img src="images/hero/hero-slide-2.jpg" alt="GĐPT Hòa Thọ sinh hoạt" class="hero-slide" />
+          <img src="images/hero/hero-slide-3.jpg" alt="GĐPT Hòa Thọ sinh hoạt" class="hero-slide" />
+          <img src="images/hero/hero-slide-4.jpg" alt="GĐPT Hòa Thọ sinh hoạt" class="hero-slide" />
+          <img src="images/hero/hero-slide-5.jpg" alt="GĐPT Hòa Thọ sinh hoạt" class="hero-slide" />
+          <img src="images/hero/hero-slide-6.jpg" alt="GĐPT Hòa Thọ sinh hoạt" class="hero-slide" />
+          <img src="images/hero/hero-slide-7.jpg" alt="GĐPT Hòa Thọ sinh hoạt" class="hero-slide" />
+          <img src="images/hero/hero-slide-8.jpg" alt="GĐPT Hòa Thọ sinh hoạt" class="hero-slide" />
+          <img src="images/hero/hero-slide-9.jpg" alt="GĐPT Hòa Thọ sinh hoạt" class="hero-slide" />
+          <img src="images/hero/hero-slide-10.jpg" alt="GĐPT Hòa Thọ sinh hoạt" class="hero-slide" />
+          <img src="images/hero/hero-slide-11.jpg" alt="GĐPT Hòa Thọ sinh hoạt" class="hero-slide" />
+          <img src="images/hero/hero-slide-12.jpg" alt="GĐPT Hòa Thọ sinh hoạt" class="hero-slide" />
+        </div>
         <div class="hero-overlay"></div>
 
         <!-- Hero Particles -->
@@ -171,7 +267,7 @@
 
         <div class="hero-content">
           <h1 id="hero-title" class="hero-title" style="opacity: 0;">
-            Gia Đình Phật Tử Hòa Thọ
+            Gia Đình Phật Tử HÒA THỌ
           </h1>
           <p id="hero-motto" class="hero-motto" style="opacity: 0;">
             Từ Bi · Trí Tuệ · Dũng Mãnh
@@ -208,7 +304,7 @@
               </h2>
 
               <p style="margin-bottom: 1.5rem;">
-                Gia Đình Phật Tử Hòa Thọ là nơi đào luyện thanh, thiếu, đồng niên tin Phật thành Phật tử chân chánh, góp phần xây dựng xã hội theo tinh thần Phật giáo. Qua các buổi
+                Gia Đình Phật Tử Hòa Thọ là nơi đào luyện thanh, thiếu, đồng niên tin Phật thành Phật tử chân chính, góp phần phụng sự đạo pháp và xây dựng xã hội. Qua các buổi
                 sinh hoạt hàng tuần, trại huấn luyện và hoạt động cộng đồng, chúng tôi cùng nhau
                 trưởng thành trong ánh sáng Phật pháp.
               </p>
@@ -245,7 +341,7 @@
 
               <div class="about-image-3d-inner" style="height: 420px;">
                 <img
-                  src="images/about/about-gdpt.png"
+                  src="images/about/about-gdpt-new.png"
                   alt="Sinh hoạt GĐPT Hòa Thọ"
                   style="width: 100%; height: 100%; object-fit: cover;"
                 />
@@ -379,6 +475,7 @@
     </footer>
 
     <!-- Project JS -->
+    <script src="js/intro-preloader.js"></script>
     <script src="js/main.js"></script>
     <script src="js/admin.js"></script>
   </body>
