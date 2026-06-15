@@ -147,6 +147,25 @@
     });
   }
 
+  // ===== DYNAMIC LOAD SCRIPT/STYLE =====
+  function loadScript(src) {
+    return new Promise(resolve => {
+      if (document.querySelector(`script[src="${src}"]`)) return resolve();
+      const s = document.createElement("script");
+      s.src = src;
+      s.onload = resolve;
+      document.head.appendChild(s);
+    });
+  }
+  function loadStyle(href) {
+    if (!document.querySelector(`link[href="${href}"]`)) {
+      const l = document.createElement("link");
+      l.rel = "stylesheet";
+      l.href = href;
+      document.head.appendChild(l);
+    }
+  }
+
   // ===== BUILD ADMIN UI =====
   function buildAdminHTML() {
     if (document.getElementById("adm-root")) return;
@@ -515,7 +534,7 @@
             { type: "text", id: "year", label: "Năm", placeholder: "2026", value: item.year || new Date().getFullYear().toString() },
             { type: "text", id: "date", label: "Ngày hiển thị", placeholder: "Tháng 5, 2026", value: item.date || "" },
           ]},
-          { type: "textarea", id: "content", label: "Nội dung bài viết", placeholder: "Mô tả chi tiết về sự kiện, sinh hoạt...", value: item.content, rows: 5 },
+          { type: "richtext", id: "content", label: "Nội dung bài viết", placeholder: "Mô tả chi tiết về sự kiện, sinh hoạt...", value: item.content, height: "300px" },
           { type: "media", id: "images", label: "Hình ảnh", placeholder: "Dán link ảnh (mỗi dòng 1 URL)...", value: (item.images || []).join("\n"), hint: "URL ảnh trực tiếp hoặc đường dẫn trong project (images/...)", icon: "image" },
           { type: "media", id: "videos", label: "Video", placeholder: "Dán link YouTube (mỗi dòng 1 URL)...", value: (item.videos || []).join("\n"), hint: "YouTube, Google Drive hoặc link bất kỳ", icon: "video" },
           { type: "tags", id: "tags", label: "Gắn thẻ (Tags)", value: item.tags || [], hint: "Gõ tag rồi bấm Enter để thêm" },
@@ -544,7 +563,7 @@
         fields.push(
           { type: "text", id: "title", label: "Tiêu đề", placeholder: "Ví dụ: Nút Dây Cơ Bản", value: item.title, required: true },
           { type: "select", id: "category", label: "Chủ đề", value: item.category, options: ["Kết Dây", "Morse", "Semaphore", "Dựng Trại", "Cứu Thương", "La Bàn", "Trò Chơi", "Khác"] },
-          { type: "textarea", id: "content", label: "Nội dung", placeholder: "Hướng dẫn chi tiết...", value: item.content, rows: 5 },
+          { type: "richtext", id: "content", label: "Nội dung", placeholder: "Hướng dẫn chi tiết...", value: item.content, height: "300px" },
           { type: "media", id: "images", label: "Hình ảnh minh họa", placeholder: "Dán link ảnh (mỗi dòng 1 URL)...", value: (item.images || []).join("\n"), icon: "image" },
           { type: "media", id: "videos", label: "Video hướng dẫn", placeholder: "Dán link YouTube (mỗi dòng 1 URL)...", value: (item.videos || []).join("\n"), icon: "video" },
         );
@@ -588,6 +607,15 @@
           <select class="adm-input" id="form-${field.id}">${opts}</select>
         </div>`;
     }
+    if (field.type === "richtext") {
+      return `
+        <div class="adm-field">
+          <label>${field.label}</label>
+          <div class="adm-richtext-wrapper" style="background: rgba(26, 43, 34, 0.4); border-radius: 0.5rem; border: 1px solid rgba(138, 176, 151, 0.2);">
+            <div id="form-${field.id}" style="height: ${field.height || '200px'}; color: var(--text-light); font-size: 1rem;">${field.value || ""}</div>
+          </div>
+        </div>`;
+    }
     if (field.type === "textarea") {
       return `
         <div class="adm-field">
@@ -604,8 +632,11 @@
       </div>`;
   }
 
+  // Global variable to store quill instances
+  let quillInstances = {};
+
   // ===== FORM: Open =====
-  function openForm(module, index) {
+  async function openForm(module, index) {
     const overlay = document.getElementById("adm-form-overlay");
     const isEdit = index >= 0;
     const items = moduleData[module] || [];
@@ -613,6 +644,12 @@
     const mod = MODULES[module];
 
     const fields = getFormFields(module, item, isEdit);
+
+    if (fields.some(f => f.type === "richtext")) {
+      loadStyle("https://cdn.quilljs.com/1.3.6/quill.snow.css");
+      await loadScript("https://cdn.quilljs.com/1.3.6/quill.min.js");
+    }
+
     const fieldsHTML = fields.map(renderFormField).join("");
 
     overlay.innerHTML = `
@@ -647,6 +684,27 @@
 
     // Init media preview
     initMediaPreview(module);
+
+    // Init Quill instances
+    quillInstances = {};
+    fields.forEach(f => {
+      if (f.type === "richtext" && window.Quill) {
+        quillInstances[f.id] = new Quill(`#form-${f.id}`, {
+          theme: 'snow',
+          placeholder: f.placeholder || "Viết nội dung...",
+          modules: {
+            toolbar: [
+              ['bold', 'italic', 'underline', 'strike'],
+              [{ 'header': [2, 3, 4, false] }],
+              [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+              ['link', 'blockquote', 'code-block'],
+              [{ 'align': [] }],
+              ['clean']
+            ]
+          }
+        });
+      }
+    });
   }
 
   // ===== TAG CHIPS =====
@@ -716,11 +774,12 @@
           title: document.getElementById("form-title").value,
           year: document.getElementById("form-year").value,
           date: document.getElementById("form-date").value,
-          content: document.getElementById("form-content").value,
+          content: quillInstances["content"] ? quillInstances["content"].root.innerHTML : document.getElementById("form-content").value,
           videos: document.getElementById("form-videos").value.split("\n").map(s => s.trim()).filter(Boolean),
           images: document.getElementById("form-images").value.split("\n").map(s => s.trim()).filter(Boolean),
           tags: Array.from(document.querySelectorAll("#chips-tags .adm-chip")).map(c => c.dataset.tag),
         };
+        if (item.content === "<p><br></p>") item.content = "";
         break;
       case "nhac":
         item = {
@@ -747,11 +806,12 @@
           id: index >= 0 ? items[index].id : "kn-" + Date.now(),
           title: document.getElementById("form-title").value,
           category: document.getElementById("form-category").value,
-          content: document.getElementById("form-content").value,
+          content: quillInstances["content"] ? quillInstances["content"].root.innerHTML : document.getElementById("form-content").value,
           videos: document.getElementById("form-videos").value.split("\n").map(s => s.trim()).filter(Boolean),
           images: document.getElementById("form-images").value.split("\n").map(s => s.trim()).filter(Boolean),
           date: new Date().getFullYear().toString(),
         };
+        if (item.content === "<p><br></p>") item.content = "";
         break;
     }
 
