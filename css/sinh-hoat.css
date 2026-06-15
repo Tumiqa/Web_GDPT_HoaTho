@@ -502,6 +502,15 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
+.sh-yt-wrapper {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 */
+  height: 0;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  background: #000;
+}
+
 /* ── Modal Gallery ── */
 .sh-modal__gallery {
   margin-bottom: 2rem;

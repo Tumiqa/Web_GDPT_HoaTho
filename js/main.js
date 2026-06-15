@@ -666,7 +666,7 @@ function initCompass() {
       id: "tai-lieu",
       label: "Tài Liệu",
       title: "Tài Liệu Tu Học",
-      desc: "Kho tài liệu Phật pháp, giáo án sinh hoạt, sách hướng dẫn các bậc học từ Mở Mắt đến Hướng Thiện.",
+      desc: "Kho tài liệu Phật pháp, giáo án sinh hoạt, sách hướng dẫn tu học từ cơ bản đến nâng cao.",
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>',
       link: "tai-lieu.html"
     },

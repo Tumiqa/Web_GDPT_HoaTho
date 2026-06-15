@@ -2,7 +2,7 @@
 <html lang="vi">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Sinh Hoạt — Gia Đình Phật Tử Hòa Thọ</title>
     <link rel="icon" type="image/png" href="images/logo.png" />
 
@@ -26,8 +26,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
-    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+
 
     <!-- Project CSS -->
     <link rel="stylesheet" href="css/style.css" />
@@ -94,7 +93,6 @@
           <nav class="desktop-nav" id="desktop-nav">
             <div style="display: flex; align-items: center; gap: 2rem;">
               <a href="index.html" class="nav-link">Trang chủ</a>
-              <a href="bac-hoc.html" class="nav-link">Bậc Học</a>
               <a href="sinh-hoat.html" class="nav-link active">Sinh Hoạt</a>
               <a href="nhac.html" class="nav-link">Nhạc GĐPT</a>
               <a href="tai-lieu.html" class="nav-link">Tài Liệu</a>
@@ -111,7 +109,6 @@
 
       <div id="mobile-menu" class="hidden">
         <a href="index.html" class="nav-link-mobile">Trang chủ</a>
-        <a href="bac-hoc.html" class="nav-link-mobile">Bậc Học</a>
         <a href="sinh-hoat.html" class="nav-link-mobile active">Sinh Hoạt</a>
         <a href="nhac.html" class="nav-link-mobile">Nhạc GĐPT</a>
         <a href="tai-lieu.html" class="nav-link-mobile">Tài Liệu</a>
@@ -189,7 +186,7 @@
             <p style="font-size: 0.85rem; color: rgba(255,255,255,0.4); font-style: italic; max-width: none;">Trưởng thành trong ánh sáng Phật pháp</p>
           </div>
           <div class="footer-links">
-            <a href="index.html">Trang chủ</a><a href="bac-hoc.html">Bậc Học</a><a href="sinh-hoat.html">Sinh Hoạt</a>
+            <a href="index.html">Trang chủ</a><a href="sinh-hoat.html">Sinh Hoạt</a>
             <a href="nhac.html">Nhạc GĐPT</a><a href="tai-lieu.html">Tài Liệu</a><a href="ky-nang.html">Kỹ Năng</a><a href="lien-he.html">Liên Hệ</a>
           </div>
           <div class="footer-divider"></div>
@@ -304,7 +301,7 @@
       const modalBackdrop = document.getElementById("sh-modal-backdrop");
       const modalEl = document.getElementById("sh-modal");
       const modalClose = document.getElementById("sh-modal-close");
-      let curImages = [], curIdx = 0, mPlayers = [];
+      let curImages = [], curIdx = 0;
 
       function openModal(i) {
         const p = posts[i]; if (!p) return;
@@ -317,11 +314,11 @@
           <div class="sh-modal__tags">${tags}</div>
         </div><div class="sh-modal__content">${p.content}</div>`;
 
-        // Videos
+        // Videos — Dùng trình phát gốc YouTube (có chọn chất lượng, tốc độ, phụ đề)
         if (p.videos && p.videos.length) {
           p.videos.forEach((v, vi) => {
             const id = getYouTubeId(v);
-            if (id) h += `<div class="sh-modal__video"><div class="plyr__video-embed" id="modal-player-${vi}"><iframe src="https://www.youtube.com/embed/${id}?origin=https://plyr.io&iv_load_policy=3&modestbranding=1&playsinline=1&showinfo=0&rel=0&enablejsapi=1" allowfullscreen allowtransparency allow="autoplay"></iframe></div></div>`;
+            if (id) h += `<div class="sh-modal__video"><div class="sh-yt-wrapper"><iframe src="https://www.youtube.com/embed/${id}?rel=0&modestbranding=1&playsinline=1" frameborder="0" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" style="position:absolute;top:0;left:0;width:100%;height:100%;border-radius:0.75rem;"></iframe></div></div>`;
           });
         }
 
@@ -336,14 +333,7 @@
         modalBackdrop.classList.add("visible");
         document.body.style.overflow = "hidden";
 
-        // Init Plyr
-        mPlayers = [];
-        modalEl.querySelectorAll('.plyr__video-embed').forEach(el => {
-          mPlayers.push(new Plyr('#' + el.id, {
-            youtube: { noCookie: true, rel: 0, showinfo: 0, iv_load_policy: 3, modestbranding: 1 },
-            controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'settings', 'fullscreen']
-          }));
-        });
+
 
         // Gallery events
         if (curImages.length > 1) {
@@ -382,8 +372,8 @@
       function closeModal() {
         modalBackdrop.classList.remove("visible");
         document.body.style.overflow = "";
-        mPlayers.forEach(p => { try { p.destroy(); } catch (e) {} });
-        mPlayers = [];
+        // Stop YouTube iframes khi đóng modal
+        modalEl.querySelectorAll('iframe').forEach(f => { f.src = f.src; });
       }
 
       cardGrid.addEventListener("click", (e) => {

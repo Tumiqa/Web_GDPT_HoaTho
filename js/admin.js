@@ -1,7 +1,7 @@
 /* ============================================================
-   GĐPT HÒA THỌ — Admin Panel Engine
-   Client-side CMS: CRUD cho sinh hoạt, nhạc, tài liệu, kỹ năng
-   Lưu qua api.php (server) hoặc export JSON (offline)
+   GĐPT HÒA THỌ — Admin CMS v2.0
+   Hệ thống quản trị nội dung đầy đủ
+   Sidebar navigation · Facebook-style posting · Rich media
    ============================================================ */
 
 (function () {
@@ -10,165 +10,255 @@
   // ===== CONFIG =====
   const API_URL = "api.php";
   const MODULES = {
-    sinhhoat: { label: "Sinh Hoạt", icon: "📸" },
-    nhac: { label: "Nhạc", icon: "🎵" },
-    tailieu: { label: "Tài Liệu", icon: "📚" },
-    kynang: { label: "Kỹ Năng", icon: "🧭" },
-    bachoc: { label: "Bậc Học", icon: "🎓" },
-    config: { label: "Cấu Hình", icon: "⚙️" },
+    sinhhoat: {
+      label: "Sinh Hoạt",
+      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`,
+      createLabel: "Tạo bài Sinh Hoạt mới",
+      createHint: "Chia sẻ khoảnh khắc hoạt động, lễ hội, trại mạc...",
+    },
+    nhac: {
+      label: "Nhạc GĐPT",
+      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
+      createLabel: "Thêm bài nhạc mới",
+      createHint: "Thêm bài hát GĐPT vào bộ sưu tập...",
+    },
+    tailieu: {
+      label: "Tài Liệu",
+      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`,
+      createLabel: "Thêm tài liệu mới",
+      createHint: "Chia sẻ giáo án, sách, bài giảng...",
+    },
+    kynang: {
+      label: "Kỹ Năng",
+      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>`,
+      createLabel: "Thêm bài kỹ năng mới",
+      createHint: "Hướng dẫn kết dây, morse, dựng trại...",
+    },
+    config: {
+      label: "Cấu Hình",
+      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
+      createLabel: "",
+      createHint: "",
+    },
   };
 
   let isLoggedIn = false;
   let adminHash = "";
   let currentModule = "sinhhoat";
   let moduleData = {};
+  let searchQuery = "";
+
+  // ===== ICONS (reusable) =====
+  const ICONS = {
+    close: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+    edit: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`,
+    trash: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`,
+    plus: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`,
+    download: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`,
+    upload: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>`,
+    search: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`,
+    image: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`,
+    video: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>`,
+    tag: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>`,
+    file: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`,
+    check: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+    warning: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+    menu: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`,
+  };
 
   // ===== SHA-256 HASH =====
   async function sha256(message) {
     const msgBuffer = new TextEncoder().encode(message);
     const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
   }
 
   // ===== DATA SERVICE =====
   const DataService = {
     async fetch(module) {
-      try {
-        const res = await fetch(`${API_URL}?module=${module}`);
-        if (res.ok) return await res.json();
-      } catch (e) {
-        // API not available, try direct JSON file
-      }
-      try {
-        const res = await fetch(`data/${module}.json`);
-        if (res.ok) return await res.json();
-      } catch (e) {}
+      try { const res = await fetch(`${API_URL}?module=${module}`); if (res.ok) return await res.json(); } catch (e) {}
+      try { const res = await fetch(`data/${module}.json`); if (res.ok) return await res.json(); } catch (e) {}
       return null;
     },
-
     async save(module, data) {
-      // Try API first
       try {
         const res = await fetch(`${API_URL}?module=${module}`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Admin-Token": adminHash,
-          },
+          headers: { "Content-Type": "application/json", "X-Admin-Token": adminHash },
           body: JSON.stringify(data),
         });
-        if (res.ok) {
-          const result = await res.json();
-          if (result.success) return { success: true, method: "server" };
-        }
+        if (res.ok) { const r = await res.json(); if (r.success) return { success: true, method: "server" }; }
       } catch (e) {}
-
-      // Fallback: save to localStorage + offer download
       localStorage.setItem(`gdpt_${module}`, JSON.stringify(data));
       return { success: true, method: "local" };
     },
   };
-
-  // Export DataService globally for other scripts to use
   window.GDPTData = DataService;
+
+  // ===== HELPERS =====
+  function esc(str) { return (str || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+  function escAttr(str) { return (str || "").replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"); }
+
+  function getYouTubeId(url) {
+    const m = (url || "").match(/(?:youtu\.be\/|v=|embed\/)([^#&?]{11})/);
+    return m ? m[1] : null;
+  }
+
+  function getYouTubeThumb(url) {
+    const id = getYouTubeId(url);
+    return id ? `https://img.youtube.com/vi/${id}/mqdefault.jpg` : null;
+  }
+
+  // ===== TOAST =====
+  function showToast(message, isError = false) {
+    let toast = document.getElementById("admin-toast");
+    if (!toast) {
+      toast = document.createElement("div");
+      toast.id = "admin-toast";
+      toast.className = "adm-toast";
+      document.body.appendChild(toast);
+    }
+    toast.innerHTML = `<span class="adm-toast__icon">${isError ? ICONS.warning : ICONS.check}</span><span>${esc(message)}</span>`;
+    toast.className = `adm-toast visible${isError ? " error" : ""}`;
+    setTimeout(() => toast.classList.remove("visible"), 3500);
+  }
+
+  // ===== CONFIRM DIALOG =====
+  function showConfirm(title, message) {
+    return new Promise(resolve => {
+      const overlay = document.createElement("div");
+      overlay.className = "adm-confirm-overlay";
+      overlay.innerHTML = `
+        <div class="adm-confirm">
+          <div class="adm-confirm__icon">${ICONS.warning}</div>
+          <h3>${esc(title)}</h3>
+          <p>${esc(message)}</p>
+          <div class="adm-confirm__btns">
+            <button class="adm-btn adm-btn--ghost" id="adm-confirm-no">Hủy</button>
+            <button class="adm-btn adm-btn--danger" id="adm-confirm-yes">Xóa</button>
+          </div>
+        </div>`;
+      document.body.appendChild(overlay);
+      requestAnimationFrame(() => overlay.classList.add("visible"));
+      const cleanup = (val) => { overlay.classList.remove("visible"); setTimeout(() => overlay.remove(), 300); resolve(val); };
+      overlay.querySelector("#adm-confirm-yes").addEventListener("click", () => cleanup(true));
+      overlay.querySelector("#adm-confirm-no").addEventListener("click", () => cleanup(false));
+      overlay.addEventListener("click", e => { if (e.target === overlay) cleanup(false); });
+    });
+  }
 
   // ===== BUILD ADMIN UI =====
   function buildAdminHTML() {
-    // Check if already exists
-    if (document.getElementById("admin-overlay")) return;
+    if (document.getElementById("adm-root")) return;
 
-    const overlay = document.createElement("div");
-    overlay.id = "admin-overlay";
-    overlay.className = "admin-overlay";
-    overlay.innerHTML = `
-      <!-- Login View -->
-      <div class="admin-login" id="admin-login-view">
-        <div class="admin-login__logo">🔐</div>
-        <h2>Admin Panel</h2>
-        <p>Nhập mật khẩu để truy cập quản trị nội dung</p>
-        <input type="password" class="admin-login__input" id="admin-password" placeholder="Mật khẩu..." autocomplete="off" />
-        <button class="admin-login__btn" id="admin-login-btn">Đăng nhập</button>
-        <div class="admin-login__error" id="admin-login-error"></div>
+    const root = document.createElement("div");
+    root.id = "adm-root";
+    root.className = "adm-root";
+    root.innerHTML = `
+      <!-- Login -->
+      <div class="adm-login" id="adm-login">
+        <button class="adm-btn-icon adm-login__close" id="adm-login-close">${ICONS.close}</button>
+        <div class="adm-login__card">
+          <div class="adm-login__logo">🔐</div>
+          <h2>Quản Trị Nội Dung</h2>
+          <p>Nhập mật khẩu để truy cập bảng điều khiển</p>
+          <input type="password" class="adm-input" id="adm-pwd" placeholder="Mật khẩu..." autocomplete="off" />
+          <button class="adm-btn adm-btn--primary adm-btn--full" id="adm-login-btn">Đăng nhập</button>
+          <div class="adm-login__error" id="adm-login-err"></div>
+        </div>
       </div>
 
-      <!-- Dashboard View (hidden initially) -->
-      <div class="admin-dashboard" id="admin-dashboard-view" style="display:none;">
-        <div class="admin-header">
-          <h2>⚙️ Quản Trị Nội Dung</h2>
-          <div class="admin-header__actions">
-            <button class="admin-btn-icon" id="admin-btn-export" title="Xuất dữ liệu JSON">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            </button>
-            <button class="admin-btn-icon" id="admin-btn-import" title="Nhập dữ liệu JSON">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            </button>
-            <button class="admin-btn-icon" id="admin-btn-close" title="Đóng">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </button>
-          </div>
+      <!-- Dashboard -->
+      <div class="adm-dashboard" id="adm-dashboard" style="display:none;">
+        <!-- Mobile header -->
+        <div class="adm-mobile-header">
+          <button class="adm-btn-icon" id="adm-sidebar-toggle">${ICONS.menu}</button>
+          <h3 id="adm-mobile-title">Quản Trị</h3>
+          <button class="adm-btn-icon" id="adm-close-mobile">${ICONS.close}</button>
         </div>
 
-        <div class="admin-tabs" id="admin-tabs"></div>
-        <div class="admin-content" id="admin-content"></div>
+        <!-- Sidebar -->
+        <aside class="adm-sidebar" id="adm-sidebar">
+          <div class="adm-sidebar__header">
+            <div class="adm-sidebar__brand">
+              <span class="adm-sidebar__brand-icon">⚙️</span>
+              <span>Admin Panel</span>
+            </div>
+            <button class="adm-btn-icon adm-sidebar__close-btn" id="adm-sidebar-close">${ICONS.close}</button>
+          </div>
+          <nav class="adm-sidebar__nav" id="adm-nav"></nav>
+          <div class="adm-sidebar__footer">
+            <button class="adm-sidebar__action" id="adm-btn-export">${ICONS.download}<span>Xuất JSON</span></button>
+            <button class="adm-sidebar__action" id="adm-btn-import">${ICONS.upload}<span>Nhập JSON</span></button>
+            <input type="file" accept=".json" id="adm-import-file" style="display:none" />
+            <div class="adm-sidebar__divider"></div>
+            <button class="adm-sidebar__action adm-sidebar__action--exit" id="adm-btn-exit">${ICONS.close}<span>Thoát Admin</span></button>
+          </div>
+        </aside>
 
-        <!-- Form overlay (inside dashboard) -->
-        <div class="admin-form-overlay" id="admin-form-overlay"></div>
+        <!-- Main content -->
+        <main class="adm-main" id="adm-main">
+          <!-- Breadcrumb -->
+          <div class="adm-breadcrumb" id="adm-breadcrumb"></div>
+          <!-- Content area -->
+          <div class="adm-content" id="adm-content"></div>
+        </main>
       </div>
+
+      <!-- Form overlay -->
+      <div class="adm-form-overlay" id="adm-form-overlay"></div>
     `;
+    document.body.appendChild(root);
+    initEvents();
+    buildSidebar();
+  }
 
-    document.body.appendChild(overlay);
-
-    // Hidden file input for import
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.accept = ".json";
-    fileInput.id = "admin-import-input";
-    fileInput.style.display = "none";
-    document.body.appendChild(fileInput);
-
-    // Toast
-    const toast = document.createElement("div");
-    toast.id = "admin-toast";
-    toast.className = "admin-toast";
-    document.body.appendChild(toast);
-
-    initAdminEvents();
-    buildTabs();
+  // ===== BUILD SIDEBAR NAV =====
+  function buildSidebar() {
+    const nav = document.getElementById("adm-nav");
+    nav.innerHTML = "";
+    Object.entries(MODULES).forEach(([key, mod]) => {
+      const btn = document.createElement("button");
+      btn.className = `adm-nav-item${key === currentModule ? " active" : ""}`;
+      btn.dataset.module = key;
+      btn.innerHTML = `<span class="adm-nav-item__icon">${mod.icon}</span><span>${mod.label}</span>`;
+      btn.addEventListener("click", () => {
+        switchModule(key);
+        // Close sidebar on mobile
+        document.getElementById("adm-sidebar").classList.remove("open");
+      });
+      nav.appendChild(btn);
+    });
   }
 
   // ===== INIT EVENTS =====
-  function initAdminEvents() {
+  function initEvents() {
     // Login
-    const loginBtn = document.getElementById("admin-login-btn");
-    const passwordInput = document.getElementById("admin-password");
+    document.getElementById("adm-login-btn").addEventListener("click", handleLogin);
+    document.getElementById("adm-pwd").addEventListener("keydown", e => { if (e.key === "Enter") handleLogin(); });
 
-    loginBtn.addEventListener("click", handleLogin);
-    passwordInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") handleLogin();
+    // Close admin
+    document.getElementById("adm-close-mobile").addEventListener("click", closeAdmin);
+    document.getElementById("adm-login-close").addEventListener("click", closeAdmin);
+    document.getElementById("adm-btn-exit").addEventListener("click", closeAdmin);
+
+    // Sidebar toggle (mobile)
+    document.getElementById("adm-sidebar-toggle").addEventListener("click", () => {
+      document.getElementById("adm-sidebar").classList.toggle("open");
+    });
+    document.getElementById("adm-sidebar-close").addEventListener("click", () => {
+      document.getElementById("adm-sidebar").classList.remove("open");
     });
 
-    // Close
-    document.getElementById("admin-btn-close").addEventListener("click", closeAdmin);
-
-    // Export
-    document.getElementById("admin-btn-export").addEventListener("click", exportAllData);
-
-    // Import
-    document.getElementById("admin-btn-import").addEventListener("click", () => {
-      document.getElementById("admin-import-input").click();
-    });
-    document.getElementById("admin-import-input").addEventListener("change", importData);
-
-    // Close on overlay click
-    document.getElementById("admin-overlay").addEventListener("click", (e) => {
-      if (e.target.id === "admin-overlay") closeAdmin();
-    });
+    // Export/Import
+    document.getElementById("adm-btn-export").addEventListener("click", exportAllData);
+    document.getElementById("adm-btn-import").addEventListener("click", () => document.getElementById("adm-import-file").click());
+    document.getElementById("adm-import-file").addEventListener("change", importData);
 
     // Close on Esc
-    document.addEventListener("keydown", (e) => {
+    document.addEventListener("keydown", e => {
       if (e.key === "Escape") {
-        const formOverlay = document.getElementById("admin-form-overlay");
+        const formOverlay = document.getElementById("adm-form-overlay");
         if (formOverlay && formOverlay.classList.contains("visible")) {
           formOverlay.classList.remove("visible");
         } else {
@@ -180,335 +270,441 @@
 
   // ===== LOGIN =====
   async function handleLogin() {
-    const password = document.getElementById("admin-password").value;
-    const errorEl = document.getElementById("admin-login-error");
+    const pwd = document.getElementById("adm-pwd").value;
+    const err = document.getElementById("adm-login-err");
+    if (!pwd) { err.textContent = "Vui lòng nhập mật khẩu"; return; }
 
-    if (!password) {
-      errorEl.textContent = "Vui lòng nhập mật khẩu";
-      return;
-    }
-
-    const hash = await sha256(password);
-
-    // Verify against config
+    const hash = await sha256(pwd);
     const config = await DataService.fetch("config");
-    if (!config || hash !== config.adminPasswordHash) {
-      errorEl.textContent = "Mật khẩu không đúng";
-      return;
-    }
+    if (!config || hash !== config.adminPasswordHash) { err.textContent = "Mật khẩu không đúng"; return; }
 
     adminHash = hash;
     isLoggedIn = true;
     sessionStorage.setItem("gdpt_admin", hash);
-
-    // Switch to dashboard
-    document.getElementById("admin-login-view").style.display = "none";
-    document.getElementById("admin-dashboard-view").style.display = "flex";
-
-    // Load first module
+    document.getElementById("adm-login").style.display = "none";
+    document.getElementById("adm-dashboard").style.display = "flex";
     await switchModule("sinhhoat");
-  }
-
-  // ===== TABS =====
-  function buildTabs() {
-    const tabsContainer = document.getElementById("admin-tabs");
-    tabsContainer.innerHTML = "";
-
-    Object.entries(MODULES).forEach(([key, mod]) => {
-      const btn = document.createElement("button");
-      btn.className = `admin-tab${key === currentModule ? " active" : ""}`;
-      btn.dataset.module = key;
-      btn.textContent = `${mod.icon} ${mod.label}`;
-      btn.addEventListener("click", () => switchModule(key));
-      tabsContainer.appendChild(btn);
-    });
   }
 
   // ===== SWITCH MODULE =====
   async function switchModule(module) {
     currentModule = module;
+    searchQuery = "";
 
-    // Update tabs
-    document.querySelectorAll(".admin-tab").forEach((t) => {
-      t.classList.toggle("active", t.dataset.module === module);
-    });
+    // Update sidebar active state
+    document.querySelectorAll(".adm-nav-item").forEach(t => t.classList.toggle("active", t.dataset.module === module));
+
+    // Update mobile title
+    const mTitle = document.getElementById("adm-mobile-title");
+    if (mTitle) mTitle.textContent = MODULES[module].label;
+
+    // Update breadcrumb
+    const bc = document.getElementById("adm-breadcrumb");
+    bc.innerHTML = `<span class="adm-breadcrumb__item">Admin</span><span class="adm-breadcrumb__sep">›</span><span class="adm-breadcrumb__item active">${MODULES[module].label}</span>`;
 
     // Load data
     const data = await DataService.fetch(module);
     moduleData[module] = data;
-
     renderModule(module, data);
   }
 
   // ===== RENDER MODULE =====
   function renderModule(module, data) {
-    const content = document.getElementById("admin-content");
+    const content = document.getElementById("adm-content");
 
-    if (module === "config") {
-      renderConfigModule(data);
-      return;
-    }
+    if (module === "config") { renderConfig(data); return; }
 
-    if (module === "bachoc") {
-      renderBacHocModule(data);
-      return;
-    }
-
-    // Generic list module
     const items = Array.isArray(data) ? data : [];
     const mod = MODULES[module];
 
     content.innerHTML = `
-      <div class="admin-module-header">
-        <h3>${mod.icon} ${mod.label} (${items.length} mục)</h3>
-        <button class="admin-btn-add" id="admin-add-btn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Thêm mới
-        </button>
+      <!-- Create Post Box -->
+      <div class="adm-create-box" id="adm-create-box">
+        <div class="adm-create-box__prompt">
+          <div class="adm-create-box__avatar">${ICONS.plus}</div>
+          <div class="adm-create-box__text">
+            <strong>${mod.createLabel}</strong>
+            <span>${mod.createHint}</span>
+          </div>
+        </div>
       </div>
-      <div class="admin-item-list" id="admin-items"></div>
+
+      <!-- Search bar -->
+      <div class="adm-search-bar">
+        <span class="adm-search-bar__icon">${ICONS.search}</span>
+        <input type="text" class="adm-search-bar__input" id="adm-search" placeholder="Tìm kiếm trong ${mod.label}..." value="${escAttr(searchQuery)}" />
+        <span class="adm-search-bar__count" id="adm-count">${items.length} mục</span>
+      </div>
+
+      <!-- Item list -->
+      <div class="adm-item-list" id="adm-items"></div>
     `;
 
-    const itemsContainer = document.getElementById("admin-items");
+    // Create box click
+    document.getElementById("adm-create-box").addEventListener("click", () => openForm(module, -1));
 
-    if (items.length === 0) {
-      itemsContainer.innerHTML = `
-        <div class="admin-empty">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-          <p>Chưa có dữ liệu. Nhấn "Thêm mới" để bắt đầu.</p>
-        </div>
-      `;
-    } else {
-      items.forEach((item, idx) => {
-        const title = item.title || item.name || `Mục ${idx + 1}`;
-        const meta = getItemMeta(module, item);
-        const el = document.createElement("div");
-        el.className = "admin-item";
-        el.innerHTML = `
-          <div class="admin-item__info">
-            <div class="admin-item__title">${escapeHTML(title)}</div>
-            <div class="admin-item__meta">${escapeHTML(meta)}</div>
-          </div>
-          <div class="admin-item__actions">
-            <button class="admin-item__btn" data-action="edit" data-index="${idx}" title="Sửa">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            </button>
-            <button class="admin-item__btn admin-item__btn--delete" data-action="delete" data-index="${idx}" title="Xóa">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-            </button>
-          </div>
-        `;
-        itemsContainer.appendChild(el);
-      });
+    // Search
+    const searchInput = document.getElementById("adm-search");
+    searchInput.addEventListener("input", () => {
+      searchQuery = searchInput.value.toLowerCase();
+      renderItems(module, items);
+    });
 
-      // Delegate clicks
-      itemsContainer.addEventListener("click", (e) => {
-        const btn = e.target.closest("[data-action]");
-        if (!btn) return;
-        const action = btn.dataset.action;
-        const index = parseInt(btn.dataset.index);
-        if (action === "edit") openForm(module, index);
-        if (action === "delete") deleteItem(module, index);
-      });
+    renderItems(module, items);
+  }
+
+  // ===== RENDER ITEMS =====
+  function renderItems(module, items) {
+    const container = document.getElementById("adm-items");
+    const countEl = document.getElementById("adm-count");
+
+    const filtered = items.filter(item => {
+      if (!searchQuery) return true;
+      const text = (item.title || item.name || "").toLowerCase() + " " + ((item.tags || []).join(" ")).toLowerCase() + " " + (item.content || item.description || "").toLowerCase();
+      return text.includes(searchQuery);
+    });
+
+    countEl.textContent = `${filtered.length} / ${items.length} mục`;
+
+    if (filtered.length === 0) {
+      container.innerHTML = `
+        <div class="adm-empty">
+          <div class="adm-empty__icon">${searchQuery ? ICONS.search : ICONS.file}</div>
+          <p>${searchQuery ? "Không tìm thấy kết quả" : "Chưa có dữ liệu. Bấm nút ở trên để tạo mới!"}</p>
+        </div>`;
+      return;
     }
 
-    // Add button
-    document.getElementById("admin-add-btn").addEventListener("click", () => openForm(module, -1));
+    container.innerHTML = filtered.map((item, idx) => {
+      const realIdx = items.indexOf(item);
+      const title = item.title || item.name || `Mục ${realIdx + 1}`;
+      const meta = getItemMeta(module, item);
+      const thumb = getItemThumb(module, item);
+      const tags = (item.tags || []).slice(0, 3).map(t => `<span class="adm-chip">${esc(t)}</span>`).join("");
+
+      return `
+        <div class="adm-card" data-index="${realIdx}">
+          ${thumb ? `<div class="adm-card__thumb"><img src="${escAttr(thumb)}" alt="" loading="lazy" onerror="this.parentElement.remove()" /></div>` : ""}
+          <div class="adm-card__body">
+            <div class="adm-card__title">${esc(title)}</div>
+            <div class="adm-card__meta">${esc(meta)}</div>
+            ${tags ? `<div class="adm-card__tags">${tags}</div>` : ""}
+          </div>
+          <div class="adm-card__actions">
+            <button class="adm-btn-icon adm-btn-icon--sm" data-action="edit" data-index="${realIdx}" title="Sửa">${ICONS.edit}</button>
+            <button class="adm-btn-icon adm-btn-icon--sm adm-btn-icon--danger" data-action="delete" data-index="${realIdx}" title="Xóa">${ICONS.trash}</button>
+          </div>
+        </div>`;
+    }).join("");
+
+    // Event delegation
+    container.addEventListener("click", async e => {
+      const btn = e.target.closest("[data-action]");
+      if (!btn) return;
+      const action = btn.dataset.action;
+      const index = parseInt(btn.dataset.index);
+      if (action === "edit") openForm(module, index);
+      if (action === "delete") await deleteItem(module, index);
+    }, { once: false });
   }
 
   function getItemMeta(module, item) {
     switch (module) {
-      case "sinhhoat": return `${item.year || ""} · ${(item.tags || []).join(", ")}`;
-      case "nhac": return `${item.artist || ""} · ${item.duration || ""}`;
-      case "tailieu": return `${item.category || ""} · ${item.fileType || ""}`;
-      case "kynang": return `${item.category || ""} · ${item.date || ""}`;
+      case "sinhhoat": return `${item.year || ""} · ${item.date || ""} · ${(item.images || []).length} ảnh · ${(item.videos || []).length} video`;
+      case "nhac": return `${item.artist || "Nhạc GĐPT"} · ${item.duration || ""}`;
+      case "tailieu": return `${item.category || ""} · ${(item.fileType || "").toUpperCase()}`;
+      case "kynang": return `${item.category || ""} · ${(item.images || []).length} ảnh · ${(item.videos || []).length} video`;
       default: return "";
     }
   }
 
-  // ===== CONFIG MODULE =====
-  function renderConfigModule(data) {
-    const content = document.getElementById("admin-content");
-    if (!data) data = {};
+  function getItemThumb(module, item) {
+    if (item.images && item.images.length) return item.images[0];
+    if (item.videos && item.videos.length) return getYouTubeThumb(item.videos[0]);
+    return null;
+  }
 
+  // ===== CONFIG MODULE =====
+  function renderConfig(data) {
+    const content = document.getElementById("adm-content");
+    if (!data) data = {};
     content.innerHTML = `
-      <div class="admin-module-header"><h3>⚙️ Cấu Hình Website</h3></div>
-      <div class="admin-item-list">
-        <div class="admin-form-group">
-          <label>Tên website</label>
-          <input type="text" id="cfg-siteName" value="${escapeAttr(data.siteName || "")}" />
+      <div class="adm-config-section">
+        <h3>⚙️ Cấu Hình Website</h3>
+        <p class="adm-config-desc">Thay đổi các thông tin hiển thị trên website</p>
+
+        <div class="adm-form-grid">
+          <div class="adm-field">
+            <label>Tên website</label>
+            <input type="text" class="adm-input" id="cfg-siteName" value="${escAttr(data.siteName || "")}" />
+          </div>
+          <div class="adm-field">
+            <label>Châm ngôn</label>
+            <input type="text" class="adm-input" id="cfg-motto" value="${escAttr(data.motto || "")}" />
+          </div>
+          <div class="adm-field">
+            <label>Email</label>
+            <input type="email" class="adm-input" id="cfg-email" value="${escAttr(data.email || "")}" />
+          </div>
+          <div class="adm-field">
+            <label>Link Facebook</label>
+            <input type="url" class="adm-input" id="cfg-facebook" value="${escAttr(data.facebook || "")}" />
+          </div>
+          <div class="adm-field">
+            <label>Địa chỉ</label>
+            <input type="text" class="adm-input" id="cfg-address" value="${escAttr(data.address || "")}" />
+          </div>
         </div>
-        <div class="admin-form-group">
-          <label>Châm ngôn</label>
-          <input type="text" id="cfg-motto" value="${escapeAttr(data.motto || "")}" />
+
+        <div class="adm-form-actions">
+          <button class="adm-btn adm-btn--primary" id="cfg-save">Lưu cấu hình</button>
         </div>
-        <div class="admin-form-group">
-          <label>Email</label>
-          <input type="email" id="cfg-email" value="${escapeAttr(data.email || "")}" />
+      </div>
+
+      <div class="adm-config-section" style="margin-top: 2rem;">
+        <h3>🔑 Đổi Mật Khẩu Admin</h3>
+        <div class="adm-form-grid">
+          <div class="adm-field">
+            <label>Mật khẩu mới</label>
+            <input type="password" class="adm-input" id="cfg-newpwd" placeholder="Nhập mật khẩu mới..." />
+          </div>
+          <div class="adm-field">
+            <label>Xác nhận</label>
+            <input type="password" class="adm-input" id="cfg-newpwd2" placeholder="Nhập lại mật khẩu..." />
+          </div>
         </div>
-        <div class="admin-form-group">
-          <label>Link Facebook</label>
-          <input type="url" id="cfg-facebook" value="${escapeAttr(data.facebook || "")}" />
-        </div>
-        <div class="admin-form-group">
-          <label>Địa chỉ</label>
-          <input type="text" id="cfg-address" value="${escapeAttr(data.address || "")}" />
-        </div>
-        <div class="admin-form__btns">
-          <button class="admin-btn-save" id="cfg-save-btn">Lưu cấu hình</button>
+        <div class="adm-form-actions">
+          <button class="adm-btn adm-btn--ghost" id="cfg-changepwd">Đổi mật khẩu</button>
         </div>
       </div>
     `;
 
-    document.getElementById("cfg-save-btn").addEventListener("click", async () => {
+    document.getElementById("cfg-save").addEventListener("click", async () => {
       data.siteName = document.getElementById("cfg-siteName").value;
       data.motto = document.getElementById("cfg-motto").value;
       data.email = document.getElementById("cfg-email").value;
       data.facebook = document.getElementById("cfg-facebook").value;
       data.address = document.getElementById("cfg-address").value;
-
       const result = await DataService.save("config", data);
       showToast(result.success ? "Đã lưu cấu hình!" : "Lỗi khi lưu", !result.success);
-      if (result.method === "local") {
-        showToast("Đã lưu tạm vào trình duyệt. Hãy Export JSON để cập nhật lên server.", false);
-      }
+    });
+
+    document.getElementById("cfg-changepwd").addEventListener("click", async () => {
+      const p1 = document.getElementById("cfg-newpwd").value;
+      const p2 = document.getElementById("cfg-newpwd2").value;
+      if (!p1 || p1.length < 4) { showToast("Mật khẩu phải ít nhất 4 ký tự", true); return; }
+      if (p1 !== p2) { showToast("Mật khẩu xác nhận không khớp", true); return; }
+      data.adminPasswordHash = await sha256(p1);
+      adminHash = data.adminPasswordHash;
+      sessionStorage.setItem("gdpt_admin", adminHash);
+      const result = await DataService.save("config", data);
+      showToast(result.success ? "Đã đổi mật khẩu!" : "Lỗi khi đổi", !result.success);
+      document.getElementById("cfg-newpwd").value = "";
+      document.getElementById("cfg-newpwd2").value = "";
     });
   }
 
-  // ===== BAC HOC MODULE =====
-  function renderBacHocModule(data) {
-    const content = document.getElementById("admin-content");
-    if (!data || !data.nganh) {
-      content.innerHTML = `<div class="admin-empty"><p>Không có dữ liệu bậc học.</p></div>`;
-      return;
-    }
-
-    let html = `<div class="admin-module-header"><h3>🎓 Bậc Học & Ngành Đoàn</h3></div>`;
-
-    data.nganh.forEach((nganh, ni) => {
-      html += `
-        <div class="admin-item" style="flex-direction: column; align-items: stretch; gap: 0.5rem; margin-bottom: 1rem;">
-          <div class="admin-item__title" style="font-size: 1rem;">${nganh.emoji} ${escapeHTML(nganh.name)}</div>
-          <div class="admin-form-group" style="margin-bottom: 0;">
-            <label>Mô tả ngành</label>
-            <textarea id="bachoc-desc-${ni}" rows="2">${escapeHTML(nganh.description)}</textarea>
-          </div>
-          ${nganh.bacHoc.map((bac, bi) => `
-            <div style="display: flex; gap: 0.5rem; align-items: center;">
-              <input type="text" value="${escapeAttr(bac.name)}" id="bachoc-${ni}-${bi}-name" style="flex: 0 0 120px;" />
-              <input type="text" value="${escapeAttr(bac.description)}" id="bachoc-${ni}-${bi}-desc" style="flex: 1;" />
-            </div>
-          `).join("")}
-        </div>
-      `;
-    });
-
-    html += `
-      <div class="admin-form__btns">
-        <button class="admin-btn-save" id="bachoc-save-btn">Lưu bậc học</button>
-      </div>
-    `;
-
-    content.innerHTML = html;
-
-    document.getElementById("bachoc-save-btn").addEventListener("click", async () => {
-      data.nganh.forEach((nganh, ni) => {
-        nganh.description = document.getElementById(`bachoc-desc-${ni}`).value;
-        nganh.bacHoc.forEach((bac, bi) => {
-          bac.name = document.getElementById(`bachoc-${ni}-${bi}-name`).value;
-          bac.description = document.getElementById(`bachoc-${ni}-${bi}-desc`).value;
-        });
-      });
-
-      const result = await DataService.save("bachoc", data);
-      showToast(result.success ? "Đã lưu bậc học!" : "Lỗi khi lưu", !result.success);
-    });
-  }
-
-  // ===== FORM: OPEN =====
-  function openForm(module, index) {
-    const overlay = document.getElementById("admin-form-overlay");
-    const isEdit = index >= 0;
-    const items = moduleData[module] || [];
-    const item = isEdit ? items[index] : {};
-
-    let formHTML = "";
-
+  // ===== FORM: Build fields per module =====
+  function getFormFields(module, item, isEdit) {
+    const fields = [];
     switch (module) {
       case "sinhhoat":
-        formHTML = `
-          <h3>${isEdit ? "✏️ Sửa bài viết" : "➕ Thêm bài viết"}</h3>
-          <div class="admin-form-group"><label>Tiêu đề</label><input type="text" id="form-title" value="${escapeAttr(item.title || "")}" placeholder="Ví dụ: Trại Họp Bạn Diệu Định 2025" /></div>
-          <div class="admin-form-group"><label>Năm</label><input type="text" id="form-year" value="${escapeAttr(item.year || new Date().getFullYear().toString())}" placeholder="2025" /></div>
-          <div class="admin-form-group"><label>Ngày hiển thị</label><input type="text" id="form-date" value="${escapeAttr(item.date || "")}" placeholder="Tháng 5, 2026" /></div>
-          <div class="admin-form-group"><label>Nội dung</label><textarea id="form-content" placeholder="Mô tả chi tiết về sự kiện...">${escapeHTML(item.content || "")}</textarea></div>
-          <div class="admin-form-group"><label>Link video</label><textarea id="form-videos" rows="2" placeholder="Mỗi dòng 1 link YouTube/Drive...">${(item.videos || []).join("\n")}</textarea><small>YouTube, Google Drive hoặc link bất kỳ — hệ thống tự nhận diện</small></div>
-          <div class="admin-form-group"><label>Link hình ảnh</label><textarea id="form-images" rows="2" placeholder="Mỗi dòng 1 URL ảnh...">${(item.images || []).join("\n")}</textarea><small>URL ảnh trực tiếp hoặc đường dẫn trong project (images/...)</small></div>
-          <div class="admin-form-group"><label>Tags</label><input type="text" id="form-tags" value="${(item.tags || []).join(", ")}" placeholder="Tag1, Tag2, Tag3" /><small>Phân cách bằng dấu phẩy</small></div>
-        `;
+        fields.push(
+          { type: "text", id: "title", label: "Tiêu đề", placeholder: "Ví dụ: Trại Họp Bạn Diệu Định 2025", value: item.title, required: true },
+          { type: "row", children: [
+            { type: "text", id: "year", label: "Năm", placeholder: "2026", value: item.year || new Date().getFullYear().toString() },
+            { type: "text", id: "date", label: "Ngày hiển thị", placeholder: "Tháng 5, 2026", value: item.date || "" },
+          ]},
+          { type: "textarea", id: "content", label: "Nội dung bài viết", placeholder: "Mô tả chi tiết về sự kiện, sinh hoạt...", value: item.content, rows: 5 },
+          { type: "media", id: "images", label: "Hình ảnh", placeholder: "Dán link ảnh (mỗi dòng 1 URL)...", value: (item.images || []).join("\n"), hint: "URL ảnh trực tiếp hoặc đường dẫn trong project (images/...)", icon: "image" },
+          { type: "media", id: "videos", label: "Video", placeholder: "Dán link YouTube (mỗi dòng 1 URL)...", value: (item.videos || []).join("\n"), hint: "YouTube, Google Drive hoặc link bất kỳ", icon: "video" },
+          { type: "tags", id: "tags", label: "Gắn thẻ (Tags)", value: item.tags || [], hint: "Gõ tag rồi bấm Enter để thêm" },
+        );
         break;
-
       case "nhac":
-        formHTML = `
-          <h3>${isEdit ? "✏️ Sửa bài nhạc" : "➕ Thêm bài nhạc"}</h3>
-          <div class="admin-form-group"><label>Tên bài hát</label><input type="text" id="form-title" value="${escapeAttr(item.title || "")}" /></div>
-          <div class="admin-form-group"><label>Nghệ sĩ / Thể loại</label><input type="text" id="form-artist" value="${escapeAttr(item.artist || "Nhạc GĐPT")}" /></div>
-          <div class="admin-form-group"><label>Link MP3</label><input type="url" id="form-src" value="${escapeAttr(item.src || "")}" placeholder="https://archive.org/download/..." /><small>Archive.org, Google Drive hoặc URL MP3 trực tiếp</small></div>
-          <div class="admin-form-group"><label>Thời lượng</label><input type="text" id="form-duration" value="${escapeAttr(item.duration || "")}" placeholder="3:45" /></div>
-        `;
+        fields.push(
+          { type: "text", id: "title", label: "Tên bài hát", placeholder: "Ví dụ: Hồn Lửa Thiêng", value: item.title, required: true },
+          { type: "text", id: "artist", label: "Nghệ sĩ / Thể loại", placeholder: "Nhạc GĐPT", value: item.artist || "Nhạc GĐPT" },
+          { type: "text", id: "src", label: "Link MP3", placeholder: "https://archive.org/download/...", value: item.src || "", hint: "Archive.org, Google Drive hoặc URL MP3 trực tiếp" },
+          { type: "text", id: "duration", label: "Thời lượng", placeholder: "3:45", value: item.duration || "" },
+        );
         break;
-
       case "tailieu":
-        formHTML = `
-          <h3>${isEdit ? "✏️ Sửa tài liệu" : "➕ Thêm tài liệu"}</h3>
-          <div class="admin-form-group"><label>Tên tài liệu</label><input type="text" id="form-title" value="${escapeAttr(item.title || "")}" /></div>
-          <div class="admin-form-group"><label>Mô tả</label><textarea id="form-description" rows="3">${escapeHTML(item.description || "")}</textarea></div>
-          <div class="admin-form-group"><label>Danh mục</label>
-            <select id="form-category">
-              ${["Phật Pháp", "Giáo Án", "Kỹ Năng", "Sách Tham Khảo", "Khác"].map(c => `<option value="${c}" ${item.category === c ? "selected" : ""}>${c}</option>`).join("")}
-            </select>
-          </div>
-          <div class="admin-form-group"><label>Link tài liệu</label><input type="url" id="form-url" value="${escapeAttr(item.url || "")}" placeholder="https://drive.google.com/..." /><small>Google Drive, PDF URL, hoặc link tải</small></div>
-          <div class="admin-form-group"><label>Loại file</label>
-            <select id="form-fileType">
-              ${["pdf", "doc", "ppt", "link", "video"].map(t => `<option value="${t}" ${item.fileType === t ? "selected" : ""}>${t.toUpperCase()}</option>`).join("")}
-            </select>
-          </div>
-        `;
+        fields.push(
+          { type: "text", id: "title", label: "Tên tài liệu", placeholder: "Ví dụ: Giáo Án Ngành Thiếu", value: item.title, required: true },
+          { type: "textarea", id: "description", label: "Mô tả", placeholder: "Mô tả ngắn về tài liệu...", value: item.description, rows: 3 },
+          { type: "row", children: [
+            { type: "select", id: "category", label: "Danh mục", value: item.category, options: ["Phật Pháp", "Giáo Án", "Kỹ Năng", "Sách Tham Khảo", "Khác"] },
+            { type: "select", id: "fileType", label: "Loại file", value: item.fileType, options: ["pdf", "doc", "ppt", "link", "video"] },
+          ]},
+          { type: "text", id: "url", label: "Link tài liệu", placeholder: "https://drive.google.com/...", value: item.url || "", hint: "Google Drive, PDF URL, hoặc link tải" },
+        );
         break;
-
       case "kynang":
-        formHTML = `
-          <h3>${isEdit ? "✏️ Sửa bài kỹ năng" : "➕ Thêm bài kỹ năng"}</h3>
-          <div class="admin-form-group"><label>Tiêu đề</label><input type="text" id="form-title" value="${escapeAttr(item.title || "")}" /></div>
-          <div class="admin-form-group"><label>Chủ đề</label>
-            <select id="form-category">
-              ${["Kết Dây", "Morse", "Dựng Trại", "Cứu Thương", "La Bàn", "Trò Chơi", "Khác"].map(c => `<option value="${c}" ${item.category === c ? "selected" : ""}>${c}</option>`).join("")}
-            </select>
-          </div>
-          <div class="admin-form-group"><label>Nội dung</label><textarea id="form-content" rows="5">${escapeHTML(item.content || "")}</textarea></div>
-          <div class="admin-form-group"><label>Link video</label><textarea id="form-videos" rows="2" placeholder="Mỗi dòng 1 link...">${(item.videos || []).join("\n")}</textarea></div>
-          <div class="admin-form-group"><label>Link hình ảnh</label><textarea id="form-images" rows="2" placeholder="Mỗi dòng 1 URL ảnh...">${(item.images || []).join("\n")}</textarea></div>
-        `;
+        fields.push(
+          { type: "text", id: "title", label: "Tiêu đề", placeholder: "Ví dụ: Nút Dây Cơ Bản", value: item.title, required: true },
+          { type: "select", id: "category", label: "Chủ đề", value: item.category, options: ["Kết Dây", "Morse", "Semaphore", "Dựng Trại", "Cứu Thương", "La Bàn", "Trò Chơi", "Khác"] },
+          { type: "textarea", id: "content", label: "Nội dung", placeholder: "Hướng dẫn chi tiết...", value: item.content, rows: 5 },
+          { type: "media", id: "images", label: "Hình ảnh minh họa", placeholder: "Dán link ảnh (mỗi dòng 1 URL)...", value: (item.images || []).join("\n"), icon: "image" },
+          { type: "media", id: "videos", label: "Video hướng dẫn", placeholder: "Dán link YouTube (mỗi dòng 1 URL)...", value: (item.videos || []).join("\n"), icon: "video" },
+        );
         break;
     }
-
-    formHTML += `
-      <div class="admin-form__btns">
-        <button class="admin-btn-cancel" id="form-cancel-btn">Hủy</button>
-        <button class="admin-btn-save" id="form-save-btn">Lưu</button>
-      </div>
-    `;
-
-    overlay.innerHTML = `<div class="admin-form">${formHTML}</div>`;
-    overlay.classList.add("visible");
-
-    // Events
-    document.getElementById("form-cancel-btn").addEventListener("click", () => overlay.classList.remove("visible"));
-    document.getElementById("form-save-btn").addEventListener("click", () => saveForm(module, index));
+    return fields;
   }
 
-  // ===== FORM: SAVE =====
+  // ===== FORM: Render =====
+  function renderFormField(field) {
+    if (field.type === "row") {
+      return `<div class="adm-form-row">${field.children.map(renderFormField).join("")}</div>`;
+    }
+    if (field.type === "tags") {
+      const chips = (field.value || []).map(t => `<span class="adm-chip adm-chip--removable" data-tag="${escAttr(t)}">${esc(t)}<button class="adm-chip__remove">&times;</button></span>`).join("");
+      return `
+        <div class="adm-field adm-field--tags" id="field-${field.id}">
+          <label><span class="adm-field__icon">${ICONS.tag}</span>${field.label}</label>
+          <div class="adm-tag-input">
+            <div class="adm-tag-chips" id="chips-${field.id}">${chips}</div>
+            <input type="text" class="adm-tag-input__field" id="form-${field.id}-input" placeholder="Gõ tag rồi bấm Enter..." />
+          </div>
+          ${field.hint ? `<small>${field.hint}</small>` : ""}
+        </div>`;
+    }
+    if (field.type === "media") {
+      const previewId = `preview-${field.id}`;
+      return `
+        <div class="adm-field adm-field--media">
+          <label><span class="adm-field__icon">${ICONS[field.icon] || ""}</span>${field.label}</label>
+          <textarea class="adm-input adm-media-textarea" id="form-${field.id}" rows="3" placeholder="${escAttr(field.placeholder)}">${esc(field.value || "")}</textarea>
+          ${field.hint ? `<small>${field.hint}</small>` : ""}
+          <div class="adm-media-preview" id="${previewId}"></div>
+        </div>`;
+    }
+    if (field.type === "select") {
+      const opts = (field.options || []).map(o => `<option value="${escAttr(o)}" ${field.value === o ? "selected" : ""}>${esc(o)}</option>`).join("");
+      return `
+        <div class="adm-field">
+          <label>${field.label}</label>
+          <select class="adm-input" id="form-${field.id}">${opts}</select>
+        </div>`;
+    }
+    if (field.type === "textarea") {
+      return `
+        <div class="adm-field">
+          <label>${field.label}</label>
+          <textarea class="adm-input" id="form-${field.id}" rows="${field.rows || 4}" placeholder="${escAttr(field.placeholder || "")}">${esc(field.value || "")}</textarea>
+        </div>`;
+    }
+    // Default: text
+    return `
+      <div class="adm-field">
+        <label>${field.label}${field.required ? ' <span class="adm-required">*</span>' : ""}</label>
+        <input type="text" class="adm-input" id="form-${field.id}" value="${escAttr(field.value || "")}" placeholder="${escAttr(field.placeholder || "")}" ${field.required ? "required" : ""} />
+        ${field.hint ? `<small>${field.hint}</small>` : ""}
+      </div>`;
+  }
+
+  // ===== FORM: Open =====
+  function openForm(module, index) {
+    const overlay = document.getElementById("adm-form-overlay");
+    const isEdit = index >= 0;
+    const items = moduleData[module] || [];
+    const item = isEdit ? { ...items[index] } : {};
+    const mod = MODULES[module];
+
+    const fields = getFormFields(module, item, isEdit);
+    const fieldsHTML = fields.map(renderFormField).join("");
+
+    overlay.innerHTML = `
+      <div class="adm-form-panel">
+        <div class="adm-form-panel__header">
+          <h3>${isEdit ? "✏️ Chỉnh sửa" : "➕ " + mod.createLabel}</h3>
+          <button class="adm-btn-icon" id="adm-form-close">${ICONS.close}</button>
+        </div>
+        <div class="adm-form-panel__body">
+          ${fieldsHTML}
+        </div>
+        <div class="adm-form-panel__footer">
+          <button class="adm-btn adm-btn--ghost" id="adm-form-cancel">Hủy</button>
+          <button class="adm-btn adm-btn--primary" id="adm-form-save">
+            ${ICONS.check}<span>${isEdit ? "Cập nhật" : "Đăng bài"}</span>
+          </button>
+        </div>
+      </div>`;
+
+    overlay.classList.add("visible");
+
+    // Close events
+    document.getElementById("adm-form-close").addEventListener("click", () => overlay.classList.remove("visible"));
+    document.getElementById("adm-form-cancel").addEventListener("click", () => overlay.classList.remove("visible"));
+    overlay.addEventListener("click", e => { if (e.target === overlay) overlay.classList.remove("visible"); });
+
+    // Save
+    document.getElementById("adm-form-save").addEventListener("click", () => saveForm(module, index));
+
+    // Init tag chips
+    initTagChips(module);
+
+    // Init media preview
+    initMediaPreview(module);
+  }
+
+  // ===== TAG CHIPS =====
+  function initTagChips(module) {
+    const fields = getFormFields(module, {}, false);
+    fields.filter(f => f.type === "tags").forEach(field => {
+      const input = document.getElementById(`form-${field.id}-input`);
+      const chipsContainer = document.getElementById(`chips-${field.id}`);
+      if (!input || !chipsContainer) return;
+
+      input.addEventListener("keydown", e => {
+        if (e.key === "Enter" || e.key === ",") {
+          e.preventDefault();
+          const tag = input.value.trim();
+          if (!tag) return;
+          // Check duplicate
+          if (chipsContainer.querySelector(`[data-tag="${tag}"]`)) { input.value = ""; return; }
+          const chip = document.createElement("span");
+          chip.className = "adm-chip adm-chip--removable";
+          chip.dataset.tag = tag;
+          chip.innerHTML = `${esc(tag)}<button class="adm-chip__remove">&times;</button>`;
+          chip.querySelector(".adm-chip__remove").addEventListener("click", () => chip.remove());
+          chipsContainer.appendChild(chip);
+          input.value = "";
+        }
+      });
+
+      // Remove existing chip buttons
+      chipsContainer.querySelectorAll(".adm-chip__remove").forEach(btn => {
+        btn.addEventListener("click", () => btn.parentElement.remove());
+      });
+    });
+  }
+
+  // ===== MEDIA PREVIEW =====
+  function initMediaPreview(module) {
+    document.querySelectorAll(".adm-media-textarea").forEach(textarea => {
+      const previewEl = textarea.closest(".adm-field--media").querySelector(".adm-media-preview");
+      if (!previewEl) return;
+
+      const updatePreview = () => {
+        const urls = textarea.value.split("\n").map(s => s.trim()).filter(Boolean);
+        previewEl.innerHTML = urls.slice(0, 6).map(url => {
+          const ytThumb = getYouTubeThumb(url);
+          const src = ytThumb || url;
+          return `<div class="adm-media-preview__item">
+            <img src="${escAttr(src)}" alt="" loading="lazy" onerror="this.parentElement.innerHTML='<span class=\\'adm-media-preview__broken\\'>❌</span>'" />
+            ${ytThumb ? '<span class="adm-media-preview__play">▶</span>' : ""}
+          </div>`;
+        }).join("") + (urls.length > 6 ? `<div class="adm-media-preview__more">+${urls.length - 6}</div>` : "");
+      };
+
+      textarea.addEventListener("input", updatePreview);
+      updatePreview(); // Initial render
+    });
+  }
+
+  // ===== FORM: Save =====
   async function saveForm(module, index) {
     const items = Array.isArray(moduleData[module]) ? [...moduleData[module]] : [];
     let item = {};
@@ -523,10 +719,9 @@
           content: document.getElementById("form-content").value,
           videos: document.getElementById("form-videos").value.split("\n").map(s => s.trim()).filter(Boolean),
           images: document.getElementById("form-images").value.split("\n").map(s => s.trim()).filter(Boolean),
-          tags: document.getElementById("form-tags").value.split(",").map(s => s.trim()).filter(Boolean),
+          tags: Array.from(document.querySelectorAll("#chips-tags .adm-chip")).map(c => c.dataset.tag),
         };
         break;
-
       case "nhac":
         item = {
           id: index >= 0 ? items[index].id : items.length + 1,
@@ -536,7 +731,6 @@
           duration: document.getElementById("form-duration").value,
         };
         break;
-
       case "tailieu":
         item = {
           id: index >= 0 ? items[index].id : "tl-" + Date.now(),
@@ -548,7 +742,6 @@
           date: new Date().getFullYear().toString(),
         };
         break;
-
       case "kynang":
         item = {
           id: index >= 0 ? items[index].id : "kn-" + Date.now(),
@@ -562,50 +755,39 @@
         break;
     }
 
-    if (!item.title) {
-      showToast("Vui lòng nhập tiêu đề", true);
-      return;
-    }
+    if (!item.title) { showToast("Vui lòng nhập tiêu đề", true); return; }
 
-    if (index >= 0) {
-      items[index] = item;
-    } else {
-      items.unshift(item); // Add to beginning
-    }
-
+    if (index >= 0) items[index] = item; else items.unshift(item);
     moduleData[module] = items;
-    const result = await DataService.save(module, items);
 
-    document.getElementById("admin-form-overlay").classList.remove("visible");
+    const result = await DataService.save(module, items);
+    document.getElementById("adm-form-overlay").classList.remove("visible");
     renderModule(module, items);
 
-    if (result.method === "local") {
-      showToast("Đã lưu tạm! Export JSON để cập nhật server.");
-    } else {
-      showToast("Đã lưu thành công!");
-    }
+    if (result.method === "local") showToast("Đã lưu tạm! Xuất JSON để cập nhật server.");
+    else showToast("Đã lưu thành công! ✓");
   }
 
   // ===== DELETE ITEM =====
   async function deleteItem(module, index) {
-    if (!confirm("Bạn có chắc muốn xóa mục này?")) return;
-
     const items = [...(moduleData[module] || [])];
+    const title = items[index]?.title || items[index]?.name || "mục này";
+    const confirmed = await showConfirm("Xác nhận xóa", `Bạn có chắc muốn xóa "${title}"? Hành động này không thể hoàn tác.`);
+    if (!confirmed) return;
+
     items.splice(index, 1);
     moduleData[module] = items;
-
-    const result = await DataService.save(module, items);
+    await DataService.save(module, items);
     renderModule(module, items);
-    showToast("Đã xóa!");
+    showToast("Đã xóa thành công!");
   }
 
-  // ===== EXPORT ALL DATA =====
+  // ===== EXPORT =====
   async function exportAllData() {
     const allData = {};
     for (const mod of Object.keys(MODULES)) {
       allData[mod] = moduleData[mod] || await DataService.fetch(mod);
     }
-
     const blob = new Blob([JSON.stringify(allData, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -616,114 +798,67 @@
     showToast("Đã xuất dữ liệu!");
   }
 
-  // ===== IMPORT DATA =====
+  // ===== IMPORT =====
   async function importData(e) {
     const file = e.target.files[0];
     if (!file) return;
-
     try {
       const text = await file.text();
       const allData = JSON.parse(text);
-
       for (const [mod, data] of Object.entries(allData)) {
-        if (MODULES[mod]) {
-          moduleData[mod] = data;
-          await DataService.save(mod, data);
-        }
+        if (MODULES[mod]) { moduleData[mod] = data; await DataService.save(mod, data); }
       }
-
       showToast("Đã nhập dữ liệu thành công!");
       await switchModule(currentModule);
-    } catch (err) {
-      showToast("Lỗi đọc file JSON: " + err.message, true);
-    }
-
+    } catch (err) { showToast("Lỗi đọc file: " + err.message, true); }
     e.target.value = "";
   }
 
-  // ===== HELPERS =====
-  function escapeHTML(str) {
-    if (!str) return "";
-    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-  }
-
-  function escapeAttr(str) {
-    if (!str) return "";
-    return str.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
-  }
-
-  function showToast(message, isError = false) {
-    const toast = document.getElementById("admin-toast");
-    if (!toast) return;
-    toast.textContent = message;
-    toast.className = `admin-toast visible${isError ? " error" : ""}`;
-    setTimeout(() => toast.classList.remove("visible"), 3000);
-  }
-
-  // ===== OPEN / CLOSE ADMIN =====
+  // ===== OPEN / CLOSE =====
   function openAdmin() {
     buildAdminHTML();
-    const overlay = document.getElementById("admin-overlay");
-    overlay.classList.add("visible");
+    const root = document.getElementById("adm-root");
+    root.classList.add("visible");
+    document.body.style.overflow = "hidden";
 
-    // Check if already logged in (session)
     const sessionHash = sessionStorage.getItem("gdpt_admin");
     if (sessionHash) {
       adminHash = sessionHash;
       isLoggedIn = true;
-      document.getElementById("admin-login-view").style.display = "none";
-      document.getElementById("admin-dashboard-view").style.display = "flex";
+      document.getElementById("adm-login").style.display = "none";
+      document.getElementById("adm-dashboard").style.display = "flex";
       switchModule("sinhhoat");
     } else {
-      document.getElementById("admin-login-view").style.display = "";
-      document.getElementById("admin-dashboard-view").style.display = "none";
-      setTimeout(() => document.getElementById("admin-password")?.focus(), 300);
+      document.getElementById("adm-login").style.display = "flex";
+      document.getElementById("adm-dashboard").style.display = "none";
+      setTimeout(() => document.getElementById("adm-pwd")?.focus(), 300);
     }
   }
 
   function closeAdmin() {
-    const overlay = document.getElementById("admin-overlay");
-    if (overlay) overlay.classList.remove("visible");
+    const root = document.getElementById("adm-root");
+    if (root) {
+      root.classList.remove("visible");
+      document.body.style.overflow = "";
+    }
   }
 
   // ===== ENTRY POINTS =====
-  // 1. Click logo footer 5 times in 3 seconds
-  let clickCount = 0;
-  let clickTimer = null;
-
-  document.addEventListener("click", (e) => {
-    const footerLogo = e.target.closest(".logo-circle--footer, .footer-logo-section a");
-    if (!footerLogo) return;
-
+  let clickCount = 0, clickTimer = null;
+  document.addEventListener("click", e => {
+    if (!e.target.closest(".logo-circle--footer, .footer-logo-section a")) return;
     clickCount++;
-    if (clickCount === 1) {
-      clickTimer = setTimeout(() => { clickCount = 0; }, 3000);
-    }
-
-    if (clickCount >= 5) {
-      clearTimeout(clickTimer);
-      clickCount = 0;
-      e.preventDefault();
-      openAdmin();
-    }
+    if (clickCount === 1) clickTimer = setTimeout(() => { clickCount = 0; }, 3000);
+    if (clickCount >= 5) { clearTimeout(clickTimer); clickCount = 0; e.preventDefault(); openAdmin(); }
   });
 
-  // 2. Ctrl+Shift+A
-  document.addEventListener("keydown", (e) => {
-    if (e.ctrlKey && e.shiftKey && e.key === "A") {
-      e.preventDefault();
-      openAdmin();
-    }
+  document.addEventListener("keydown", e => {
+    if (e.ctrlKey && e.shiftKey && e.key === "A") { e.preventDefault(); openAdmin(); }
   });
 
-  // 3. ?admin in URL
   if (window.location.search.includes("admin")) {
-    document.addEventListener("DOMContentLoaded", () => {
-      setTimeout(openAdmin, 500);
-    });
+    document.addEventListener("DOMContentLoaded", () => setTimeout(openAdmin, 500));
   }
 
-  // Export openAdmin globally
   window.openGDPTAdmin = openAdmin;
-
 })();
