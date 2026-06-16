@@ -502,7 +502,16 @@
     try {
       const res = await fetch("data/nhac.json");
       if (res.ok) {
-        PLAYLIST = await res.json();
+        const rawData = await res.json();
+        PLAYLIST = rawData.map(track => {
+          let src = track.src || "";
+          const match = src.match(/archive\.org\/details\/([^\/?#]+)/);
+          if (match) {
+            const id = match[1];
+            src = `https://archive.org/download/${id}/${id}.mp3`;
+          }
+          return { ...track, src };
+        });
       }
     } catch (e) {
       console.warn("Could not load nhac.json", e);
