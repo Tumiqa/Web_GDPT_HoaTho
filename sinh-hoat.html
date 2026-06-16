@@ -226,7 +226,11 @@
       let posts = [];
       try {
         const res = await fetch("data/sinhhoat.json");
-        if (res.ok) posts = await res.json();
+        if (res.ok) {
+          posts = await res.json();
+          // Sort posts by year descending
+          posts.sort((a, b) => (parseInt(b.year) || 0) - (parseInt(a.year) || 0));
+        }
       } catch (e) { console.warn("Could not load sinhhoat.json", e); }
 
       const cardGrid = document.getElementById("sh-card-grid");
