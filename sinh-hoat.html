@@ -30,6 +30,7 @@
 
     <!-- Project CSS -->
     <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/hero-effects.css" />
     <link rel="stylesheet" href="css/sinh-hoat.css" />
     <link rel="stylesheet" href="css/admin.css" />
   </head>
@@ -121,8 +122,7 @@
     <main>
       <!-- ===== HERO ===== -->
       <section class="sh-hero" id="sh-hero">
-        <div class="sh-lotus-bg" id="sh-lotus-bg"></div>
-        <div class="sh-hero-content">
+        <div class="sh-hero-content hero-content">
           <h1>📸 Sinh Hoạt &amp; Tư Liệu</h1>
           <p>Lưu giữ những khoảnh khắc đẹp trong các kỳ trại, lễ hội và buổi sinh hoạt hàng tuần của GĐPT Hòa Thọ.</p>
         </div>
@@ -202,26 +202,11 @@
     </footer>
 
     <script src="js/main.js"></script>
+    <script src="js/hero-effects.js"></script>
     <script src="js/admin.js"></script>
 
     <script>
     document.addEventListener("DOMContentLoaded", async () => {
-      /* === Floating lotuses === */
-      const lotusBg = document.getElementById("sh-lotus-bg");
-      if (lotusBg && window.innerWidth >= 768) {
-        const emojis = ["🪷", "🌸", "💮", "🌺"];
-        for (let i = 0; i < 15; i++) {
-          const el = document.createElement("div");
-          el.classList.add("lotus-float");
-          el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-          el.style.left = Math.random() * 100 + "%";
-          el.style.animationDuration = Math.random() * 10 + 10 + "s";
-          el.style.animationDelay = Math.random() * 10 + "s";
-          el.style.fontSize = Math.random() * 1.5 + 1 + "rem";
-          lotusBg.appendChild(el);
-        }
-      }
-
       /* === Load Data === */
       let posts = [];
       try {
