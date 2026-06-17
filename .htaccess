@@ -10,3 +10,18 @@ RewriteRule ^/?(.*)\.html$ /$1 [L,R=301]
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}\.html -f
 RewriteRule ^(.*)$ $1.html [NC,L]
+
+# 3. Cache Control
+<IfModule mod_headers.c>
+    # Các file HTML: Không bao giờ cache (Luôn kiểm tra phiên bản mới)
+    <FilesMatch "\.(html|htm)$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires 0
+    </FilesMatch>
+
+    # Tài nguyên tĩnh (CSS, JS, Fonts, Ảnh): Cache dài hạn (đã có cơ chế cache-busting ?v=...)
+    <FilesMatch "\.(css|js|png|jpg|jpeg|gif|webp|svg|woff|woff2|ttf|eot|mp3|mp4)$">
+        Header set Cache-Control "max-age=31536000, public"
+    </FilesMatch>
+</IfModule>

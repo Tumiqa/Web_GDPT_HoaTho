@@ -3,6 +3,15 @@
    Shared across all pages: preloader, cursor, header, animations
    ============================================================ */
 
+// Fallback: Tự động tắt loading nếu mạng quá chậm sau 7 giây
+setTimeout(() => {
+  document.body.classList.remove("loading");
+  const p = document.getElementById("preloader");
+  if (p) { p.style.opacity = "0"; setTimeout(() => p.style.display = "none", 500); }
+  const ip = document.getElementById("intro-preloader");
+  if (ip) { ip.style.opacity = "0"; setTimeout(() => ip.style.display = "none", 500); }
+}, 7000);
+
 document.addEventListener("DOMContentLoaded", () => {
   // ===== PRELOADER =====
   initPreloader();
