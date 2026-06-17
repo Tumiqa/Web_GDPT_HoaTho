@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="css/style.css?v=1.0.1" />
     <link rel="stylesheet" href="css/hero-effects.css?v=1.0.1" />
     <link rel="stylesheet" href="css/ky-nang.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/semaphore.css?v=1.0.1" />
     <link rel="stylesheet" href="css/sinh-hoat.css?v=1.0.1" />
     <link rel="stylesheet" href="css/admin.css?v=1.0.1" />
   </head>
@@ -74,6 +75,13 @@
             <nav class="kn-nav" id="kn-nav">
               <!-- Rendered by JS -->
             </nav>
+            
+            <div class="kn-tools-widget" style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(138, 176, 151, 0.1);">
+              <button id="open-semaphore-btn" class="kn-nav-item" style="width: 100%; justify-content: center; background: linear-gradient(135deg, rgba(237, 137, 54, 0.15), rgba(221, 107, 32, 0.15)); border: 1px solid rgba(237, 137, 54, 0.3); color: #ed8936;">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+                Công Cụ Semaphore
+              </button>
+            </div>
           </aside>
 
           <!-- Content -->
@@ -97,6 +105,143 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
       <div class="sh-modal" id="kn-modal"></div>
+    </div>
+
+    <!-- ===== SEMAPHORE MODAL ===== -->
+    <div class="sh-modal-backdrop" id="sema-modal-backdrop">
+      <button class="sh-modal__close" id="sema-modal-close" aria-label="Đóng">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="sh-modal" id="sema-modal" style="width: 85vw; max-width: 1000px; height: 90vh; max-height: 850px; border-radius: 20px; padding: 2rem; display: flex; flex-direction: column; align-items: center; justify-content: space-between; background: var(--bg-dark); box-shadow: 0 15px 50px rgba(0,0,0,0.6); overflow: hidden;">
+        <h2 style="margin-bottom: 1rem; text-align: center; font-family: 'Inter', sans-serif; font-size: 1.8rem; flex-shrink: 0;">Công Cụ Học Semaphore</h2>
+        
+        <div class="sema-header-tabs" style="display: flex; gap: 1rem; margin-bottom: 1rem; background: rgba(0,0,0,0.2); padding: 0.5rem; border-radius: 50px; flex-shrink: 0;">
+          <button class="sema-tab active" data-tab="learn">Học Cơ Bản</button>
+          <button class="sema-tab" data-tab="practice">Luyện Tập</button>
+        </div>
+        
+        <div id="flagger">
+          <svg xmlns="http://www.w3.org/2000/svg" width="619" height="507" viewBox="0 0 619 507">
+            <style>
+              .sema-st0{fill:rgba(138, 176, 151, 0.4);} 
+              .sema-st1{fill:#FFFFFF;} 
+              .sema-st2{fill:#ED1C24;} 
+              .sema-st3{fill:#FCEE21;} 
+            </style>
+            <g id="body">
+              <circle class="sema-st0" cx="308.8" cy="178" r="46.8"/>
+              <path class="sema-st0" d="M355.6 484.4h-9l-37.8-116.8L271 484.4h-9V239.3h93.6z"/>
+            </g>
+            <g id="arm-r-wrapper" style="transform-origin: 57.35% 48.7%;">
+              <g id="arm-r" class="arm">
+                <path class="sema-st0" d="M355.9 266.4c-7.7 0-13.9-6.2-13.9-13.9s6.2-13.9 13.9-13.9l116.8-.4c1.1 0 1.3.7 1.3 1 .1 1.2.1 1.3-19 5.7-9.7 2.2-23.3 5.2-40.3 8.9-29 6.3-58.3 12.5-58.6 12.6h-.2z"/>
+                <path class="sema-st1" d="M472.7 239.2c7.1 0-116.8 26.2-116.8 26.2-7.1 0-12.9-5.8-12.9-12.9 0-7.1 5.8-12.9 12.9-12.9l116.8-.4m0-2l-116.8.4c-8.2 0-14.9 6.7-14.9 14.9s6.7 14.9 14.9 14.9h.4c.3-.1 29.6-6.3 58.6-12.6 17-3.7 30.6-6.7 40.3-8.9 5.8-1.3 10.2-2.4 13.3-3.2 1.7-.4 2.9-.8 3.8-1 1.2-.4 2.9-.9 2.7-2.6-.1-.8-.7-1.9-2.3-1.9z"/>
+                <g id="sema-flag-r" style="transform-origin: 472.7px 239.2px;">
+                  <path class="sema-st2" d="M576.1 357.4l.2-118.1-103.6-.1z"/>
+                  <path class="sema-st3" d="M472.5 357.2l103.6.2-103.4-118.2z"/>
+                </g>
+              </g>
+            </g>
+            <g id="arm-l-wrapper" style="transform-origin: 42.16% 48.7%;">
+              <g id="arm-l" class="arm">
+                <path class="sema-st0" d="M261.9 266.4h-.1c-.3-.1-29.6-6.3-58.6-12.6-17-3.7-30.6-6.7-40.3-8.9-19.1-4.4-19.1-4.6-19-5.7 0-.2.2-1 1.3-1l116.8.4c7.7 0 13.9 6.2 13.9 13.9s-6.2 13.9-13.9 13.9h-.1z"/>
+                <path class="sema-st1" d="M145.2 239.2l116.8.4c7.1 0 12.9 5.8 12.9 12.9 0 7.1-5.8 12.9-12.9 12.9 0 0-123.9-26.2-116.8-26.2m0-2c-1.7 0-2.2 1.2-2.3 1.8-.2 1.8 1.5 2.3 2.7 2.6.9.3 2.1.6 3.8 1 3 .8 7.5 1.8 13.3 3.2 9.7 2.2 23.3 5.2 40.3 8.9 29 6.3 58.3 12.5 58.6 12.6h.4c8.2 0 14.9-6.7 14.9-14.9s-6.7-14.9-14.9-14.9l-116.8-.3z"/>
+                <g id="sema-flag-l" style="transform-origin: 145.2px 239.2px;">
+                  <path class="sema-st2" d="M41.8 357.4l-.2-118.1 103.6-.1z"/>
+                  <path class="sema-st3" d="M145.4 357.2l-103.6.2 103.4-118.2z"/>
+                </g>
+              </g>
+            </g>
+          </svg>
+        </div>
+
+        <!-- TAB HỌC CƠ BẢN -->
+        <div id="sema-tab-learn" class="sema-tab-content active" style="width: 100%; display: flex; flex-direction: column; align-items: center; flex-shrink: 0;">
+          <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 1rem; width: 100%; position: relative; z-index: 10;">
+            <p style="color: var(--text-muted); text-align: center; font-size: 1rem; margin: 0;">Bấm các chữ cái bên dưới hoặc gõ phím trên máy tính để xem tín hiệu cờ.</p>
+            <span class="sema-tooltip-wrapper">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sema-info-icon"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              <span class="sema-tooltip-content">
+                <strong>Mẹo học:</strong> Chữ A tới I tương ứng số 1 tới 9 (K = 0).<br>
+                <i style="opacity: 0.8; font-size: 0.85rem;">(Để truyền tin số 1, đánh "Dấu báo số" trước, sau đó đánh cờ chữ A).</i><br>
+                <i style="opacity: 0.8; font-size: 0.85rem; margin-top: 6px; display: block;">* Đối với chữ cái kép (như EE), nhân vật sẽ xoay cờ hoặc thu tay nhịp nhẹ. Thử bấm 2 lần vào 1 chữ nhé!</i>
+              </span>
+            </span>
+          </div>
+          <nav id="sema-content" class="sema-switcher">
+          <ul id="sema-keyboard">
+            <li><a id="sema-a" href="#" data-char="a">A/1</a></li>
+            <li><a id="sema-b" href="#" data-char="b">B/2</a></li>
+            <li><a id="sema-c" href="#" data-char="c">C/3</a></li>
+            <li><a id="sema-d" href="#" data-char="d">D/4</a></li>
+            <li><a id="sema-e" href="#" data-char="e">E/5</a></li>
+            <li><a id="sema-f" href="#" data-char="f">F/6</a></li>
+            <li><a id="sema-g" href="#" data-char="g">G/7</a></li>
+            <li><a id="sema-h" href="#" data-char="h">H/8</a></li>
+            <li><a id="sema-i" href="#" data-char="i">I/9</a></li>
+            <li><a id="sema-j" href="#" data-char="j">J</a></li>
+            <li><a id="sema-k" href="#" data-char="k">K/0</a></li>
+            <li><a id="sema-l" href="#" data-char="l">L</a></li>
+            <li><a id="sema-m" href="#" data-char="m">M</a></li>
+            <li><a id="sema-n" href="#" data-char="n">N</a></li>
+            <li><a id="sema-o" href="#" data-char="o">O</a></li>
+            <li><a id="sema-p" href="#" data-char="p">P</a></li>
+            <li><a id="sema-q" href="#" data-char="q">Q</a></li>
+            <li><a id="sema-r" href="#" data-char="r">R</a></li>
+            <li><a id="sema-s" href="#" data-char="s">S</a></li>
+            <li><a id="sema-t" href="#" data-char="t">T</a></li>
+            <li><a id="sema-u" href="#" data-char="u">U</a></li>
+            <li><a id="sema-v" href="#" data-char="v">V</a></li>
+            <li><a id="sema-w" href="#" data-char="w">W</a></li>
+            <li><a id="sema-x" href="#" data-char="x">X</a></li>
+            <li><a id="sema-y" href="#" data-char="y">Y</a></li>
+            <li><a id="sema-z" href="#" data-char="z">Z</a></li>
+            <li style="flex: 1 1 100%; display: flex; gap: 0.5rem; max-width: 400px; margin: 0 auto;">
+              <a id="sema-num" href="#" data-char="num" style="flex: 1;">Dấu báo số</a>
+              <a id="sema-space" href="#" data-char="space" style="flex: 1;">Dấu cách</a>
+            </li>
+          </ul>
+          </nav>
+        </div>
+        
+        <!-- TAB LUYỆN TẬP -->
+        <div id="sema-tab-practice" class="sema-tab-content" style="display: none; width: 100%; max-width: 500px;">
+          <div class="sema-prac-controls">
+            <div class="sema-prac-group">
+              <label>Độ khó:</label>
+              <select id="sema-prac-level" class="sema-select">
+                <option value="char">Ký tự ngẫu nhiên</option>
+                <option value="word_notone">Từ đơn (Không dấu)</option>
+                <option value="word_telex" selected>Từ đơn (Có dấu Telex)</option>
+                <option value="sentence">Câu ngắn (Có dấu Telex)</option>
+              </select>
+            </div>
+            <div class="sema-prac-group">
+              <label>Tốc độ:</label>
+              <select id="sema-prac-speed" class="sema-select">
+                <option value="2000">Rất Chậm</option>
+                <option value="1500">Chậm</option>
+                <option value="1000" selected>Vừa</option>
+                <option value="600">Nhanh</option>
+                <option value="350">Rất Nhanh</option>
+              </select>
+            </div>
+          </div>
+          
+          <button id="sema-prac-start" class="sema-btn-primary">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Bắt Đầu Truyền Tin
+          </button>
+          
+          <div id="sema-prac-feedback" class="sema-prac-feedback">Nhấn Bắt đầu để nhận đề bài!</div>
+          
+          <div class="sema-prac-input-area">
+            <input type="text" id="sema-prac-input" class="sema-input" placeholder="Gõ đáp án vào đây..." disabled autocomplete="off">
+            <button id="sema-prac-submit" class="sema-btn-secondary" disabled>Gửi</button>
+          </div>
+        </div>
+
+      </div>
     </div>
 
     <!-- ===== IMAGE LIGHTBOX ===== -->
@@ -364,7 +509,323 @@
             }
           }
         });
+
+        /* ====== SEMAPHORE TOOL ====== */
+        const semaBtn = document.getElementById('open-semaphore-btn');
+        const semaModal = document.getElementById('sema-modal-backdrop');
+        const semaClose = document.getElementById('sema-modal-close');
+        const svgFlagger = document.getElementById('flagger');
+        const semaBtns = document.querySelectorAll('#sema-keyboard a');
+
+        function openSema() {
+          semaModal.classList.add('visible');
+          document.body.style.overflow = "hidden";
+        }
+        function closeSema() {
+          semaModal.classList.remove('visible');
+          document.body.style.overflow = "";
+          if (typeof stopSema === 'function') stopSema();
+        }
+
+        if (semaBtn) semaBtn.addEventListener('click', openSema);
+        if (semaClose) semaClose.addEventListener('click', closeSema);
+        if (semaModal) {
+          semaModal.addEventListener('click', (e) => {
+            if (e.target === semaModal) closeSema();
+          });
+        }
+
+        let currentSemaLetter = '';
+
+        function playDoubleLetterAnimation() {
+          const rand = Math.random();
+          if (rand > 0.5) {
+            // Spin 360: Dùng Web Animations API (WAAPI) để đảm bảo animation chạy 100% mượt mà
+            const lFlag = document.getElementById('sema-flag-l');
+            const rFlag = document.getElementById('sema-flag-r');
+            if (lFlag && rFlag) {
+              const spinKeyframes = [
+                { transform: 'rotate(0deg)' },
+                { transform: 'rotate(360deg)' }
+              ];
+              const spinOptions = {
+                duration: 350,
+                easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+                iterations: 1
+              };
+              lFlag.animate(spinKeyframes, spinOptions);
+              rFlag.animate(spinKeyframes, spinOptions);
+            }
+          } else {
+            // Thu nhẹ tay (rớt xuống không gian nghỉ) rồi vung lên lại
+            const char = currentSemaLetter;
+            svgFlagger.removeAttribute("class");
+            svgFlagger.classList.add("sema-space");
+            setTimeout(() => {
+              svgFlagger.removeAttribute("class");
+              svgFlagger.classList.add("sema-" + char);
+            }, 150);
+          }
+        }
+
+        function doSign(char, btnEl) {
+          if (char === currentSemaLetter && char !== 'space' && char !== 'rest') {
+            playDoubleLetterAnimation();
+            // Cập nhật phím ảo để hiệu ứng active được bật nếu dùng phím bấm
+            document.querySelectorAll('#sema-keyboard a.active').forEach(e => e.classList.remove('active'));
+            if (btnEl) btnEl.classList.add('active');
+            return;
+          }
+          currentSemaLetter = char;
+          
+          svgFlagger.removeAttribute("class");
+          svgFlagger.classList.add("sema-" + char);
+          
+          document.querySelectorAll('#sema-keyboard a.active').forEach(e => e.classList.remove('active'));
+          if (btnEl) btnEl.classList.add('active');
+        }
+
+        semaBtns.forEach(btn => {
+          btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            doSign(this.dataset.char, this);
+          });
+        });
+
+        const semaKeys = {
+          32:"space",48:"k",49:"a",50:"b",51:"c",52:"d",53:"e",54:"f",55:"g",56:"h",57:"i",
+          65:"a",66:"b",67:"c",68:"d",69:"e",70:"f",71:"g",72:"h",73:"i",74:"j",75:"k",
+          76:"l",77:"m",78:"n",79:"o",80:"p",81:"q",82:"r",83:"s",84:"t",85:"u",86:"v",
+          87:"w",88:"x",89:"y",90:"z",96:"k",97:"a",98:"b",99:"c",100:"d",101:"e",
+          102:"f",103:"g",104:"h",105:"i"
+        };
+
+        document.addEventListener("keydown", function(e) {
+          if (!semaModal.classList.contains('visible')) return;
+          // Ngăn bắt phím nếu đang gõ trong ô Input luyện tập
+          if (document.activeElement && document.activeElement.id === 'sema-prac-input') return;
+          
+          if (e.key === "Escape") { closeSema(); return; }
+          
+          const char = semaKeys[e.which];
+          if (char) {
+            const btnEl = document.getElementById("sema-" + char);
+            if (btnEl) doSign(char, btnEl);
+          }
+        });
+
+        // --- TABS LOGIC ---
+        const tabBtns = document.querySelectorAll('.sema-tab');
+        const tabContents = document.querySelectorAll('.sema-tab-content');
+        tabBtns.forEach(btn => {
+          btn.addEventListener('click', () => {
+            tabBtns.forEach(b => b.classList.remove('active'));
+            tabContents.forEach(c => c.style.display = 'none');
+            btn.classList.add('active');
+            document.getElementById('sema-tab-' + btn.dataset.tab).style.display = 'block';
+            doSign('space', null); // Reset tay
+            if (typeof stopSema === 'function') stopSema();
+          });
+        });
+
+        // --- PRACTICE MODE LOGIC ---
+        const semaVocab = [
+          { text: "HÒA THỌ", telex: "HOAF THOJ", notone: "HOA THO" },
+          { text: "TINH TẤN", telex: "TINH TAANS", notone: "TINH TAN" },
+          { text: "SEN TRẮNG", telex: "SEN TRAWNGS", notone: "SEN TRANG" },
+          { text: "GIA ĐÌNH", telex: "GIA DDINHF", notone: "GIA DINH" },
+          { text: "PHẬT TỬ", telex: "PHAJT TUWR", notone: "PHAT TU" },
+          { text: "BI TRÍ DŨNG", telex: "BI TRIS DUNGX", notone: "BI TRI DUNG" },
+          { text: "HOẠT ĐỘNG", telex: "HOAJT DDOOJNG", notone: "HOAT DONG" },
+          { text: "MẬT THƯ", telex: "MAJT THUW", notone: "MAT THU" },
+          { text: "KỸ NĂNG", telex: "KYX NAWNG", notone: "KY NANG" },
+          { text: "TRUYỀN TIN", telex: "TRUYEEFN TIN", notone: "TRUYEN TIN" },
+          { text: "NÚT DÂY", telex: "NUTS DAAY", notone: "NUT DAY" },
+          { text: "TRẠI MẠC", telex: "TRAJI MAJC", notone: "TRAI MAC" },
+          { text: "ĐOÀN KẾT", telex: "DDOAFN KEEST", notone: "DOAN KET" },
+          { text: "YÊU THƯƠNG", telex: "YEEU THUWOWNG", notone: "YEU THUONG" },
+          { text: "THANH THIẾU NIÊN", telex: "THANH THIEUS NIEEN", notone: "THANH THIEU NIEN" },
+          { text: "CHÂN THẬT", telex: "CHAAN THAJT", notone: "CHAN THAT" },
+          { text: "KỶ LUẬT", telex: "KYR LUAJT", notone: "KY LUAT" },
+          { text: "ĐỒNG TÂM", telex: "DDOOFNG TAAM", notone: "DONG TAM" },
+          { text: "HƯỚNG ĐẠO", telex: "HUWOWNGS DDAOJ", notone: "HUONG DAO" },
+          { text: "CẤP TÍN", telex: "CAAPS TINS", notone: "CAP TIN" },
+          { text: "CẤP TẬP", telex: "CAAPS TAJP", notone: "CAP TAP" }
+        ];
+
+        let semaQueue = [];
+        let semaInterval = null;
+        let currentAnswer = "";
+        let acceptTelex = "";
+
+        const pracLevel = document.getElementById('sema-prac-level');
+        const pracSpeed = document.getElementById('sema-prac-speed');
+        const pracStart = document.getElementById('sema-prac-start');
+        const pracInput = document.getElementById('sema-prac-input');
+        const pracSubmit = document.getElementById('sema-prac-submit');
+        const pracFeedback = document.getElementById('sema-prac-feedback');
+
+        window.stopSema = function() {
+          if (semaInterval) clearInterval(semaInterval);
+          semaInterval = null;
+          doSign('space', null);
+          if (pracStart) pracStart.disabled = false;
+        };
+
+        if (pracStart) {
+          pracStart.addEventListener('click', () => {
+            stopSema();
+            pracInput.value = "";
+            pracInput.disabled = true;
+            pracSubmit.disabled = true;
+            pracStart.disabled = true;
+            pracFeedback.style.color = "#fbbf24";
+            pracFeedback.innerText = "Chuẩn bị...";
+            document.querySelector('.sema-prac-input-area').classList.remove('active');
+            
+            // Lấy đề bài
+            let lvl = pracLevel.value;
+            let qText = "";
+            let qTelex = "";
+            
+            if (lvl === "char") {
+              const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+              for(let i=0; i<5; i++) {
+                qText += chars.charAt(Math.floor(Math.random() * chars.length));
+              }
+              qTelex = qText;
+            } else if (lvl === "word_notone") {
+              let item = semaVocab[Math.floor(Math.random() * semaVocab.length)];
+              qText = item.notone;
+              qTelex = item.notone;
+            } else if (lvl === "word_telex") {
+              let item = semaVocab[Math.floor(Math.random() * semaVocab.length)];
+              qText = item.text;
+              qTelex = item.telex;
+            } else if (lvl === "sentence") {
+              let item1 = semaVocab[Math.floor(Math.random() * semaVocab.length)];
+              let item2 = semaVocab[Math.floor(Math.random() * semaVocab.length)];
+              qText = item1.text + " " + item2.text;
+              qTelex = item1.telex + " " + item2.telex;
+            }
+            
+            currentAnswer = qText.toUpperCase();
+            acceptTelex = qTelex.toUpperCase();
+            
+            // Xây dựng hàng đợi tín hiệu
+            semaQueue = [];
+            for(let i=0; i<qTelex.length; i++) {
+              let char = qTelex[i].toLowerCase();
+              if (char === " ") {
+                if (semaQueue.length > 0 && semaQueue[semaQueue.length - 1] !== "space") {
+                  semaQueue.push("space");
+                }
+              } else {
+                if (lvl === "char") {
+                  semaQueue.push(char);
+                  semaQueue.push("rest");
+                } else {
+                  // Chữ cái kép sẽ tự động được xử lý hiệu ứng trong doSign()
+                  semaQueue.push(char);
+                }
+              }
+            }
+            if (semaQueue.length === 0 || semaQueue[semaQueue.length - 1] !== "space") {
+              semaQueue.push("space"); // Kết thúc
+            }
+            
+            // Phát tín hiệu
+            let speed = parseInt(pracSpeed.value);
+            let idx = 0;
+            
+            setTimeout(() => {
+              pracFeedback.innerText = "Đang truyền tin... Hãy tập trung!";
+              semaInterval = setInterval(() => {
+                if (idx >= semaQueue.length) {
+                  stopSema();
+                  pracFeedback.innerText = "Đã truyền xong! Hãy nhập đáp án.";
+                  pracInput.disabled = false;
+                  pracSubmit.disabled = false;
+                  document.querySelector('.sema-prac-input-area').classList.add('active');
+                  pracInput.focus();
+                  return;
+                }
+                
+                let sig = semaQueue[idx];
+                if (sig === "rest") {
+                  doSign('space', null);
+                } else {
+                  doSign(sig, null);
+                }
+                idx++;
+                
+              }, speed);
+            }, 1000);
+          });
+        }
+
+        if (pracSubmit) pracSubmit.addEventListener('click', checkAnswer);
+        if (pracInput) {
+          pracInput.addEventListener('keydown', (e) => {
+            if (e.key === "Enter") checkAnswer();
+          });
+        }
+
+        function checkAnswer() {
+          let val = pracInput.value.trim().toUpperCase();
+          if (!val) return;
+          if (val === currentAnswer || val === acceptTelex) {
+            pracFeedback.style.color = "#10b981";
+            pracFeedback.innerHTML = `✅ Chính xác! Đáp án: <strong>${currentAnswer}</strong>`;
+          } else {
+            pracFeedback.style.color = "#ef4444";
+            pracFeedback.innerHTML = `❌ Sai rồi. Bạn gõ: ${val} <br> Đáp án đúng: <strong>${currentAnswer}</strong> (${acceptTelex})`;
+          }
+          pracInput.disabled = true;
+          pracSubmit.disabled = true;
+          document.querySelector('.sema-prac-input-area').classList.remove('active');
+        }
+
       });
     </script>
+    <style>
+      /* Mobile Landscape Hack */
+      @media (max-width: 768px) and (orientation: portrait) {
+        #sema-modal-backdrop {
+          align-items: center !important;
+          justify-content: center !important;
+        }
+        #sema-modal {
+          width: 98vh !important;
+          height: 98vw !important;
+          max-height: none !important;
+          max-width: none !important;
+          transform: rotate(90deg);
+          overflow: hidden !important;
+          padding: 1rem !important;
+          justify-content: space-between !important;
+        }
+        #sema-keyboard a {
+          width: 36px;
+          height: 36px;
+          font-size: 0.85rem;
+        }
+        #flagger {
+          max-width: none !important;
+          margin-bottom: 0.5rem !important;
+        }
+      }
+      @media (max-width: 768px) and (orientation: landscape) {
+        #sema-modal {
+          width: 98vw !important;
+          height: 98vh !important;
+          max-height: none !important;
+          max-width: none !important;
+          padding: 1rem !important;
+          overflow: hidden !important;
+          justify-content: space-between !important;
+        }
+      }
+    </style>
   </body>
 </html>

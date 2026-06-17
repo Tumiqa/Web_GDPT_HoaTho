@@ -27,6 +27,8 @@
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script defer src="https://unpkg.com/lucide@latest"></script>
 
+    <!-- Preload JSON Data -->
+    <link rel="preload" href="data/sinhhoat.json" as="fetch" crossorigin="anonymous" />
 
     <!-- Project CSS -->
     <link rel="stylesheet" href="css/style.css?v=1.0.1" />
@@ -231,6 +233,13 @@
         const m = url.match(/(?:youtu\.be\/|v=|embed\/)([^#&?]{11})/);
         return m ? m[1] : null;
       }
+      function optimizeUrl(url, width = 800) {
+        if (!url || !url.startsWith("http")) return url;
+        if (url.includes("ibb.co") || url.includes("img.youtube.com")) {
+          return `https://wsrv.nl/?url=${encodeURIComponent(url)}&w=${width}&output=webp`;
+        }
+        return url;
+      }
       function getPostThumb(p) {
         if (p.images && p.images.length) return p.images[0];
         if (p.videos && p.videos.length) { const id = getYouTubeId(p.videos[0]); return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : null; }
@@ -246,7 +255,7 @@
         const tags = (post.tags||[]).slice(0,3).map(t => `<span class="sh-tag">${t}</span>`).join("");
         const excerpt = post.content.length > 80 ? post.content.substring(0, 80) + "…" : post.content;
         const thumbEl = thumb
-          ? `<img src="${thumb}" alt="${post.title}" loading="lazy" />`
+          ? `<img src="${optimizeUrl(thumb, 600)}" alt="${post.title}" loading="lazy" />`
           : `<div class="sh-card__thumb-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>`;
 
         return `<div class="sh-card" data-index="${i}" data-year="${post.year}">
@@ -307,15 +316,15 @@
         if (p.videos && p.videos.length) {
           p.videos.forEach((v, vi) => {
             const id = getYouTubeId(v);
-            if (id) h += `<div class="sh-modal__video"><div class="sh-yt-wrapper"><iframe src="https://www.youtube.com/embed/${id}?rel=0&modestbranding=1&playsinline=1" frameborder="0" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" style="position:absolute;top:0;left:0;width:100%;height:100%;border-radius:0.75rem;"></iframe></div></div>`;
+            if (id) h += `<div class="sh-modal__video"><div class="sh-yt-wrapper"><iframe loading="lazy" src="https://www.youtube.com/embed/${id}?rel=0&modestbranding=1&playsinline=1" frameborder="0" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" style="position:absolute;top:0;left:0;width:100%;height:100%;border-radius:0.75rem;"></iframe></div></div>`;
           });
         }
 
         // Gallery
         if (curImages.length) {
-          const thumbs = curImages.map((img, idx) => `<div class="sh-gallery-thumb ${idx === 0 ? "active" : ""}" data-idx="${idx}"><img src="${img}" alt="Ảnh ${idx + 1}" loading="lazy" /></div>`).join("");
+          const thumbs = curImages.map((img, idx) => `<div class="sh-gallery-thumb ${idx === 0 ? "active" : ""}" data-idx="${idx}"><img src="${optimizeUrl(img, 200)}" alt="Ảnh ${idx + 1}" loading="lazy" /></div>`).join("");
           const nav = curImages.length > 1 ? `<button class="sh-gallery-nav sh-gallery-prev" id="sh-gallery-prev" aria-label="Ảnh trước"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button><button class="sh-gallery-nav sh-gallery-next" id="sh-gallery-next" aria-label="Ảnh sau"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button><div class="sh-gallery-counter" id="sh-gallery-counter">1 / ${curImages.length}</div>` : "";
-          h += `<div class="sh-modal__gallery"><div class="sh-modal__gallery-main" id="sh-gallery-main"><img id="sh-gallery-img" src="${curImages[0]}" alt="${p.title}" />${nav}</div>${curImages.length > 1 ? `<div class="sh-gallery-thumbs" id="sh-gallery-thumbs">${thumbs}</div>` : ""}</div>`;
+          h += `<div class="sh-modal__gallery"><div class="sh-modal__gallery-main" id="sh-gallery-main"><img id="sh-gallery-img" src="${optimizeUrl(curImages[0], 1200)}" alt="${p.title}" />${nav}</div>${curImages.length > 1 ? `<div class="sh-gallery-thumbs" id="sh-gallery-thumbs">${thumbs}</div>` : ""}</div>`;
         }
 
         modalEl.innerHTML = h;
@@ -347,7 +356,7 @@
       function setImg(idx) {
         curIdx = idx;
         const img = document.getElementById("sh-gallery-img");
-        if (img) img.src = curImages[idx];
+        if (img) img.src = optimizeUrl(curImages[idx], 1200);
 
         const ctr = document.getElementById("sh-gallery-counter");
         if (ctr) ctr.textContent = `${idx + 1} / ${curImages.length}`;
@@ -385,7 +394,7 @@
 
       function openLightbox(idx) {
         curIdx = idx;
-        lbImg.src = curImages[idx];
+        lbImg.src = optimizeUrl(curImages[idx], 1600);
         lb.classList.add("visible");
         const m = curImages.length > 1;
         lbPrev.style.display = m ? "" : "none";
@@ -401,7 +410,7 @@
         if (n < 0) n = curImages.length - 1;
         if (n >= curImages.length) n = 0;
         curIdx = n;
-        lbImg.src = curImages[n];
+        lbImg.src = optimizeUrl(curImages[n], 1600);
         setImg(n);
       }
 

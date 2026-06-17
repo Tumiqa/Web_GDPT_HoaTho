@@ -1,0 +1,335 @@
+/* ============================================================
+   SEMAPHORE TOOL
+   ============================================================ */
+#flagger {
+  position: relative;
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 1rem;
+}
+
+/* Hào quang phía sau nhân vật */
+#flagger::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, rgba(138, 176, 151, 0.15) 0%, transparent 70%);
+  border-radius: 50%;
+  z-index: -1;
+}
+
+#flagger svg {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  display: block;
+}
+
+#sema-keyboard {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0;
+  list-style: none;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+#sema-keyboard a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-dark);
+  text-decoration: none;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 0.95rem;
+}
+
+#sema-keyboard a:hover {
+  background: rgba(138, 176, 151, 0.2);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  border-color: rgba(138, 176, 151, 0.4);
+  box-shadow: 0 6px 12px rgba(138, 176, 151, 0.15);
+}
+
+#sema-keyboard a.active {
+  background: linear-gradient(135deg, var(--brand-secondary), var(--brand-primary));
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 6px 15px rgba(138, 176, 151, 0.4);
+  transform: scale(1.05);
+}
+
+/* Tooltip Mẹo */
+.sema-tooltip-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: help;
+}
+
+.sema-info-icon {
+  color: #ed8936;
+  transition: transform 0.3s;
+}
+
+.sema-tooltip-wrapper:hover .sema-info-icon {
+  transform: scale(1.1);
+}
+
+.sema-tooltip-content {
+  position: absolute;
+  bottom: 150%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+  border: 1px solid rgba(237, 137, 54, 0.4);
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  width: max-content;
+  max-width: 280px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  pointer-events: none;
+  z-index: 100;
+  text-align: left;
+  line-height: 1.5;
+}
+
+.sema-tooltip-content::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -6px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: rgba(237, 137, 54, 0.4) transparent transparent transparent;
+}
+
+.sema-tooltip-wrapper:hover .sema-tooltip-content {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.sema-tooltip-content strong {
+  color: #ed8936;
+}
+
+/* Semaphore Animations */
+#arm-l, #arm-r {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+#arm-l { transform-origin: 42.16% 48.7%; }
+#arm-r { transform-origin: 57.35% 48.7%; }
+
+.sema-a #arm-r, .sema-b #arm-r, .sema-c #arm-r, .sema-d #arm-l, .sema-d #arm-r, .sema-j #arm-l, .sema-v #arm-l, .sema-num #arm-l { transform: rotate(90deg); }
+.sema-e #arm-l, .sema-f #arm-l, .sema-g #arm-l, .sema-k #arm-r, .sema-p #arm-r, .sema-t #arm-r { transform: rotate(-90deg); }
+.sema-c #arm-l, .sema-g #arm-r, .sema-n #arm-r, .sema-s #arm-r, .sema-t #arm-l, .sema-u #arm-l, .sema-v #arm-r, .sema-x #arm-r, .sema-y #arm-l { transform: rotate(45deg); }
+.sema-a #arm-l, .sema-e #arm-r, .sema-i #arm-l, .sema-k #arm-l, .sema-l #arm-l, .sema-l #arm-r, .sema-m #arm-l, .sema-n #arm-l, .sema-q #arm-r, .sema-u #arm-r, .sema-num #arm-r { transform: rotate(-45deg); }
+.sema-space #arm-l, .sema-z #arm-l { transform: rotateX(180deg) rotate(135deg); }
+.sema-h #arm-r, .sema-space #arm-r, .sema-w #arm-l, .sema-x #arm-l { transform: rotateX(180deg) rotate(-135deg); }
+.sema-i #arm-r, .sema-o #arm-r { transform: rotateX(180deg) rotate(-225deg); }
+/* Add to the bottom of semaphore.css */
+
+/* Tabs */
+.sema-tab {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 8px 24px;
+  border-radius: 50px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.sema-tab.active {
+  background: linear-gradient(135deg, var(--brand-secondary), var(--brand-primary));
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(138, 176, 151, 0.3);
+}
+
+.sema-tab:not(.active):hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Practice Controls */
+.sema-prac-controls {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  justify-content: center;
+}
+
+.sema-prac-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.sema-prac-group label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.sema-select {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.3s;
+  width: 100%;
+}
+
+.sema-select:focus {
+  border-color: var(--brand-primary);
+}
+
+.sema-select option {
+  background: var(--bg-dark);
+  color: #fff;
+}
+
+.sema-btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+  margin-bottom: 1.5rem;
+}
+
+.sema-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+}
+
+.sema-btn-primary:active {
+  transform: translateY(0);
+}
+
+.sema-btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.sema-prac-feedback {
+  text-align: center;
+  font-size: 0.95rem;
+  color: #fbbf24;
+  margin-bottom: 1.5rem;
+  min-height: 24px;
+  font-weight: 500;
+}
+
+.sema-prac-input-area {
+  display: flex;
+  gap: 8px;
+  opacity: 0.5;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.sema-prac-input-area.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sema-input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.sema-input:focus {
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 2px rgba(138, 176, 151, 0.2);
+}
+
+.sema-btn-secondary {
+  padding: 0 24px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.sema-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.sema-btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+/* Add to semaphore.css */
+.sema-spin-anim {
+  animation: semaSpin360 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes semaSpin360 {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
