@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="css/hero-effects.css?v=1.0.1" />
     <link rel="stylesheet" href="css/ky-nang.css?v=1.0.1" />
     <link rel="stylesheet" href="css/semaphore.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/morse.css?v=1.0.0" />
     <link rel="stylesheet" href="css/sinh-hoat.css?v=1.0.1" />
     <link rel="stylesheet" href="css/admin.css?v=1.0.1" />
   </head>
@@ -80,6 +81,10 @@
               <button id="open-semaphore-btn" class="kn-nav-item" style="width: 100%; justify-content: center; background: linear-gradient(135deg, rgba(237, 137, 54, 0.15), rgba(221, 107, 32, 0.15)); border: 1px solid rgba(237, 137, 54, 0.3); color: #ed8936;">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
                 Công Cụ Semaphore
+              </button>
+              <button id="open-morse-btn" class="kn-nav-item" style="width: 100%; justify-content: center; background: linear-gradient(135deg, rgba(66, 153, 225, 0.15), rgba(49, 130, 206, 0.15)); border: 1px solid rgba(66, 153, 225, 0.3); color: #63b3ed; margin-top: 10px;">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/><path d="M19.1 4.9C23 8.8 23 15.2 19.1 19.1"/></svg>
+                Công Cụ Morse
               </button>
             </div>
           </aside>
@@ -241,6 +246,97 @@
           </div>
         </div>
 
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===== MORSE MODAL ===== -->
+    <div class="sh-modal-backdrop" id="morse-modal-backdrop">
+      <button class="sh-modal__close" id="morse-modal-close" aria-label="Đóng">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="sh-modal" id="morse-modal" style="width: 85vw; max-width: 1000px; height: 90vh; max-height: 850px; border-radius: 20px; padding: 2rem; display: flex; flex-direction: column; align-items: center; justify-content: space-between; background: var(--bg-dark); box-shadow: 0 15px 50px rgba(0,0,0,0.6); overflow: hidden;">
+        <h2 style="margin-bottom: 1rem; text-align: center; font-family: 'Inter', sans-serif; font-size: 1.8rem; flex-shrink: 0; color: #63b3ed;">Công Cụ Học Morse</h2>
+        
+        <div class="sema-header-tabs" style="display: flex; gap: 1rem; margin-bottom: 1rem; background: rgba(0,0,0,0.2); padding: 0.5rem; border-radius: 50px; flex-shrink: 0;">
+          <button class="morse-tab active" data-tab="learn">Dịch Thuật</button>
+          <button class="morse-tab" data-tab="practice">Luyện Tập</button>
+        </div>
+        
+        <div id="morse-flagger" style="position: relative; width: 100%; flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 0 auto 1rem;">
+           <div id="morse-beacon" class="morse-beacon-off"></div>
+           <div id="morse-output-display" style="font-size: 3rem; font-weight: bold; letter-spacing: 8px; color: #63b3ed; margin-top: 2rem; text-align: center; min-height: 4rem; text-shadow: 0 0 10px rgba(99, 179, 237, 0.4);"></div>
+           <div id="morse-output-text" style="font-size: 1.5rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center; min-height: 2rem; text-transform: uppercase;"></div>
+        </div>
+
+        <!-- TAB DỊCH THUẬT -->
+        <div id="morse-tab-learn" class="morse-tab-content active" style="width: 100%; display: flex; flex-direction: column; align-items: center; flex-shrink: 0;">
+          <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 1rem; width: 100%; position: relative; z-index: 10;">
+            <p style="color: var(--text-muted); text-align: center; font-size: 1rem; margin: 0;">Nhập văn bản hoặc mã Morse ( . và - ) để dịch và phát tín hiệu.</p>
+            <span class="sema-tooltip-wrapper">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sema-info-icon"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              <span class="sema-tooltip-content">
+                <strong>Ghi chú:</strong> Nhập Tiếng Việt không dấu hoặc có dấu (hệ thống sẽ tự chuyển thành Telex).<br>
+                Nếu nhập Morse, ngăn cách các ký tự bằng khoảng trắng, các từ bằng 1 dấu gạch chéo <code>/</code>.<br>
+                <i style="opacity: 0.8; font-size: 0.85rem; margin-top: 6px; display: block;">* Tốc độ chuẩn: 1 Tít = 1 đơn vị, 1 Tè = 3 đơn vị.</i>
+              </span>
+            </span>
+          </div>
+          <div class="sema-prac-input-area active" style="width: 100%; max-width: 600px; margin-bottom: 1rem;">
+             <textarea id="morse-learn-input" class="sema-input" placeholder="Ví dụ: GIA DINH PHAT TU hoặc --. .. .-" rows="2" style="resize: none;"></textarea>
+          </div>
+          <div class="sema-prac-controls" style="width: 100%; max-width: 600px; justify-content: space-between;">
+             <div class="sema-prac-group">
+                <label>Tốc độ (WPM):</label>
+                <select id="morse-learn-speed" class="sema-select">
+                  <option value="5">Siêu Chậm (5 WPM)</option>
+                  <option value="10">Chậm (10 WPM)</option>
+                  <option value="15" selected>Vừa (15 WPM)</option>
+                  <option value="20">Nhanh (20 WPM)</option>
+                </select>
+             </div>
+             <button id="morse-learn-play" class="sema-btn-primary" style="margin-bottom: 0; flex: 1; margin-left: 1rem; background: linear-gradient(135deg, #4299e1, #3182ce); box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);">Phát Tín Hiệu</button>
+             <button id="morse-learn-stop" class="sema-btn-secondary" style="margin-left: 0.5rem; display: none;">Dừng</button>
+          </div>
+        </div>
+
+        <!-- TAB LUYỆN TẬP -->
+        <div id="morse-tab-practice" class="morse-tab-content" style="display: none; width: 100%; flex-direction: column; align-items: center; flex-shrink: 0;">
+          <div class="sema-prac-controls" style="width: 100%; max-width: 600px;">
+            <div class="sema-prac-group">
+              <label>Độ khó:</label>
+              <select id="morse-prac-level" class="sema-select">
+                <option value="char">Ký tự ngẫu nhiên</option>
+                <option value="word_notone">Từ đơn (Không dấu)</option>
+                <option value="word_telex" selected>Từ đơn (Có dấu Telex)</option>
+                <option value="sentence">Câu ngắn (Có dấu Telex)</option>
+              </select>
+            </div>
+            <div class="sema-prac-group">
+              <label>Tốc độ (WPM):</label>
+              <select id="morse-prac-speed" class="sema-select">
+                <option value="5">Siêu Chậm (5 WPM)</option>
+                <option value="10">Chậm (10 WPM)</option>
+                <option value="15" selected>Vừa (15 WPM)</option>
+                <option value="20">Nhanh (20 WPM)</option>
+                <option value="25">Rất Nhanh (25 WPM)</option>
+              </select>
+            </div>
+          </div>
+          
+          <button id="morse-prac-start" class="sema-btn-primary" style="max-width: 600px; background: linear-gradient(135deg, #4299e1, #3182ce); box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Bắt Đầu Luyện Tập
+          </button>
+          
+          <div id="morse-prac-feedback" class="sema-prac-feedback">Nhấn Bắt đầu để nhận đề bài!</div>
+          
+          <div class="sema-prac-input-area" style="width: 100%; max-width: 600px;">
+            <input type="text" id="morse-prac-input" class="sema-input" placeholder="Gõ đáp án vào đây..." disabled autocomplete="off">
+            <button id="morse-prac-submit" class="sema-btn-primary" style="margin-bottom: 0; background: linear-gradient(135deg, #4299e1, #3182ce);" disabled>Kiểm tra</button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -788,6 +884,7 @@
 
       });
     </script>
+    <script src="js/morse.js?v=1.0.0"></script>
     <style>
       /* Mobile Landscape Hack */
       @media (max-width: 768px) and (orientation: portrait) {

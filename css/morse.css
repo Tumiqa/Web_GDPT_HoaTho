@@ -1,0 +1,81 @@
+/* css/morse.css */
+
+#morse-beacon {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #333 10%, #111 80%);
+  box-shadow: inset 0 0 30px #000, 0 10px 20px rgba(0,0,0,0.8);
+  border: 6px solid #222;
+  transition: background 0.05s, box-shadow 0.05s, border-color 0.05s;
+  margin: 0 auto;
+}
+
+#morse-beacon.morse-beacon-on {
+  background: radial-gradient(circle, #ffffff 10%, #ffd700 80%);
+  box-shadow: 
+    inset 0 0 20px #ffaa00, 
+    0 0 60px 20px rgba(255, 215, 0, 0.8), 
+    0 0 100px rgba(255, 255, 255, 0.6);
+  border-color: #ffd700;
+}
+
+/* Tab logic */
+.morse-tab-content {
+  display: none !important;
+}
+.morse-tab-content.active {
+  display: flex !important;
+}
+
+.morse-tab {
+  background: transparent;
+  border: none;
+  color: #a0aec0;
+  padding: 0.5rem 1.5rem;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+.morse-tab:hover {
+  color: #fff;
+}
+.morse-tab.active {
+  background: rgba(66, 153, 225, 0.2);
+  color: #63b3ed;
+  box-shadow: 0 0 15px rgba(66, 153, 225, 0.3);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) and (orientation: portrait) {
+  #morse-modal {
+    width: 98vh !important;
+    height: 98vw !important;
+    max-height: none !important;
+    max-width: none !important;
+    transform: rotate(90deg);
+    overflow: hidden !important;
+    padding: 1rem !important;
+    justify-content: space-between !important;
+  }
+  #morse-beacon {
+    width: 100px;
+    height: 100px;
+  }
+}
+@media (max-width: 768px) and (orientation: landscape) {
+  #morse-modal {
+    width: 98vw !important;
+    height: 98vh !important;
+    max-height: none !important;
+    max-width: none !important;
+    padding: 1rem !important;
+    overflow: hidden !important;
+    justify-content: space-between !important;
+  }
+  #morse-beacon {
+    width: 100px;
+    height: 100px;
+  }
+}
