@@ -188,6 +188,66 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // BASIC TAB - Keyboard Generation
+  const morseKeyboard = document.getElementById("morse-keyboard");
+  if (morseKeyboard) {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".split('');
+    chars.forEach(c => {
+      let li = document.createElement("li");
+      let a = document.createElement("a");
+      a.href = "#";
+      a.textContent = c;
+      a.dataset.char = c;
+      a.className = "sema-key";
+      
+      // Inline styles matching Semaphore keyboard
+      a.style.display = "flex";
+      a.style.alignItems = "center";
+      a.style.justifyContent = "center";
+      a.style.width = "42px";
+      a.style.height = "42px";
+      a.style.background = "linear-gradient(145deg, #2a2a2a, #1a1a1a)";
+      a.style.border = "1px solid rgba(255,255,255,0.05)";
+      a.style.borderRadius = "12px";
+      a.style.color = "var(--text-light)";
+      a.style.textDecoration = "none";
+      a.style.fontWeight = "bold";
+      a.style.fontSize = "1.1rem";
+      a.style.boxShadow = "4px 4px 10px rgba(0,0,0,0.5), -2px -2px 8px rgba(255,255,255,0.05)";
+      a.style.transition = "all 0.15s ease-out";
+
+      a.addEventListener("mouseover", () => {
+        a.style.transform = "translateY(-3px) scale(1.05)";
+        a.style.background = "linear-gradient(145deg, #3182ce, #2b6cb0)";
+        a.style.color = "#fff";
+        a.style.borderColor = "rgba(99, 179, 237, 0.4)";
+        a.style.boxShadow = "0 8px 15px rgba(49, 130, 206, 0.4)";
+      });
+      a.addEventListener("mouseout", () => {
+        a.style.transform = "none";
+        a.style.background = "linear-gradient(145deg, #2a2a2a, #1a1a1a)";
+        a.style.color = "var(--text-light)";
+        a.style.borderColor = "rgba(255,255,255,0.05)";
+        a.style.boxShadow = "4px 4px 10px rgba(0,0,0,0.5), -2px -2px 8px rgba(255,255,255,0.05)";
+      });
+
+      li.appendChild(a);
+      morseKeyboard.appendChild(li);
+
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        initAudio();
+        stopPlayback();
+        outputDisplay.textContent = c;
+        outputText.textContent = morseCode[c];
+        isPlaying = true;
+        playSequence(morseCode[c], 15, () => {
+          isPlaying = false;
+        });
+      });
+    });
+  }
+
   // TRANSLATE MODE
   const learnInput = document.getElementById("morse-learn-input");
   const learnPlayBtn = document.getElementById("morse-learn-play");
@@ -307,19 +367,36 @@ document.addEventListener("DOMContentLoaded", () => {
     let morseWords = words.map(w => {
       return w.split('').map(c => morseCode[c] || '').filter(Boolean).join(' ');
     });
-    let sequence = morseWords.join(' / ');
+    let mainSequence = morseWords.join(' / ');
 
     isPlaying = true;
     pracStart.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" stroke="none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> Dừng Truyền Tin`;
     
-    playSequence(sequence, parseInt(pracSpeed.value), () => {
-      pracActive = false;
-      pracStart.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg> Phát Lại / Chơi Tiếp`;
-      pracFeedback.textContent = "Đã phát xong! Hãy nhập đáp án của bạn:";
-      pracFeedback.style.color = "#48bb78";
-      pracInput.disabled = false;
-      pracSubmit.disabled = false;
-      pracInput.focus();
+    let speed = parseInt(pracSpeed.value);
+    let fastSpeed = speed + 8; // NW và AR phát nhanh hơn bình thường
+    let nwSeq = "-. .-- / -. .-- / -. .--";
+    let arSeq = ".- .-. / .- .-. / .- .-.";
+
+    playSequence(nwSeq, fastSpeed, () => {
+      if (!isPlaying) return;
+      currentTimeout = setTimeout(() => {
+        if (!isPlaying) return;
+        playSequence(mainSequence, speed, () => {
+          if (!isPlaying) return;
+          currentTimeout = setTimeout(() => {
+            if (!isPlaying) return;
+            playSequence(arSeq, fastSpeed, () => {
+              pracActive = false;
+              pracStart.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg> Phát Lại / Chơi Tiếp`;
+              pracFeedback.textContent = "Đã phát xong! Hãy nhập đáp án của bạn:";
+              pracFeedback.style.color = "#48bb78";
+              pracInput.disabled = false;
+              pracSubmit.disabled = false;
+              pracInput.focus();
+            });
+          }, 1200); // nghỉ 1.2s trước khi kết thúc bằng AR
+        });
+      }, 1200); // nghỉ 1.2s trước khi vào bài chính
     });
   }
 
