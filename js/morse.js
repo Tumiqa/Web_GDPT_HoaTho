@@ -198,55 +198,53 @@ document.addEventListener("DOMContentLoaded", () => {
       a.href = "#";
       a.textContent = c;
       a.dataset.char = c;
-      a.className = "sema-key";
-      
-      // Inline styles matching Semaphore keyboard
-      a.style.display = "flex";
-      a.style.alignItems = "center";
-      a.style.justifyContent = "center";
-      a.style.width = "42px";
-      a.style.height = "42px";
-      a.style.background = "linear-gradient(145deg, #2a2a2a, #1a1a1a)";
-      a.style.border = "1px solid rgba(255,255,255,0.05)";
-      a.style.borderRadius = "12px";
-      a.style.color = "var(--text-light)";
-      a.style.textDecoration = "none";
-      a.style.fontWeight = "bold";
-      a.style.fontSize = "1.1rem";
-      a.style.boxShadow = "4px 4px 10px rgba(0,0,0,0.5), -2px -2px 8px rgba(255,255,255,0.05)";
-      a.style.transition = "all 0.15s ease-out";
-
-      a.addEventListener("mouseover", () => {
-        a.style.transform = "translateY(-3px) scale(1.05)";
-        a.style.background = "linear-gradient(145deg, #3182ce, #2b6cb0)";
-        a.style.color = "#fff";
-        a.style.borderColor = "rgba(99, 179, 237, 0.4)";
-        a.style.boxShadow = "0 8px 15px rgba(49, 130, 206, 0.4)";
-      });
-      a.addEventListener("mouseout", () => {
-        a.style.transform = "none";
-        a.style.background = "linear-gradient(145deg, #2a2a2a, #1a1a1a)";
-        a.style.color = "var(--text-light)";
-        a.style.borderColor = "rgba(255,255,255,0.05)";
-        a.style.boxShadow = "4px 4px 10px rgba(0,0,0,0.5), -2px -2px 8px rgba(255,255,255,0.05)";
-      });
+      a.id = "morse-key-" + c;
 
       li.appendChild(a);
       morseKeyboard.appendChild(li);
 
       a.addEventListener("click", (e) => {
         e.preventDefault();
-        initAudio();
-        stopPlayback();
-        outputDisplay.textContent = c;
-        outputText.textContent = morseCode[c];
-        isPlaying = true;
-        playSequence(morseCode[c], 15, () => {
-          isPlaying = false;
-        });
+        playBasicChar(c, a);
       });
     });
   }
+
+  function playBasicChar(char, btnEl) {
+    initAudio();
+    stopPlayback();
+
+    // Highlight active key
+    morseKeyboard.querySelectorAll("a.active").forEach(el => el.classList.remove("active"));
+    if (btnEl) btnEl.classList.add("active");
+
+    outputDisplay.textContent = char;
+    outputText.textContent = morseCode[char] || "";
+    isPlaying = true;
+    playSequence(morseCode[char] || "", 15, () => {
+      isPlaying = false;
+    });
+  }
+
+  // Keyboard input for Basic tab
+  document.addEventListener("keydown", (e) => {
+    if (!morseModal || !morseModal.classList.contains("visible")) return;
+
+    // Only respond when Basic tab is active
+    const basicTab = document.getElementById("morse-tab-basic");
+    if (!basicTab || !basicTab.classList.contains("active")) return;
+
+    // Don't capture if user is typing in an input/textarea
+    const tag = document.activeElement?.tagName;
+    if (tag === "INPUT" || tag === "TEXTAREA") return;
+
+    let key = e.key.toUpperCase();
+    if (morseCode[key]) {
+      e.preventDefault();
+      let btnEl = document.getElementById("morse-key-" + key);
+      playBasicChar(key, btnEl);
+    }
+  });
 
   // TRANSLATE MODE
   const learnInput = document.getElementById("morse-learn-input");

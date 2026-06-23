@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="css/ky-nang.css?v=1.0.1" />
     <link rel="stylesheet" href="css/semaphore.css?v=1.0.1" />
     <link rel="stylesheet" href="css/morse.css?v=1.0.0" />
+    <link rel="stylesheet" href="css/ciphertools.css?v=1.0.0" />
     <link rel="stylesheet" href="css/sinh-hoat.css?v=1.0.1" />
     <link rel="stylesheet" href="css/admin.css?v=1.0.1" />
   </head>
@@ -86,6 +87,10 @@
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/><path d="M19.1 4.9C23 8.8 23 15.2 19.1 19.1"/></svg>
                 Công Cụ Morse
               </button>
+              <button id="open-cipher-btn" class="kn-nav-item" style="width: 100%; justify-content: center; background: linear-gradient(135deg, rgba(159, 122, 234, 0.15), rgba(128, 90, 213, 0.15)); border: 1px solid rgba(159, 122, 234, 0.3); color: #b794f4; margin-top: 10px;">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Công Cụ Mật Mã
+              </button>
             </div>
           </aside>
 
@@ -118,7 +123,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
       <div class="sh-modal" id="sema-modal" style="width: 85vw; max-width: 1000px; height: 90vh; max-height: 850px; border-radius: 20px; padding: 2rem; display: flex; flex-direction: column; align-items: center; justify-content: space-between; background: var(--bg-dark); box-shadow: 0 15px 50px rgba(0,0,0,0.6); overflow: hidden;">
-        <h2 style="margin-bottom: 1rem; text-align: center; font-family: 'Inter', sans-serif; font-size: 1.8rem; flex-shrink: 0;">Công Cụ Học Semaphore</h2>
+        <h2 style="margin-bottom: 1rem; text-align: center; font-size: 1.8rem; flex-shrink: 0;">Công Cụ Học Semaphore</h2>
         
         <div class="sema-header-tabs" style="display: flex; gap: 1rem; margin-bottom: 1rem; background: rgba(0,0,0,0.2); padding: 0.5rem; border-radius: 50px; flex-shrink: 0;">
           <button class="sema-tab active" data-tab="learn">Học Cơ Bản</button>
@@ -256,19 +261,19 @@
       <button class="sh-modal__close" id="morse-modal-close" aria-label="Đóng">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
-      <div class="sh-modal" id="morse-modal" style="width: 85vw; max-width: 1000px; height: 90vh; max-height: 850px; border-radius: 20px; padding: 2rem; display: flex; flex-direction: column; align-items: center; justify-content: space-between; background: var(--bg-dark); box-shadow: 0 15px 50px rgba(0,0,0,0.6); overflow: hidden;">
-        <h2 style="margin-bottom: 1rem; text-align: center; font-family: 'Inter', sans-serif; font-size: 1.8rem; flex-shrink: 0; color: #63b3ed;">Công Cụ Học Morse</h2>
+      <div class="sh-modal" id="morse-modal" style="width: 85vw; max-width: 1000px; height: 90vh; max-height: 850px; border-radius: 20px; padding: 1.5rem; display: flex; flex-direction: column; align-items: center; background: var(--bg-dark); box-shadow: 0 15px 50px rgba(0,0,0,0.6); overflow: hidden;">
+        <h2 style="margin-bottom: 0.75rem; text-align: center; font-size: 1.8rem; flex-shrink: 0;">Công Cụ Học Morse</h2>
         
-        <div class="sema-header-tabs" style="display: flex; gap: 1rem; margin-bottom: 1rem; background: rgba(0,0,0,0.2); padding: 0.5rem; border-radius: 50px; flex-shrink: 0;">
+        <div class="sema-header-tabs" style="display: flex; gap: 1rem; margin-bottom: 0.75rem; background: rgba(0,0,0,0.2); padding: 0.5rem; border-radius: 50px; flex-shrink: 0;">
           <button class="morse-tab active" data-tab="basic">Học Cơ Bản</button>
           <button class="morse-tab" data-tab="learn">Dịch Thuật</button>
           <button class="morse-tab" data-tab="practice">Luyện Tập</button>
         </div>
         
-        <div id="morse-flagger" style="position: relative; width: 100%; flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 0 auto 1rem;">
+        <div id="morse-flagger">
            <div id="morse-beacon" class="morse-beacon-off"></div>
-           <div id="morse-output-display" style="font-size: 3rem; font-weight: bold; letter-spacing: 8px; color: #63b3ed; margin-top: 2rem; text-align: center; min-height: 4rem; text-shadow: 0 0 10px rgba(99, 179, 237, 0.4);"></div>
-           <div id="morse-output-text" style="font-size: 1.5rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center; min-height: 2rem; text-transform: uppercase;"></div>
+           <div id="morse-output-display" style="font-size: 2.5rem; font-weight: bold; letter-spacing: 6px; color: var(--brand-primary); margin-top: 0.75rem; text-align: center; min-height: 2.5rem; text-shadow: 0 0 10px rgba(138, 176, 151, 0.4);"></div>
+           <div id="morse-output-text" style="font-size: 1.2rem; color: var(--text-muted); margin-top: 0.25rem; text-align: center; min-height: 1.5rem; text-transform: uppercase;"></div>
         </div>
 
         <!-- TAB HỌC CƠ BẢN -->
@@ -307,7 +312,7 @@
                   <option value="20">Nhanh (20 WPM)</option>
                 </select>
              </div>
-             <button id="morse-learn-play" class="sema-btn-primary" style="margin-bottom: 0; flex: 1; margin-left: 1rem; background: linear-gradient(135deg, #4299e1, #3182ce); box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);">Phát Tín Hiệu</button>
+             <button id="morse-learn-play" class="sema-btn-primary" style="margin-bottom: 0; flex: 1; margin-left: 1rem;">Phát Tín Hiệu</button>
              <button id="morse-learn-stop" class="sema-btn-secondary" style="margin-left: 0.5rem; display: none;">Dừng</button>
           </div>
         </div>
@@ -336,7 +341,7 @@
             </div>
           </div>
           
-          <button id="morse-prac-start" class="sema-btn-primary" style="max-width: 600px; background: linear-gradient(135deg, #4299e1, #3182ce); box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);">
+          <button id="morse-prac-start" class="sema-btn-primary" style="max-width: 600px;">
             <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
             Bắt Đầu Luyện Tập
           </button>
@@ -345,9 +350,97 @@
           
           <div class="sema-prac-input-area" style="width: 100%; max-width: 600px;">
             <input type="text" id="morse-prac-input" class="sema-input" placeholder="Gõ đáp án vào đây..." aria-label="Gõ đáp án vào đây" disabled autocomplete="off">
-            <button id="morse-prac-submit" class="sema-btn-primary" style="margin-bottom: 0; background: linear-gradient(135deg, #4299e1, #3182ce);" disabled>Kiểm tra</button>
+            <button id="morse-prac-submit" class="sema-btn-primary" style="margin-bottom: 0;" disabled>Kiểm tra</button>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- ===== CIPHER TOOLS MODAL ===== -->
+    <div class="sh-modal-backdrop" id="cipher-modal-backdrop">
+      <button class="sh-modal__close" id="cipher-modal-close" aria-label="Đóng">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="sh-modal" id="cipher-modal" style="width: 85vw; max-width: 1000px; height: 90vh; max-height: 850px; border-radius: 20px; padding: 1.5rem; display: flex; flex-direction: column; align-items: center; background: var(--bg-dark); box-shadow: 0 15px 50px rgba(0,0,0,0.6); overflow: hidden;">
+        <h2 style="margin-bottom: 0.75rem; text-align: center; font-size: 1.8rem; flex-shrink: 0;">Công Cụ Mật Mã</h2>
+
+        <!-- Màn hình chọn hệ thống -->
+        <div class="cipher-select-screen" id="cipher-select-screen">
+          <p style="color: var(--text-muted); text-align: center; margin-bottom: 0.5rem;">Chọn một hệ thống mật mã để bắt đầu học:</p>
+          <div class="cipher-select-cards">
+            <div class="cipher-card" data-type="dancing">
+              <div class="cipher-card-icon">🕺</div>
+              <div class="cipher-card-title">Hình Nhân Nhảy Múa</div>
+              <div class="cipher-card-desc">Mật mã từ truyện Sherlock Holmes. Mỗi chữ cái là một hình nhân đang nhảy.</div>
+            </div>
+            <div class="cipher-card" data-type="asl">
+              <div class="cipher-card-icon">✋</div>
+              <div class="cipher-card-title">Thủ Ngữ Ngón Tay</div>
+              <div class="cipher-card-desc">Bảng chữ cái ký hiệu ASL. Mỗi chữ cái là một tư thế bàn tay.</div>
+            </div>
+            <div class="cipher-card" data-type="braille">
+              <div class="cipher-card-icon">⠀⠃⠗</div>
+              <div class="cipher-card-title">Mật Mã Braille</div>
+              <div class="cipher-card-desc">Chữ nổi Braille. Mỗi chữ cái là một tổ hợp các chấm nổi.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Màn hình công cụ chi tiết -->
+        <div class="cipher-tool-screen" id="cipher-tool-screen">
+          <button class="cipher-back-btn" id="cipher-back-btn">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            Quay lại
+          </button>
+
+          <h3 id="cipher-tool-title" style="text-align: center; font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--brand-primary);"></h3>
+
+          <div class="sema-header-tabs" style="display: flex; gap: 1rem; margin-bottom: 0.5rem; background: rgba(0,0,0,0.2); padding: 0.5rem; border-radius: 50px; flex-shrink: 0;">
+            <button class="cipher-tab active" data-tab="learn">Học Cơ Bản</button>
+            <button class="cipher-tab" data-tab="practice">Luyện Tập</button>
+          </div>
+
+          <!-- Vùng hiển thị cipher -->
+          <div class="cipher-display-area">
+            <div class="cipher-display-main" id="cipher-display-main"></div>
+            <div class="cipher-display-sub" id="cipher-display-sub"></div>
+          </div>
+
+          <!-- TAB HỌC CƠ BẢN -->
+          <div id="cipher-tab-learn" class="cipher-tab-content active">
+            <p style="color: var(--text-muted); text-align: center; margin-bottom: 0.75rem; font-size: 0.95rem;">Bấm chữ cái hoặc gõ phím trên bàn phím để xem ký hiệu:</p>
+            <nav style="width: 100%; max-width: 600px; display: flex; justify-content: center;">
+              <ul id="cipher-keyboard"></ul>
+            </nav>
+          </div>
+
+          <!-- TAB LUYỆN TẬP -->
+          <div id="cipher-tab-practice" class="cipher-tab-content">
+            <div class="sema-prac-controls" style="width: 100%; max-width: 500px;">
+              <div class="sema-prac-group">
+                <label for="cipher-prac-level">Độ khó:</label>
+                <select id="cipher-prac-level" class="sema-select">
+                  <option value="char">Ký tự ngẫu nhiên</option>
+                  <option value="word" selected>Từ đơn</option>
+                  <option value="sentence">Câu ngắn</option>
+                </select>
+              </div>
+            </div>
+
+            <button id="cipher-prac-start" class="sema-btn-primary" style="max-width: 500px;">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              Bắt Đầu Luyện Tập
+            </button>
+
+            <div id="cipher-prac-feedback" class="sema-prac-feedback">Nhấn Bắt đầu để nhận đề bài!</div>
+
+            <div class="sema-prac-input-area" style="width: 100%; max-width: 500px;">
+              <input type="text" id="cipher-prac-input" class="sema-input" placeholder="Gõ đáp án vào đây..." aria-label="Gõ đáp án vào đây" disabled autocomplete="off">
+              <button id="cipher-prac-submit" class="sema-btn-primary" style="margin-bottom: 0;" disabled>Kiểm tra</button>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -395,6 +488,7 @@
     <script defer src="js/main.js?v=1.0.1"></script>
     <script defer src="js/hero-effects.js?v=1.0.1"></script>
     <script defer src="js/admin.js?v=1.0.1"></script>
+    <script defer src="js/ciphertools.js?v=1.0.0"></script>
     <script>
       document.addEventListener('DOMContentLoaded', async () => {
         let skills = [];

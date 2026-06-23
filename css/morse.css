@@ -1,23 +1,37 @@
 /* css/morse.css */
 
+/* Khu vực đèn Morse - co giãn linh hoạt nhưng đèn luôn tròn và căn giữa */
+#morse-flagger {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 1 1 0;
+  min-height: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
 #morse-beacon {
-  width: 150px;
-  height: 150px;
+  width: 100px;
+  height: 100px;
+  min-width: 100px;
+  min-height: 100px;
   border-radius: 50%;
-  background: radial-gradient(circle, #333 10%, #111 80%);
+  background: radial-gradient(circle, #2a3a2e 10%, #111 80%);
   box-shadow: inset 0 0 30px #000, 0 10px 20px rgba(0,0,0,0.8);
-  border: 6px solid #222;
+  border: 5px solid #1a2b22;
   transition: background 0.05s, box-shadow 0.05s, border-color 0.05s;
-  margin: 0 auto;
+  flex-shrink: 0;
 }
 
 #morse-beacon.morse-beacon-on {
-  background: radial-gradient(circle, #ffffff 10%, #ffd700 80%);
+  background: radial-gradient(circle, #ffffff 10%, #8ab097 70%);
   box-shadow: 
-    inset 0 0 20px #ffaa00, 
-    0 0 60px 20px rgba(255, 215, 0, 0.8), 
-    0 0 100px rgba(255, 255, 255, 0.6);
-  border-color: #ffd700;
+    inset 0 0 20px #5a9a6e, 
+    0 0 60px 20px rgba(138, 176, 151, 0.8), 
+    0 0 100px rgba(138, 176, 151, 0.5);
+  border-color: #8ab097;
 }
 
 /* Tab logic */
@@ -31,20 +45,76 @@
 .morse-tab {
   background: transparent;
   border: none;
-  color: #a0aec0;
-  padding: 0.5rem 1.5rem;
+  color: var(--text-muted);
+  padding: 8px 24px;
   border-radius: 50px;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.95rem;
   cursor: pointer;
-  font-weight: 500;
   transition: all 0.3s;
 }
-.morse-tab:hover {
-  color: #fff;
-}
+
 .morse-tab.active {
-  background: rgba(66, 153, 225, 0.2);
-  color: #63b3ed;
-  box-shadow: 0 0 15px rgba(66, 153, 225, 0.3);
+  background: linear-gradient(135deg, var(--brand-secondary), var(--brand-primary));
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(138, 176, 151, 0.3);
+}
+
+.morse-tab:not(.active):hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Bàn phím Morse - giống 100% style Semaphore keyboard */
+#morse-keyboard {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0;
+  list-style: none;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+#morse-keyboard a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-dark);
+  text-decoration: none;
+  font-weight: 600;
+  font-family: inherit;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 0.95rem;
+}
+
+#morse-keyboard a:hover {
+  background: rgba(138, 176, 151, 0.2);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  border-color: rgba(138, 176, 151, 0.4);
+  box-shadow: 0 6px 12px rgba(138, 176, 151, 0.15);
+}
+
+#morse-keyboard a.active {
+  background: linear-gradient(135deg, var(--brand-secondary), var(--brand-primary));
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 6px 15px rgba(138, 176, 151, 0.4);
+  transform: scale(1.05);
+}
+
+/* Tab content luôn flex-shrink: 0 để không bị bóp */
+.morse-tab-content.active {
+  flex-shrink: 0 !important;
 }
 
 /* Mobile responsive */
@@ -57,11 +127,12 @@
     transform: rotate(90deg);
     overflow: hidden !important;
     padding: 1rem !important;
-    justify-content: space-between !important;
   }
   #morse-beacon {
-    width: 100px;
-    height: 100px;
+    width: 70px;
+    height: 70px;
+    min-width: 70px;
+    min-height: 70px;
   }
 }
 @media (max-width: 768px) and (orientation: landscape) {
@@ -72,10 +143,26 @@
     max-width: none !important;
     padding: 1rem !important;
     overflow: hidden !important;
-    justify-content: space-between !important;
   }
   #morse-beacon {
-    width: 100px;
-    height: 100px;
+    width: 70px;
+    height: 70px;
+    min-width: 70px;
+    min-height: 70px;
   }
+}
+
+/* Ghi đè font chữ cho các thành phần UI trong Morse để đồng bộ với website */
+#morse-modal h2,
+#morse-modal .morse-tab,
+#morse-modal .sema-select,
+#morse-modal .sema-btn-primary,
+#morse-modal .sema-btn-secondary,
+#morse-modal .sema-input,
+#morse-modal .sema-prac-group label,
+#morse-modal .sema-prac-feedback,
+#morse-modal #morse-output-display,
+#morse-modal #morse-output-text,
+#morse-modal p {
+  font-family: inherit !important;
 }

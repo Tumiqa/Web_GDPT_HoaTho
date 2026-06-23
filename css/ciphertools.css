@@ -1,0 +1,402 @@
+/* ============================================================
+   CIPHER TOOLS (Dancing Men / ASL / Braille)
+   ============================================================ */
+
+/* @font-face declarations */
+@font-face {
+  font-family: 'DancingMen';
+  src: url('../fonts/GL-DancingMen.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Gallaudet';
+  src: url('../fonts/Gallaudet.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ===== Màn hình chọn hệ thống ===== */
+.cipher-select-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  flex: 1 1 0;
+  min-height: 0;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem 0;
+}
+
+.cipher-select-cards {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  max-width: 700px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.cipher-card {
+  flex: 1 1 180px;
+  max-width: 220px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(138, 176, 151, 0.15);
+  border-radius: 16px;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.cipher-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  border-color: rgba(138, 176, 151, 0.4);
+  background: rgba(138, 176, 151, 0.08);
+  box-shadow: 0 12px 30px rgba(138, 176, 151, 0.15);
+}
+
+.cipher-card-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--brand-secondary), var(--brand-primary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.cipher-card-title {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #fff;
+}
+
+.cipher-card-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* ===== Màn hình công cụ chi tiết ===== */
+.cipher-tool-screen {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+.cipher-tool-screen.active {
+  display: flex;
+}
+
+.cipher-back-btn {
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-family: inherit;
+  padding: 4px 0;
+  margin-bottom: 0.5rem;
+  transition: color 0.3s;
+}
+
+.cipher-back-btn:hover {
+  color: var(--brand-primary);
+}
+
+/* Tabs giống Semaphore/Morse */
+.cipher-tab {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 8px 24px;
+  border-radius: 50px;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.cipher-tab.active {
+  background: linear-gradient(135deg, var(--brand-secondary), var(--brand-primary));
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(138, 176, 151, 0.3);
+}
+
+.cipher-tab:not(.active):hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Vùng hiển thị cipher */
+.cipher-display-area {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 1 1 0;
+  min-height: 0;
+  width: 100%;
+  overflow: hidden;
+  padding: 0.5rem 0;
+}
+
+.cipher-display-main {
+  font-size: 5rem;
+  line-height: 1;
+  text-align: center;
+  min-height: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  color: var(--brand-primary);
+}
+
+.cipher-display-main.dancing-men-font {
+  font-family: 'DancingMen', sans-serif;
+  font-size: 6rem;
+  color: var(--text-light);
+}
+
+.cipher-display-main.asl-font {
+  font-family: 'Gallaudet', sans-serif;
+  font-size: 6rem;
+  color: var(--text-light);
+}
+
+.cipher-display-main.braille-font {
+  font-size: inherit;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ===== Visual Braille Cell (2×3 grid) ===== */
+.braille-cell-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+}
+
+.braille-cell {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 6px;
+  padding: 10px 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(138, 176, 151, 0.2);
+  border-radius: 10px;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.braille-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all 0.3s ease;
+}
+
+.braille-dot.active {
+  background: var(--brand-primary);
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 8px rgba(138, 176, 151, 0.5), inset 0 0 4px rgba(255,255,255,0.3);
+}
+
+/* Hover reveal: Latin letter */
+.braille-latin {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--brand-primary);
+  font-family: inherit;
+  opacity: 0;
+  transform: scale(0.7);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  pointer-events: none;
+  text-shadow: 0 0 12px rgba(138, 176, 151, 0.5);
+}
+
+.braille-hoverable:hover .braille-cell {
+  opacity: 0.15;
+  transform: scale(0.9);
+}
+
+.braille-hoverable:hover .braille-latin {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Space between words */
+.braille-space {
+  display: inline-block;
+  width: 20px;
+}
+
+.cipher-display-sub {
+  font-size: 1.5rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+  text-align: center;
+  min-height: 2rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+/* Bàn phím cipher */
+#cipher-keyboard {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0;
+  list-style: none;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+#cipher-keyboard a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-dark);
+  text-decoration: none;
+  font-weight: 600;
+  font-family: inherit;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 0.95rem;
+}
+
+#cipher-keyboard a:hover {
+  background: rgba(138, 176, 151, 0.2);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  border-color: rgba(138, 176, 151, 0.4);
+  box-shadow: 0 6px 12px rgba(138, 176, 151, 0.15);
+}
+
+#cipher-keyboard a.active {
+  background: linear-gradient(135deg, var(--brand-secondary), var(--brand-primary));
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 6px 15px rgba(138, 176, 151, 0.4);
+  transform: scale(1.05);
+}
+
+/* Tab content */
+.cipher-tab-content {
+  display: none !important;
+  width: 100%;
+}
+
+.cipher-tab-content.active {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Font overrides */
+#cipher-modal h2,
+#cipher-modal h3,
+#cipher-modal .cipher-tab,
+#cipher-modal .cipher-back-btn,
+#cipher-modal .cipher-card-title,
+#cipher-modal .cipher-card-desc,
+#cipher-modal .sema-select,
+#cipher-modal .sema-btn-primary,
+#cipher-modal .sema-btn-secondary,
+#cipher-modal .sema-input,
+#cipher-modal .sema-prac-group label,
+#cipher-modal .sema-prac-feedback,
+#cipher-modal p {
+  font-family: inherit !important;
+}
+
+/* Override default .sh-modal styles for cipher modal */
+#cipher-modal-backdrop {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#cipher-modal-backdrop .sh-modal {
+  margin: 0;
+  padding: 1.5rem;
+  transform: translateY(30px) scale(0.97);
+}
+
+#cipher-modal-backdrop.visible .sh-modal {
+  transform: translateY(0) scale(1);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .cipher-select-cards {
+    flex-direction: column;
+    align-items: center;
+  }
+  .cipher-card {
+    max-width: 100%;
+    width: 100%;
+  }
+  .cipher-display-main {
+    font-size: 3.5rem;
+  }
+  .cipher-display-main.dancing-men-font,
+  .cipher-display-main.asl-font {
+    font-size: 4rem;
+  }
+  .cipher-display-main.braille-font {
+    gap: 6px;
+  }
+  .braille-dot {
+    width: 10px;
+    height: 10px;
+  }
+  .braille-cell {
+    gap: 4px;
+    padding: 6px 5px;
+    border-radius: 6px;
+  }
+  .braille-latin {
+    font-size: 1.2rem;
+  }
+}
