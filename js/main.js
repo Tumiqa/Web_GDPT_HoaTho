@@ -57,6 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===== MAPBOX =====
   if (document.getElementById("map-container")) {
     initMapbox();
+    initMapMobileToggle();
   }
 
   // ===== HERO SLIDESHOW =====
@@ -648,6 +649,53 @@ async function initMapbox() {
   } catch (error) {
     console.error("Error loading map data:", error);
   }
+}
+
+/* =====================
+   MAP MOBILE TOGGLE
+   Tạo nút toggle danh sách địa điểm trên mobile
+   ===================== */
+function initMapMobileToggle() {
+  if (window.innerWidth > 768) return;
+
+  const sidebarHeader = document.querySelector(".map-sidebar-header");
+  const locationsList = document.querySelector(".locations-list");
+  if (!sidebarHeader || !locationsList) return;
+
+  // Tạo nút toggle
+  const toggleBtn = document.createElement("button");
+  toggleBtn.className = "map-toggle-btn";
+  toggleBtn.innerHTML = `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/>
+    </svg>
+    <span>Xem danh sách đơn vị</span>
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: auto;">
+      <polyline points="6 9 12 15 18 9"/>
+    </svg>
+  `;
+
+  sidebarHeader.after(toggleBtn);
+
+  toggleBtn.addEventListener("click", () => {
+    const isExpanded = locationsList.classList.toggle("expanded");
+    toggleBtn.classList.toggle("active", isExpanded);
+    const label = toggleBtn.querySelector("span");
+    if (label) {
+      label.textContent = isExpanded ? "Ẩn danh sách" : "Xem danh sách đơn vị";
+    }
+  });
+
+  // Khi click vào 1 location item, tự động mở list nếu đang đóng
+  locationsList.addEventListener("click", (e) => {
+    const item = e.target.closest(".location-item");
+    if (item && !locationsList.classList.contains("expanded")) {
+      locationsList.classList.add("expanded");
+      toggleBtn.classList.add("active");
+      const label = toggleBtn.querySelector("span");
+      if (label) label.textContent = "Ẩn danh sách";
+    }
+  });
 }
 
 /* =====================

@@ -237,11 +237,37 @@
 
 @media (max-width: 768px) {
   .tailieu-hero {
-    min-height: 40vh;
-    padding: 7rem 1.5rem 3rem;
+    min-height: 35vh;
+    padding: 6.5rem 1.25rem 2.5rem;
   }
   .tl-filters {
-    padding: 1.5rem 1rem;
+    padding: 1.25rem 1rem;
     top: 60px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
+  .tl-filters::-webkit-scrollbar { display: none; }
+  .tl-filter-btn {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .tl-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .tailieu-hero {
+    min-height: 28vh;
+    padding: 5.5rem 1rem 2rem;
+  }
+  .tailieu-hero h1 { font-size: clamp(1.6rem, 7vw, 2.2rem); }
+  .tailieu-hero p { font-size: 0.9rem; }
+  .tl-filters { padding: 1rem 0.75rem; gap: 0.35rem; }
+  .tl-filter-btn { padding: 0.5rem 1rem; font-size: 0.78rem; }
+  .tl-card { padding: 1.25rem; }
+  .tl-card__title { font-size: 1rem; }
+  .tl-btn { font-size: 0.8rem; padding: 0.5rem 0.75rem; }
 }

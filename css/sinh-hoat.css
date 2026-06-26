@@ -738,7 +738,7 @@
    RESPONSIVE
    ============================================================ */
 @media (max-width: 768px) {
-  .sh-hero { min-height: 35vh; }
+  .sh-hero { min-height: 30vh; }
   .sh-filter-section { padding: 1.5rem 0 0.25rem; }
 
   .sh-modal {
@@ -769,4 +769,23 @@
     width: 56px;
     height: 40px;
   }
+}
+
+@media (max-width: 480px) {
+  .sh-hero { min-height: 25vh; }
+  .sh-hero-content h1 { font-size: clamp(1.6rem, 7vw, 2.2rem); }
+  .sh-hero-content p { font-size: 0.9rem; }
+
+  .sh-card__info { padding: 0.85rem 1rem; }
+  .sh-card__title { font-size: 0.95rem; }
+  .sh-card__excerpt { font-size: 0.78rem; }
+
+  .sh-filter-btn {
+    padding: 0.35rem 0.85rem;
+    font-size: 0.75rem;
+  }
+
+  .sh-modal { margin: 0.5rem auto; }
+  .sh-modal__title { font-size: clamp(1.2rem, 5vw, 1.6rem); }
+  .sh-modal__content { font-size: 0.9rem; line-height: 1.7; }
 }

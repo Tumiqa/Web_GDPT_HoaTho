@@ -117,33 +117,8 @@
   flex-shrink: 0 !important;
 }
 
-/* Mobile responsive */
-@media (max-width: 768px) and (orientation: portrait) {
-  #morse-modal {
-    width: 98vh !important;
-    height: 98vw !important;
-    max-height: none !important;
-    max-width: none !important;
-    transform: rotate(90deg);
-    overflow: hidden !important;
-    padding: 1rem !important;
-  }
-  #morse-beacon {
-    width: 70px;
-    height: 70px;
-    min-width: 70px;
-    min-height: 70px;
-  }
-}
-@media (max-width: 768px) and (orientation: landscape) {
-  #morse-modal {
-    width: 98vw !important;
-    height: 98vh !important;
-    max-height: none !important;
-    max-width: none !important;
-    padding: 1rem !important;
-    overflow: hidden !important;
-  }
+/* Mobile responsive — rotation removed, handled by ky-nang.html inline styles */
+@media (max-width: 768px) {
   #morse-beacon {
     width: 70px;
     height: 70px;
@@ -152,7 +127,6 @@
   }
 }
 
-/* Ghi đè font chữ cho các thành phần UI trong Morse để đồng bộ với website */
 #morse-modal h2,
 #morse-modal .morse-tab,
 #morse-modal .sema-select,
@@ -165,4 +139,25 @@
 #morse-modal #morse-output-text,
 #morse-modal p {
   font-family: inherit !important;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 480px) {
+  #morse-keyboard { gap: 0.35rem; }
+  #morse-keyboard a {
+    width: 38px;
+    height: 38px;
+    font-size: 0.85rem;
+    border-radius: 8px;
+  }
+  .morse-tab {
+    padding: 6px 16px;
+    font-size: 0.85rem;
+  }
+  #morse-beacon {
+    width: 60px;
+    height: 60px;
+    min-width: 60px;
+    min-height: 60px;
+  }
 }

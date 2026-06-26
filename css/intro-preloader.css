@@ -493,25 +493,40 @@
 @media (max-width: 768px) {
   .intro-lotus-main { width: min(65vw, 320px); }
   .intro-logo-main { width: min(28vw, 120px); height: min(28vw, 120px); }
-  .intro-scouts-main { height: min(35vh, 260px); max-width: 95%; }
+  .intro-scouts-main { height: min(32vh, 240px); max-width: 95%; }
   .intro-logo-halo { width: 180px; height: 180px; }
   .intro-logo-glow { width: 230px; height: 230px; }
   .intro-lb { height: 5vh; }
   .intro-typewriter { font-size: clamp(0.9rem, 4vw, 1.3rem); }
+
+  /* FIX: Chuyển org-name sang relative để không đè lên scouts */
   .intro-org-name {
-    font-size: clamp(0.85rem, 3.5vw, 1.3rem);
-    letter-spacing: 0.12em;
+    position: relative;
+    top: auto;
+    margin-top: 12px;
+    font-size: clamp(0.8rem, 3.2vw, 1.2rem);
+    letter-spacing: 0.1em;
   }
+
+  /* Khoảng cách giữa logo group và scouts */
+  .intro-combined-logo {
+    margin-bottom: clamp(8px, 2vh, 20px);
+  }
+
+  #intro-stage-combined {
+    top: 8%;
+    bottom: 12%;
+    padding: 0 1rem;
+  }
+
   .intro-sacred-ring-1 { width: 220px; height: 220px; }
   .intro-sacred-ring-2 { width: 320px; height: 320px; }
   .intro-sacred-ring-3 { width: 420px; height: 420px; }
   .intro-light-rays { width: 450px; height: 450px; }
   .intro-light-burst { width: 400px; height: 400px; }
-  #intro-stage-combined { top: 10%; bottom: 14%; }
-  .intro-combined-logo { margin-bottom: 0; }
   .intro-lotus-text { bottom: -45px; font-size: clamp(0.85rem, 3vw, 1.1rem); }
 
-  /* Ẩn decorative elements trên mobile — giảm lag */
+  /* Ẩn decorative nặng trên mobile — giảm lag */
   .intro-dv { display: none; }
   .intro-corner { width: 25px; height: 25px; }
   .intro-ctl { top: 8%; left: 3%; }
@@ -520,50 +535,62 @@
   .intro-cbr { bottom: 8%; right: 3%; }
 
   /* Sep & typewriter */
-  .intro-sep { bottom: 10%; }
-  .intro-typewriter { bottom: 5%; }
+  .intro-sep { bottom: 9%; }
+  .intro-typewriter { bottom: 4%; }
 }
 
 @media (max-width: 480px) {
-  .intro-lotus-main { width: min(75vw, 260px); }
-  .intro-logo-main { width: min(30vw, 95px); height: min(30vw, 95px); }
-  .intro-scouts-main { height: min(30vh, 210px); max-width: 98%; }
-  .intro-logo-halo { width: 140px; height: 140px; }
-  .intro-logo-glow { width: 180px; height: 180px; }
-  .intro-typewriter {
-    font-size: clamp(0.8rem, 4.5vw, 1.1rem);
-    letter-spacing: 0.04em;
-    max-width: 90vw;
-    text-align: center;
-    white-space: normal;
-    line-height: 1.4;
-  }
+  .intro-lotus-main { width: min(70vw, 240px); }
+  .intro-logo-main { width: min(26vw, 85px); height: min(26vw, 85px); }
+  .intro-scouts-main { height: min(25vh, 190px); max-width: 98%; }
+  .intro-logo-halo { width: 130px; height: 130px; }
+  .intro-logo-glow { width: 160px; height: 160px; }
+
   .intro-org-name {
-    font-size: clamp(0.75rem, 4.2vw, 1.1rem);
-    letter-spacing: 0.08em;
+    font-size: clamp(0.65rem, 3.5vw, 0.95rem);
+    letter-spacing: 0.06em;
     white-space: normal;
     text-align: center;
     max-width: 85vw;
     line-height: 1.3;
+    margin-top: 8px;
   }
-  .intro-combined-logo { margin-bottom: 0; }
-  .intro-sacred-ring-1 { width: 180px; height: 180px; }
-  .intro-sacred-ring-2 { width: 260px; height: 260px; }
+
+  .intro-combined-logo {
+    margin-bottom: clamp(4px, 1.5vh, 12px);
+  }
+
+  #intro-stage-combined {
+    top: 6%;
+    bottom: 10%;
+    padding: 0 0.75rem;
+  }
+
+  .intro-typewriter {
+    font-size: clamp(0.7rem, 4vw, 1rem);
+    letter-spacing: 0.03em;
+    max-width: 90vw;
+    text-align: center;
+    white-space: normal;
+    line-height: 1.4;
+    bottom: 3%;
+  }
+
+  .intro-sacred-ring-1 { width: 170px; height: 170px; }
+  .intro-sacred-ring-2 { width: 240px; height: 240px; }
   .intro-sacred-ring-3 { display: none; }
-  .intro-light-rays { width: 350px; height: 350px; }
-  .intro-light-burst { width: 300px; height: 300px; }
+  .intro-light-rays { width: 300px; height: 300px; }
+  .intro-light-burst { width: 260px; height: 260px; }
   .intro-lotus-text {
-    font-size: clamp(0.75rem, 3.5vw, 1rem);
-    bottom: -35px;
+    font-size: clamp(0.7rem, 3.2vw, 0.9rem);
+    bottom: -30px;
     white-space: normal;
     text-align: center;
     max-width: 80vw;
   }
-  #intro-stage-combined { top: 8%; bottom: 12%; }
-  .intro-sep { bottom: 9%; }
-  .intro-typewriter { bottom: 4%; }
+  .intro-sep { bottom: 7%; }
 
-  /* Ẩn bớt hiệu ứng nặng trên màn hình nhỏ */
+  /* Ẩn bớt hiệu ứng nặng */
   .intro-dh { display: none; }
   .intro-corner { display: none; }
   .intro-scanline { display: none; }
@@ -571,18 +598,23 @@
 }
 
 @media (max-height: 500px) and (orientation: landscape) {
-  .intro-lotus-main { width: min(35vh, 220px); }
-  .intro-logo-main { width: min(16vh, 75px); height: min(16vh, 75px); }
-  .intro-scouts-main { height: min(35vh, 160px); }
+  .intro-lotus-main { width: min(35vh, 200px); }
+  .intro-logo-main { width: min(14vh, 65px); height: min(14vh, 65px); }
+  .intro-scouts-main { height: min(28vh, 140px); }
   .intro-lb { height: 4vh; }
-  .intro-combined-logo { margin-bottom: 0; }
+
   .intro-org-name {
-    font-size: clamp(0.55rem, 1.4vw, 0.75rem);
-    letter-spacing: 0.08em;
+    position: relative;
+    top: auto;
+    margin-top: 6px;
+    font-size: clamp(0.5rem, 1.2vw, 0.7rem);
+    letter-spacing: 0.06em;
   }
-  #intro-stage-combined { top: 10%; bottom: 12%; }
-  .intro-typewriter { font-size: clamp(0.6rem, 1.5vw, 0.9rem); bottom: 3%; }
-  .intro-sep { bottom: 8%; }
+  .intro-combined-logo { margin-bottom: 4px; }
+  #intro-stage-combined { top: 8%; bottom: 10%; }
+  .intro-typewriter { font-size: clamp(0.55rem, 1.4vw, 0.8rem); bottom: 3%; }
+  .intro-sep { bottom: 7%; }
   .intro-sacred-ring-3 { display: none; }
   .intro-dh, .intro-dv, .intro-corner { display: none; }
 }
+

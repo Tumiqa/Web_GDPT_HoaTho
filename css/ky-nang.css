@@ -346,27 +346,104 @@
   .kn-sidebar {
     width: 100%;
     position: static;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
   }
   .kn-nav {
     flex-direction: row;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 0.4rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 0.25rem;
   }
+  .kn-nav::-webkit-scrollbar { display: none; }
   .kn-nav-item {
-    flex: 1 1 calc(50% - 0.5rem);
+    flex: 0 0 auto;
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    border-radius: 50px;
   }
 }
 
 @media (max-width: 768px) {
   .kynang-hero {
-    min-height: 40vh;
-    padding: 7rem 1.5rem 3rem;
+    min-height: 35vh;
+    padding: 6.5rem 1.25rem 2.5rem;
+  }
+  .kn-sidebar {
+    padding: 1rem;
+    border-radius: 0.75rem;
+  }
+  .kn-sidebar h3 {
+    font-size: 1rem;
+    margin-bottom: 0.6rem;
+    padding-bottom: 0.5rem;
   }
   .kn-nav-item {
-    flex: 1 1 100%;
+    padding: 0.5rem 0.85rem;
+    font-size: 0.8rem;
   }
   .kn-article {
-    padding: 1.5rem;
+    padding: 1.25rem;
+  }
+  .kn-article__title {
+    font-size: 1.15rem;
+  }
+
+  /* Tools widget: grid 3 cột compact */
+  .kn-tools-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    margin-top: 1rem !important;
+    padding-top: 1rem !important;
+  }
+  .kn-tools-grid .kn-nav-item {
+    flex: unset;
+    width: 100% !important;
+    padding: 0.6rem 0.5rem !important;
+    font-size: 0.72rem !important;
+    flex-direction: column;
+    gap: 4px;
+    text-align: center;
+    justify-content: center !important;
+    border-radius: 0.6rem;
+    white-space: normal;
+    line-height: 1.2;
+    margin-top: 0 !important;
+  }
+  .kn-tools-grid .kn-nav-item svg {
+    margin-right: 0 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .kynang-hero {
+    min-height: 30vh;
+    padding: 5.5rem 1rem 2rem;
+  }
+  .kynang-hero h1 { font-size: clamp(1.6rem, 7vw, 2.2rem); }
+  .kynang-hero p { font-size: 0.9rem; }
+  .kn-container { padding: 2rem 0 3rem; }
+  .kn-article {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  .kn-article__title { font-size: 1.05rem; }
+  .kn-btn-readmore {
+    align-self: flex-end;
+    width: 40px;
+    height: 40px;
+  }
+
+  /* Tools grid giảm cỡ thêm */
+  .kn-tools-grid .kn-nav-item {
+    padding: 0.5rem 0.35rem !important;
+    font-size: 0.68rem !important;
   }
 }
 

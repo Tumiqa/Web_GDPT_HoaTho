@@ -17,6 +17,10 @@
   --container-padding: 3rem;
   --card-radius: 1rem;
 
+  /* Responsive Spacing (overridden by media queries) */
+  --section-padding-mobile: 3rem;
+  --container-padding-mobile: 1rem;
+
   /* Transitions */
   --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-bounce: cubic-bezier(0.22, 1, 0.36, 1);
@@ -100,6 +104,10 @@ p {
   line-height: 1.8;
   max-width: 65ch;
   color: var(--text-dark);
+}
+
+@media (max-width: 768px) {
+  p { max-width: none; }
 }
 
 /* ===== LAYOUT ===== */
@@ -1275,114 +1283,193 @@ footer {
   transform: scale(1);
 }
 
-/* ===== RESPONSIVE ===== */
+/* ============================================================
+   RESPONSIVE SYSTEM — Breakpoints: 1024 / 768 / 480
+   Nền tảng responsive chuẩn cho toàn hệ thống
+   ============================================================ */
+
+/* ───── ≤1024px — Tablet / Laptop nhỏ ───── */
 @media (max-width: 1024px) {
   .grid-4 { grid-template-columns: repeat(2, 1fr); }
   .grid-3 { grid-template-columns: repeat(2, 1fr); }
 }
 
+/* ───── ≤768px — Mobile / Tablet dọc ───── */
 @media (max-width: 768px) {
   :root {
-    --section-padding: 4rem;
-    --container-padding: 1.25rem;
+    --section-padding: 3.5rem;
+    --container-padding: 1rem;
   }
 
+  /* --- Header --- */
+  .desktop-nav { display: none !important; }
+  .mobile-menu-btn {
+    display: block !important;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+  }
+
+  /* --- Hero --- */
   .hero-title {
-    font-size: clamp(2.2rem, 10vw, 3.5rem);
+    font-size: clamp(2rem, 9vw, 3rem);
     text-shadow: 0 0 20px rgba(138, 176, 151, 0.15);
   }
-
+  .hero-motto { font-size: clamp(0.9rem, 3.5vw, 1.1rem); }
+  .hero-cta { padding: 12px 24px; font-size: 0.85rem; }
   .hero-particle-layer,
-  .scroll-indicator-line {
-    display: none;
-  }
+  .scroll-indicator-line,
+  .scroll-indicator { display: none; }
 
+  /* --- Grids → Single Column --- */
   .grid-2,
   .grid-3,
-  .grid-4 {
-    grid-template-columns: 1fr;
-  }
+  .grid-4 { grid-template-columns: 1fr; }
+  .highlights-grid { grid-template-columns: 1fr; }
 
-  .highlights-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .about-stats {
-    gap: 0.75rem;
-  }
-
+  /* --- About Section --- */
+  .about-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
+  .about-stats { gap: 0.75rem; }
   .about-stat-number { font-size: 1.3rem; }
   .about-stat-label { font-size: 0.6rem; letter-spacing: 1px; }
   .about-tagline { font-size: 1rem; }
-
   .about-image-glow,
-  .about-image-corner {
-    display: none;
+  .about-image-corner { display: none; }
+  .about-image-3d-inner {
+    height: auto !important;
+  }
+  .about-image-3d-inner img {
+    width: 100% !important;
+    height: auto !important;
+    object-fit: contain !important;
   }
 
-  .card-overlay img {
-    height: 250px;
+  /* --- Cards --- */
+  .card-overlay img { height: 250px; }
+  .highlight-card { padding: 1.25rem; }
+
+  /* --- Map — FLIP ORDER: map lên trước, sidebar xuống dưới --- */
+  .map-layout {
+    flex-direction: column !important;
+  }
+  .map-container-wrapper {
+    order: 1;
+    min-height: 350px;
+    height: 350px;
+  }
+  .map-sidebar {
+    order: 2;
+    padding: 1.25rem;
+  }
+  .map-sidebar-header h3 { font-size: 1.15rem; }
+  .map-sidebar-header p { font-size: 0.82rem; margin-bottom: 1rem; }
+
+  /* Locations list — collapsible mặc định trên mobile */
+  .locations-list {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    padding-right: 0;
+  }
+  .locations-list.expanded {
+    max-height: 250px;
+    overflow-y: auto;
+    padding-right: 6px;
   }
 
-  .footer-bottom {
-    flex-direction: column;
-  }
-
-  #back-to-top {
-    bottom: 1rem;
-    right: 1rem;
-    width: 3rem;
-    height: 3rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .hero-cta {
-    padding: 14px 28px;
+  /* Nút toggle danh sách (được tạo bởi JS) */
+  .map-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 0.65rem 1rem;
+    margin-top: 0.5rem;
+    background: rgba(138, 176, 151, 0.08);
+    border: 1px solid rgba(138, 176, 151, 0.2);
+    border-radius: 0.6rem;
+    color: var(--brand-primary);
+    font-family: inherit;
     font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .map-toggle-btn:hover {
+    background: rgba(138, 176, 151, 0.15);
+    border-color: rgba(138, 176, 151, 0.35);
+  }
+  .map-toggle-btn svg {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.3s ease;
+  }
+  .map-toggle-btn.active svg {
+    transform: rotate(180deg);
   }
 
-  .highlight-card {
-    padding: 1.5rem;
+  /* --- Compass — Sizes + Text nhỏ hơn, không tràn --- */
+  .compass-wrapper { min-height: 350px; padding: 1rem; }
+  .compass-ring {
+    width: 85vw;
+    max-width: 300px;
+    height: 85vw;
+    max-height: 300px;
   }
-}
+  .compass-center {
+    width: 25vw;
+    max-width: 100px;
+    height: 25vw;
+    max-height: 100px;
+  }
+  .compass-center-text {
+    font-size: clamp(0.8rem, 4vw, 1.2rem);
+  }
+  .compass-point {
+    width: 20vw;
+    max-width: 80px;
+    height: 20vw;
+    max-height: 80px;
+    margin-top: calc(-10vw);
+    margin-left: calc(-10vw);
+  }
+  .compass-point-icon {
+    width: 10vw;
+    max-width: 40px;
+    height: 10vw;
+    max-height: 40px;
+  }
+  .compass-point-text {
+    font-size: 0.65rem;
+    white-space: normal;
+    line-height: 1.15;
+    max-width: 60px;
+    text-align: center;
+  }
+  .compass-content-card { padding: 1.5rem; }
+  .compass-content-card h3 { font-size: 1.5rem; }
 
-/* ===== RESPONSIVE NAV (centralized from inline styles) ===== */
-/* Mobile-first: nav hidden by default, shown on desktop */
-.desktop-nav { display: none; }
-
-@media (min-width: 769px) {
-  .desktop-nav { display: block !important; }
-  .mobile-menu-btn { display: none !important; }
-}
-
-@media (max-width: 768px) {
-  .desktop-nav { display: none !important; }
-  .mobile-menu-btn { display: block !important; background: none; border: none; cursor: pointer; padding: 8px; }
-  .about-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
-
-  /* Hero mobile */
-  .hero-motto { font-size: clamp(0.9rem, 3.5vw, 1.1rem); }
-  .hero-cta { padding: 12px 24px; font-size: 0.85rem; }
-  .scroll-indicator { display: none; }
-
-  /* About image tối ưu */
-  .about-image-3d-inner { height: 280px !important; }
-
-  /* Footer mobile */
+  /* --- Footer --- */
+  .footer-bottom { flex-direction: column; }
   .footer-links {
     flex-wrap: wrap !important;
     justify-content: center !important;
     gap: 0.75rem !important;
   }
   .footer-links a { font-size: 0.82rem; }
+  .footer-content { padding: 3rem 0 1.5rem; }
 
-  /* Map mobile */
-  .map-sidebar { padding: 1.25rem; }
-  .map-sidebar-header h3 { font-size: 1.2rem; }
-  .locations-list { max-height: 200px; }
+  /* --- Back to Top --- */
+  #back-to-top {
+    bottom: 1rem;
+    right: 1rem;
+    width: 3rem;
+    height: 3rem;
+  }
 
-  /* Touch targets — tất cả button tối thiểu 44px */
+  /* --- Touch targets — tối thiểu 44px --- */
   button, .nav-link-mobile, a.nav-link {
     min-height: 44px;
   }
@@ -1390,6 +1477,117 @@ footer {
     padding: 0.75rem 1.25rem;
     font-size: 0.95rem;
   }
+}
+
+/* ───── ≤480px — Điện thoại nhỏ ───── */
+@media (max-width: 480px) {
+  :root {
+    --container-padding: 0.75rem;
+  }
+
+  /* --- Header: Ẩn logo text, chỉ hiện icon --- */
+  .logo-text { display: none; }
+
+  /* --- Hero: CTA full-width, sizes nhỏ hơn --- */
+  .hero-title { font-size: clamp(1.8rem, 8.5vw, 2.5rem); }
+  .hero-motto { font-size: 0.85rem; }
+  .hero-cta {
+    width: 100%;
+    justify-content: center;
+    padding: 14px 20px;
+    font-size: 0.85rem;
+  }
+
+  /* --- About Section --- */
+  .about-image-3d-inner {
+    height: auto !important;
+  }
+  .about-tagline { font-size: 0.9rem; }
+  .about-stat-number { font-size: 1.1rem; }
+  .about-stat-label { font-size: 0.55rem; letter-spacing: 0.5px; }
+
+  /* --- Highlight Cards --- */
+  .highlight-card { padding: 1.25rem; }
+  .highlight-icon { width: 52px; height: 52px; }
+  .highlight-icon svg { width: 22px; height: 22px; }
+  .highlight-btn { width: 100%; justify-content: center; }
+
+  /* --- Compass: Ẩn text, chỉ hiện icon --- */
+  .compass-wrapper { min-height: 300px; padding: 0.75rem; }
+  .compass-point-text { display: none; }
+  .compass-ring {
+    width: 75vw !important;
+    max-width: 260px !important;
+    height: 75vw !important;
+    max-height: 260px !important;
+  }
+  .compass-center {
+    width: 22vw !important;
+    max-width: 85px !important;
+    height: 22vw !important;
+    max-height: 85px !important;
+  }
+  .compass-point {
+    width: 16vw !important;
+    max-width: 65px !important;
+    height: 16vw !important;
+    max-height: 65px !important;
+    margin-top: calc(-8vw) !important;
+    margin-left: calc(-8vw) !important;
+  }
+  .compass-point-icon {
+    width: 9vw !important;
+    max-width: 36px !important;
+    height: 9vw !important;
+    max-height: 36px !important;
+    margin-bottom: 0;
+  }
+  .compass-content-card { padding: 1.25rem; }
+  .compass-content-card h3 { font-size: 1.3rem; }
+
+  /* --- Map --- */
+  .map-container-wrapper { min-height: 300px; height: 300px; }
+  .map-sidebar { padding: 1rem; }
+  .map-sidebar-header h3 { font-size: 1.05rem; }
+  .location-item { padding: 0.75rem; }
+  .location-title { font-size: 0.95rem; }
+  .location-address { font-size: 0.78rem; }
+
+  /* --- Footer --- */
+  .footer-content { padding: 2.5rem 0 1.5rem; }
+  .footer-links { gap: 0.5rem !important; }
+  .footer-links a { font-size: 0.78rem; }
+  .logo-circle--footer { width: 70px; height: 70px; }
+  .footer-logo-section .logo-text { display: block; font-size: 1.2rem; }
+
+  /* --- Back to Top --- */
+  #back-to-top {
+    width: 2.75rem;
+    height: 2.75rem;
+    bottom: 0.75rem;
+    right: 0.75rem;
+  }
+  #back-to-top svg { width: 1.25rem; height: 1.25rem; }
+}
+
+/* ===== RESPONSIVE NAV ===== */
+/* Mobile-first: nav hidden by default, shown on desktop */
+.desktop-nav { display: none; }
+.map-toggle-btn { display: none; } /* Hidden on desktop, shown in ≤768px */
+
+@media (min-width: 769px) {
+  .desktop-nav { display: block !important; }
+  .mobile-menu-btn { display: none !important; }
+}
+
+/* ===== UTILITY RESPONSIVE CLASSES (cho phát triển tương lai) ===== */
+@media (max-width: 768px) {
+  .mobile-hide { display: none !important; }
+  .mobile-full-width { width: 100% !important; }
+  .mobile-text-center { text-align: center !important; }
+}
+@media (min-width: 769px) {
+  .mobile-only { display: none !important; }
 }
 
 .hidden { display: none !important; }
@@ -1608,50 +1806,7 @@ footer {
   to { transform: rotate(-360deg); }
 }
 
-@media (max-width: 768px) {
-  .compass-wrapper {
-    min-height: 400px;
-    padding: 1rem;
-  }
-  .compass-ring {
-    width: 85vw;
-    max-width: 300px;
-    height: 85vw;
-    max-height: 300px;
-  }
-  .compass-center {
-    width: 25vw;
-    max-width: 100px;
-    height: 25vw;
-    max-height: 100px;
-  }
-  .compass-center-text {
-    font-size: clamp(0.8rem, 4vw, 1.2rem);
-  }
-  .compass-point {
-    width: 20vw;
-    max-width: 80px;
-    height: 20vw;
-    max-height: 80px;
-    margin-top: calc(-10vw); /* Tự căn giữa theo kích thước */
-    margin-left: calc(-10vw);
-  }
-  .compass-point-icon {
-    width: 10vw;
-    max-width: 40px;
-    height: 10vw;
-    max-height: 40px;
-  }
-  .compass-point-text {
-    font-size: 0.75rem;
-  }
-  .compass-content-card {
-    padding: 1.5rem;
-  }
-  .compass-content-card h3 {
-    font-size: 1.5rem;
-  }
-}
+/* Compass responsive rules are now centralized in the RESPONSIVE SYSTEM section above */
 
 /* ===== BẢN ĐỒ MAPBOX ===== */
 .map-layout {
