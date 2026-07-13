@@ -13,5 +13,16 @@ desktop.ini
 # Temp files
 *.tmp
 *.swp
-*.zip  
- 
+*.zip
+
+# Auth database (sensitive — never commit)
+data/auth.db
+data/auth.db-wal
+data/auth.db-shm
+
+# Backups
+data/backups/
+
+# Python cache
+__pycache__/
+*.pyc

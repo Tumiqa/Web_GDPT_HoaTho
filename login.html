@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Đăng Nhập — GĐPT Hòa Thọ</title>
+    <link rel="icon" type="image/png" href="images/logo.png" />
+
+    <!-- SEO -->
+    <meta name="description" content="Đăng nhập hệ thống quản trị GĐPT Hòa Thọ" />
+    <meta name="robots" content="noindex, nofollow" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Lucide Icons -->
+    <script defer src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Login CSS -->
+    <link rel="stylesheet" href="css/login.css?v=1.0.0" />
+  </head>
+
+  <body>
+    <!-- Animated Background -->
+    <div class="login-bg">
+      <div class="login-bg__gradient"></div>
+      <div class="login-bg__orb login-bg__orb--1"></div>
+      <div class="login-bg__orb login-bg__orb--2"></div>
+      <div class="login-bg__orb login-bg__orb--3"></div>
+      <div class="login-bg__grid"></div>
+    </div>
+
+    <!-- Login Container -->
+    <main class="login-container" id="login-main">
+      <!-- Back link -->
+      <a href="/" class="login-back" id="login-back-link">
+        <i data-lucide="arrow-left"></i>
+        <span>Trang chủ</span>
+      </a>
+
+      <!-- Login Card -->
+      <div class="login-card" id="login-card">
+        <!-- Logo -->
+        <div class="login-card__logo">
+          <img src="images/logo.png" alt="GĐPT Hòa Thọ" width="72" height="72" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div class="login-card__logo-fallback" style="display:none;">🪷</div>
+        </div>
+
+        <!-- Header -->
+        <div class="login-card__header">
+          <h1>Đăng Nhập</h1>
+          <p>Hệ thống quản trị GĐPT Hòa Thọ</p>
+        </div>
+
+        <!-- Form -->
+        <form class="login-form" id="login-form" autocomplete="on">
+          <!-- Username -->
+          <div class="login-field" id="field-username">
+            <label for="login-username">
+              <i data-lucide="user"></i>
+              <span>Tên đăng nhập</span>
+            </label>
+            <div class="login-field__input-wrap">
+              <input
+                type="text"
+                id="login-username"
+                name="username"
+                placeholder="Nhập tên đăng nhập..."
+                autocomplete="username"
+                required
+                autofocus
+              />
+            </div>
+          </div>
+
+          <!-- Password -->
+          <div class="login-field" id="field-password">
+            <label for="login-password">
+              <i data-lucide="lock"></i>
+              <span>Mật khẩu</span>
+            </label>
+            <div class="login-field__input-wrap">
+              <input
+                type="password"
+                id="login-password"
+                name="password"
+                placeholder="Nhập mật khẩu..."
+                autocomplete="current-password"
+                required
+              />
+              <button type="button" class="login-field__toggle-pw" id="toggle-password" aria-label="Hiện/ẩn mật khẩu">
+                <i data-lucide="eye" class="icon-show"></i>
+                <i data-lucide="eye-off" class="icon-hide" style="display:none;"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Error Message -->
+          <div class="login-error" id="login-error" role="alert" aria-live="polite"></div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="login-btn" id="login-btn">
+            <span class="login-btn__text">Đăng nhập</span>
+            <span class="login-btn__loading" style="display:none;">
+              <svg class="login-btn__spinner" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="31.4" stroke-dashoffset="10" stroke-linecap="round"></circle>
+              </svg>
+              <span>Đang xử lý...</span>
+            </span>
+            <i data-lucide="log-in" class="login-btn__icon"></i>
+          </button>
+        </form>
+
+        <!-- Footer -->
+        <div class="login-card__footer">
+          <p>Bi · Trí · Dũng</p>
+        </div>
+      </div>
+
+      <!-- Security badge -->
+      <div class="login-security">
+        <i data-lucide="shield-check"></i>
+        <span>Kết nối được bảo mật</span>
+      </div>
+    </main>
+
+    <!-- Login JS -->
+    <script src="js/login.js?v=1.0.0"></script>
+  </body>
+</html>

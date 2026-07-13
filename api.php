@@ -1,13 +1,17 @@
 <?php
 /* ============================================================
-   GĐPT HÒA THỌ — API Backend v2.0
+   GĐPT HÒA THỌ — API Backend v3.0
    Đọc/ghi JSON data files + auto backup
+   Auth: Session-based (backward-compatible with X-Admin-Token)
    ============================================================ */
+
+require_once __DIR__ . '/auth_helpers.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, X-Admin-Token');
+header('Access-Control-Allow-Credentials: true');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(204);
@@ -29,23 +33,49 @@ if (!$module || !in_array($module, $ALLOWED_MODULES)) {
 
 $filePath = $DATA_DIR . $module . '.json';
 
-// ===== GET: Read data =====
+// ===== GET: Read data (Public — no auth required) =====
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (!file_exists($filePath)) { echo json_encode([]); exit; }
     echo file_get_contents($filePath);
     exit;
 }
 
-// ===== POST: Write data =====
+// ===== POST: Write data (Auth required — admin role only) =====
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $token = isset($_SERVER['HTTP_X_ADMIN_TOKEN']) ? $_SERVER['HTTP_X_ADMIN_TOKEN'] : '';
-    if (!$token) { http_response_code(401); echo json_encode(['error' => 'Missing X-Admin-Token']); exit; }
 
-    if (!file_exists($CONFIG_FILE)) { http_response_code(500); echo json_encode(['error' => 'Config not found']); exit; }
-    $config = json_decode(file_get_contents($CONFIG_FILE), true);
-    $expectedHash = isset($config['adminPasswordHash']) ? $config['adminPasswordHash'] : '';
+    // --- AUTH CHECK ---
+    // Method 1: Session-based auth (new system)
+    $currentUser = getCurrentUser();
+    $isAuthorized = false;
 
-    if ($token !== $expectedHash) { http_response_code(403); echo json_encode(['error' => 'Invalid token']); exit; }
+    if ($currentUser) {
+        // Session-based: only admin can write
+        if ($currentUser['role'] === 'admin') {
+            $isAuthorized = true;
+        } else {
+            http_response_code(403);
+            echo json_encode(['error' => 'Bạn không có quyền chỉnh sửa (cần quyền Admin)']);
+            exit;
+        }
+    } else {
+        // Method 2: Legacy X-Admin-Token (backward compatibility)
+        $token = isset($_SERVER['HTTP_X_ADMIN_TOKEN']) ? $_SERVER['HTTP_X_ADMIN_TOKEN'] : '';
+        if ($token) {
+            if (file_exists($CONFIG_FILE)) {
+                $config = json_decode(file_get_contents($CONFIG_FILE), true);
+                $expectedHash = isset($config['adminPasswordHash']) ? $config['adminPasswordHash'] : '';
+                if ($token === $expectedHash) {
+                    $isAuthorized = true;
+                }
+            }
+        }
+    }
+
+    if (!$isAuthorized) {
+        http_response_code(401);
+        echo json_encode(['error' => 'Chưa đăng nhập hoặc không đủ quyền']);
+        exit;
+    }
 
     $body = file_get_contents('php://input');
     $json = json_decode($body);

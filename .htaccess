@@ -4,14 +4,29 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
 # 1. Chuyển hướng các đường dẫn có đuôi .html về dạng không có đuôi (301 Redirect)
 RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /([^\ ]+)\.html
-RewriteRule ^/?(.*)\.html$ /$1 [L,R=301]
+RewriteRule ^/?(.*)\\.html$ /$1 [L,R=301]
 
 # 2. Xử lý ngầm phía máy chủ: Nếu gọi một đường dẫn không đuôi, hãy load file .html tương ứng
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}\.html -f
 RewriteRule ^(.*)$ $1.html [NC,L]
 
-# 3. Cache Control
+# 3. Bảo vệ file nhạy cảm — Auth System
+<FilesMatch "^(auth_helpers\.php|auth_seed\.php)$">
+    Require all denied
+</FilesMatch>
+
+# 4. Bảo vệ database SQLite
+<FilesMatch "\.db$">
+    Require all denied
+</FilesMatch>
+
+# 5. Chặn truy cập thư mục data/backups
+<DirectoryMatch ".*/data/backups">
+    Require all denied
+</DirectoryMatch>
+
+# 6. Cache Control
 <IfModule mod_headers.c>
     # Các file HTML: Không bao giờ cache (Luôn kiểm tra phiên bản mới)
     <FilesMatch "\.(html|htm)$">

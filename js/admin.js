@@ -9,6 +9,7 @@
 
   // ===== CONFIG =====
   const API_URL = "api.php";
+  const AUTH_URL = "auth.php";
   const MODULES = {
     sinhhoat: {
       label: "Sinh Hoạt",
@@ -39,11 +40,20 @@
       icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
       createLabel: "",
       createHint: "",
+      adminOnly: true,
+    },
+    users: {
+      label: "Tài Khoản",
+      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>`,
+      createLabel: "Thêm tài khoản mới",
+      createHint: "Tạo tài khoản thành viên, phân quyền...",
+      adminOnly: true,
     },
   };
 
   let isLoggedIn = false;
   let adminHash = "";
+  let currentUser = null; // { id, username, displayName, role }
   let currentModule = "sinhhoat";
   let moduleData = {};
   let searchQuery = "";
@@ -82,9 +92,13 @@
     },
     async save(module, data) {
       try {
+        const headers = { "Content-Type": "application/json" };
+        // Legacy fallback: include X-Admin-Token if available
+        if (adminHash) headers["X-Admin-Token"] = adminHash;
         const res = await fetch(`${API_URL}?module=${module}`, {
           method: "POST",
-          headers: { "Content-Type": "application/json", "X-Admin-Token": adminHash },
+          headers,
+          credentials: "same-origin", // Send session cookie
           body: JSON.stringify(data),
         });
         if (res.ok) { const r = await res.json(); if (r.success) return { success: true, method: "server" }; }
@@ -166,6 +180,10 @@
     }
   }
 
+  // ===== ROLE HELPERS =====
+  function isAdmin() { return currentUser && currentUser.role === 'admin'; }
+  function isMember() { return currentUser && currentUser.role === 'member'; }
+
   // ===== BUILD ADMIN UI =====
   function buildAdminHTML() {
     if (document.getElementById("adm-root")) return;
@@ -174,15 +192,16 @@
     root.id = "adm-root";
     root.className = "adm-root";
     root.innerHTML = `
-      <!-- Login -->
-      <div class="adm-login" id="adm-login">
-        <button class="adm-btn-icon adm-login__close" id="adm-login-close">${ICONS.close}</button>
+      <!-- Login Modal -->
+      <div class="adm-login" id="adm-login" style="display:none;">
         <div class="adm-login__card">
+          <button class="adm-btn-icon adm-login__close" id="adm-login-close">${ICONS.close}</button>
           <div class="adm-login__logo">🔐</div>
-          <h2>Quản Trị Nội Dung</h2>
-          <p>Nhập mật khẩu để truy cập bảng điều khiển</p>
-          <input type="password" class="adm-input" id="adm-pwd" placeholder="Mật khẩu..." autocomplete="off" />
-          <button class="adm-btn adm-btn--primary adm-btn--full" id="adm-login-btn">Đăng nhập</button>
+          <h2>Đăng nhập</h2>
+          <p>Tính năng này chỉ dành riêng cho thành viên <span style="white-space: nowrap;">GĐPT Hòa Thọ</span>.</p>
+          <input type="text" class="adm-input" id="adm-username" placeholder="Tên đăng nhập / Số điện thoại..." autocomplete="username" style="margin-bottom:12px;" />
+          <input type="password" class="adm-input" id="adm-pwd" placeholder="Mật khẩu..." autocomplete="current-password" />
+          <button class="adm-btn adm-btn--primary adm-btn--full" id="adm-login-btn" style="margin-top:16px;">Đăng nhập</button>
           <div class="adm-login__error" id="adm-login-err"></div>
         </div>
       </div>
@@ -205,13 +224,19 @@
             </div>
             <button class="adm-btn-icon adm-sidebar__close-btn" id="adm-sidebar-close">${ICONS.close}</button>
           </div>
+          <!-- User info -->
+          <div class="adm-sidebar__user" id="adm-user-info"></div>
           <nav class="adm-sidebar__nav" id="adm-nav"></nav>
           <div class="adm-sidebar__footer">
-            <button class="adm-sidebar__action" id="adm-btn-export">${ICONS.download}<span>Xuất JSON</span></button>
-            <button class="adm-sidebar__action" id="adm-btn-import">${ICONS.upload}<span>Nhập JSON</span></button>
+            <button class="adm-sidebar__action adm-admin-only" id="adm-btn-export">${ICONS.download}<span>Xuất JSON</span></button>
+            <button class="adm-sidebar__action adm-admin-only" id="adm-btn-import">${ICONS.upload}<span>Nhập JSON</span></button>
             <input type="file" accept=".json" id="adm-import-file" style="display:none" />
             <div class="adm-sidebar__divider"></div>
-            <button class="adm-sidebar__action adm-sidebar__action--exit" id="adm-btn-exit">${ICONS.close}<span>Thoát Admin</span></button>
+            <button class="adm-sidebar__action adm-sidebar__action--logout" id="adm-btn-logout">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              <span>Đăng xuất</span>
+            </button>
+            <button class="adm-sidebar__action adm-sidebar__action--exit" id="adm-btn-exit">${ICONS.close}<span>Đóng</span></button>
           </div>
         </aside>
 
@@ -230,6 +255,8 @@
     document.body.appendChild(root);
     initEvents();
     buildSidebar();
+    updateUserInfoUI();
+    applyRoleRestrictions();
   }
 
   // ===== BUILD SIDEBAR NAV =====
@@ -237,6 +264,9 @@
     const nav = document.getElementById("adm-nav");
     nav.innerHTML = "";
     Object.entries(MODULES).forEach(([key, mod]) => {
+      // Hide admin-only modules for members
+      if (mod.adminOnly && !isAdmin()) return;
+
       const btn = document.createElement("button");
       btn.className = `adm-nav-item${key === currentModule ? " active" : ""}`;
       btn.dataset.module = key;
@@ -250,16 +280,53 @@
     });
   }
 
+  // ===== UPDATE USER INFO UI =====
+  function updateUserInfoUI() {
+    const userInfo = document.getElementById("adm-user-info");
+    if (!userInfo || !currentUser) return;
+    const roleBadge = currentUser.role === 'admin'
+      ? '<span class="adm-role-badge adm-role-badge--admin">Admin</span>'
+      : '<span class="adm-role-badge adm-role-badge--member">Member</span>';
+    const avatarHtml = currentUser.avatarUrl
+      ? `<img src="${currentUser.avatarUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;" />`
+      : currentUser.displayName.charAt(0).toUpperCase();
+    userInfo.innerHTML = `
+      <div class="adm-user-card">
+        <div class="adm-user-card__avatar">${avatarHtml}</div>
+        <div class="adm-user-card__info">
+          <div class="adm-user-card__name">${esc(currentUser.displayName)}</div>
+          <div class="adm-user-card__meta">@${esc(currentUser.username)} ${roleBadge}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  // ===== APPLY ROLE RESTRICTIONS =====
+  function applyRoleRestrictions() {
+    if (!isAdmin()) {
+      // Hide admin-only elements
+      document.querySelectorAll('.adm-admin-only').forEach(el => el.style.display = 'none');
+    }
+  }
+
   // ===== INIT EVENTS =====
   function initEvents() {
-    // Login
-    document.getElementById("adm-login-btn").addEventListener("click", handleLogin);
-    document.getElementById("adm-pwd").addEventListener("keydown", e => { if (e.key === "Enter") handleLogin(); });
+    // Login events
+    const loginBtn = document.getElementById("adm-login-btn");
+    if (loginBtn) loginBtn.addEventListener("click", handleLogin);
+    const pwdInput = document.getElementById("adm-pwd");
+    if (pwdInput) pwdInput.addEventListener("keydown", e => { if (e.key === "Enter") handleLogin(); });
+    const usernameInput = document.getElementById("adm-username");
+    if (usernameInput) usernameInput.addEventListener("keydown", e => { if (e.key === "Enter") document.getElementById("adm-pwd").focus(); });
+    const loginClose = document.getElementById("adm-login-close");
+    if (loginClose) loginClose.addEventListener("click", closeAdmin);
 
     // Close admin
     document.getElementById("adm-close-mobile").addEventListener("click", closeAdmin);
-    document.getElementById("adm-login-close").addEventListener("click", closeAdmin);
     document.getElementById("adm-btn-exit").addEventListener("click", closeAdmin);
+
+    // Logout
+    document.getElementById("adm-btn-logout").addEventListener("click", handleLogout);
 
     // Sidebar toggle (mobile)
     document.getElementById("adm-sidebar-toggle").addEventListener("click", () => {
@@ -269,9 +336,11 @@
       document.getElementById("adm-sidebar").classList.remove("open");
     });
 
-    // Export/Import
-    document.getElementById("adm-btn-export").addEventListener("click", exportAllData);
-    document.getElementById("adm-btn-import").addEventListener("click", () => document.getElementById("adm-import-file").click());
+    // Export/Import (admin only)
+    const exportBtn = document.getElementById("adm-btn-export");
+    const importBtn = document.getElementById("adm-btn-import");
+    if (exportBtn) exportBtn.addEventListener("click", exportAllData);
+    if (importBtn) importBtn.addEventListener("click", () => document.getElementById("adm-import-file").click());
     document.getElementById("adm-import-file").addEventListener("change", importData);
 
     // Close on Esc
@@ -289,20 +358,65 @@
 
   // ===== LOGIN =====
   async function handleLogin() {
+    const username = document.getElementById("adm-username").value.trim();
     const pwd = document.getElementById("adm-pwd").value;
     const err = document.getElementById("adm-login-err");
-    if (!pwd) { err.textContent = "Vui lòng nhập mật khẩu"; return; }
+    if (!username || !pwd) { err.textContent = "Vui lòng nhập đầy đủ thông tin"; return; }
 
-    const hash = await sha256(pwd);
-    const config = await DataService.fetch("config");
-    if (!config || hash !== config.adminPasswordHash) { err.textContent = "Mật khẩu không đúng"; return; }
+    try {
+      const res = await fetch(`${AUTH_URL}?action=login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({ username, password: pwd }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        currentUser = data.user;
+        isLoggedIn = true;
+        
+        // Legacy compat: store hash in session for DataService
+        const config = await DataService.fetch('config');
+        if (config && config.adminPasswordHash && currentUser.role === 'admin') {
+          adminHash = config.adminPasswordHash;
+          sessionStorage.setItem('gdpt_admin', adminHash);
+        }
 
-    adminHash = hash;
-    isLoggedIn = true;
-    sessionStorage.setItem("gdpt_admin", hash);
-    document.getElementById("adm-login").style.display = "none";
-    document.getElementById("adm-dashboard").style.display = "flex";
-    await switchModule("sinhhoat");
+        // Hide login and close admin panel overlay (staying on current page)
+        document.getElementById("adm-login").style.display = "none";
+        closeAdmin();
+        
+        // Render authenticated user menu in site header
+        renderHeaderUser(currentUser);
+        
+        showToast("Đăng nhập thành công!");
+      } else {
+        err.textContent = data.error || "Đăng nhập thất bại";
+      }
+    } catch (e) {
+      err.textContent = "Không thể kết nối đến máy chủ";
+    }
+  }
+
+  // ===== LOGOUT =====
+  async function handleLogout() {
+    try {
+      await fetch(`${AUTH_URL}?action=logout`, { credentials: 'same-origin' });
+    } catch (e) {}
+    currentUser = null;
+    isLoggedIn = false;
+    adminHash = "";
+    sessionStorage.removeItem("gdpt_admin");
+    
+    // Hide dashboard and close admin panel overlay
+    const dashboardEl = document.getElementById("adm-dashboard");
+    if (dashboardEl) dashboardEl.style.display = "none";
+    closeAdmin();
+    
+    // Restore login button in site header
+    renderHeaderGuest();
+    
+    showToast("Đã đăng xuất thành công");
   }
 
   // ===== SWITCH MODULE =====
@@ -322,9 +436,342 @@
     bc.innerHTML = `<span class="adm-breadcrumb__item">Admin</span><span class="adm-breadcrumb__sep">›</span><span class="adm-breadcrumb__item active">${MODULES[module].label}</span>`;
 
     // Load data
+    if (module === "users") {
+      await loadAndRenderUsers();
+      return;
+    }
+
     const data = await DataService.fetch(module);
     moduleData[module] = data;
     renderModule(module, data);
+  }
+
+  // ===== LOAD & RENDER USERS (ADMIN MODULE) =====
+  async function loadAndRenderUsers() {
+    const content = document.getElementById("adm-content");
+    content.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+        <div>
+          <h3 style="font-size:1.25rem; font-weight:700; color:#fff;">Quản Lý Tài Khoản</h3>
+          <p style="font-size:0.8rem; color:rgba(255,255,255,0.5);">Quản trị danh sách huynh trưởng, đoàn sinh và phân quyền</p>
+        </div>
+        <button class="adm-btn adm-btn--primary" id="btn-add-user" style="display:flex; align-items:center; gap:8px;">
+          ${ICONS.plus} <span>Thêm tài khoản mới</span>
+        </button>
+      </div>
+
+      <div class="adm-item-list" id="users-list-container">
+        <!-- Rendered users will go here -->
+      </div>
+    `;
+
+    document.getElementById("btn-add-user").addEventListener("click", openAddUserModal);
+
+    await refreshUsersList();
+  }
+
+  async function refreshUsersList() {
+    const listContainer = document.getElementById("users-list-container");
+    if (!listContainer) return;
+
+    listContainer.innerHTML = `<div class="adm-loading">Đang tải danh sách tài khoản...</div>`;
+
+    try {
+      const res = await fetch(`${AUTH_URL}?action=list-users`, { credentials: 'same-origin' });
+      if (res.ok) {
+        const data = await res.json();
+        const users = data.users || [];
+        
+        if (users.length === 0) {
+          listContainer.innerHTML = `<div class="adm-empty"><p>Chưa có tài khoản nào được tạo.</p></div>`;
+          return;
+        }
+
+        listContainer.innerHTML = users.map(u => {
+          const roleBadge = u.role === 'admin' 
+            ? '<span class="adm-role-badge adm-role-badge--admin">Admin</span>' 
+            : '<span class="adm-role-badge adm-role-badge--member">Member</span>';
+          const avatarHtml = u.avatar_url
+            ? `<img src="${u.avatar_url}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;" />`
+            : (u.full_name || u.display_name || "?").charAt(0).toUpperCase();
+          
+          return `
+            <div class="adm-card" style="flex-direction:column; align-items:stretch; gap:12px;">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div class="adm-user-card__avatar">${avatarHtml}</div>
+                <div style="flex:1; min-width:0;">
+                  <div class="adm-card__title">${esc(u.full_name || u.display_name)}</div>
+                  <div class="adm-card__meta">
+                    @${esc(u.username)} ${roleBadge}
+                  </div>
+                </div>
+              </div>
+              
+              <div style="display:flex; gap:10px; flex-wrap:wrap; font-size:0.75rem; color:rgba(255,255,255,0.6);">
+                ${u.dharma_name ? `<div>PD: <strong>${esc(u.dharma_name)}</strong></div>` : ''}
+                ${u.position ? `<div>Chức vụ: <strong>${esc(u.position)}</strong></div>` : ''}
+                ${u.rank ? `<div>Cấp: <strong>${esc(u.rank)}</strong></div>` : ''}
+                ${u.study_level ? `<div>Bậc học: <strong>${esc(u.study_level)}</strong></div>` : ''}
+              </div>
+
+              <div style="display:flex; justify-content:flex-end; gap:8px; border-top:1px solid rgba(255,255,255,0.06); padding-top:10px; margin-top:4px;">
+                <button class="adm-btn adm-btn--sm" data-user-action="password" data-user-id="${u.id}" data-username="${escAttr(u.username)}">
+                  Đổi mật khẩu
+                </button>
+                ${u.id !== currentUser.userId ? `
+                  <button class="adm-btn adm-btn--sm adm-btn--danger" data-user-action="delete" data-user-id="${u.id}" data-username="${escAttr(u.username)}">
+                    Xóa
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        // Attach event listeners using delegation
+        // Remove old listener if any by cloning container (standard way without keeping ref)
+        const newContainer = listContainer.cloneNode(true);
+        listContainer.parentNode.replaceChild(newContainer, listContainer);
+
+        newContainer.addEventListener("click", async e => {
+          const btn = e.target.closest("[data-user-action]");
+          if (!btn) return;
+          const action = btn.dataset.userAction;
+          const userId = btn.dataset.userId;
+          const username = btn.dataset.username;
+
+          if (action === "password") {
+            openAdminChangeUserPasswordModal(userId, username);
+          } else if (action === "delete") {
+            const confirmed = await showConfirm("Xác nhận xóa", `Bạn có chắc chắn muốn xóa tài khoản @${username}?`);
+            if (confirmed) {
+              try {
+                const delRes = await fetch(`${AUTH_URL}?action=delete-user`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  credentials: 'same-origin',
+                  body: JSON.stringify({ userId }),
+                });
+                const delData = await delRes.json();
+                if (delRes.ok && delData.success) {
+                  showToast(`Đã xóa tài khoản @${username}`);
+                  await refreshUsersList();
+                } else {
+                  showToast(delData.error || "Xóa thất bại", true);
+                }
+              } catch (err) {
+                showToast("Lỗi kết nối", true);
+              }
+            }
+          }
+        });
+
+      } else {
+        listContainer.innerHTML = `<div class="adm-empty"><p>Không thể tải danh sách tài khoản.</p></div>`;
+      }
+    } catch (err) {
+      listContainer.innerHTML = `<div class="adm-empty"><p>Lỗi kết nối máy chủ.</p></div>`;
+    }
+  }
+
+  // ===== ADMIN CREATE USER MODAL =====
+  function openAddUserModal() {
+    let overlay = document.getElementById("add-user-modal-overlay");
+    if (!overlay) {
+      overlay = document.createElement("div");
+      overlay.id = "add-user-modal-overlay";
+      overlay.className = "auth-modal-overlay";
+      document.body.appendChild(overlay);
+    }
+
+    overlay.innerHTML = `
+      <div class="auth-modal" style="width: min(540px, 94vw);">
+        <button class="adm-btn-icon auth-modal__close" id="add-user-close">${ICONS.close}</button>
+        <h3>Thêm Tài Khoản Mới</h3>
+        <p class="auth-modal__desc">Tạo tài khoản thành viên tu học cho huynh trưởng, đoàn sinh</p>
+        
+        <div class="auth-modal__grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <div class="adm-field" style="grid-column: span 2;">
+            <label>Tên đăng nhập / Số điện thoại *</label>
+            <input type="text" class="adm-input" id="add-usr-username" placeholder="Nhập SĐT hoặc username..." required />
+          </div>
+          <div class="adm-field" style="grid-column: span 2;">
+            <label>Mật khẩu * (Tối thiểu 6 ký tự)</label>
+            <input type="password" class="adm-input" id="add-usr-password" placeholder="Nhập mật khẩu..." required />
+          </div>
+          <div class="adm-field">
+            <label>Họ và tên *</label>
+            <input type="text" class="adm-input" id="add-usr-fullName" placeholder="Trương Minh Quân..." required />
+          </div>
+          <div class="adm-field">
+            <label>Pháp danh</label>
+            <input type="text" class="adm-input" id="add-usr-dharmaName" placeholder="Chúc Vương..." />
+          </div>
+          <div class="adm-field">
+            <label>Ngày sinh</label>
+            <input type="text" class="adm-input" id="add-usr-dob" placeholder="DD/MM/YYYY" />
+          </div>
+          <div class="adm-field">
+            <label>Vai trò hệ thống</label>
+            <select class="adm-input" id="add-usr-role" style="background:#1e3222; color:#fff;">
+              <option value="member">Member (Chỉ đọc)</option>
+              <option value="admin">Admin (Toàn quyền CMS)</option>
+            </select>
+          </div>
+          <div class="adm-field">
+            <label>Chức vụ</label>
+            <select class="adm-input" id="add-usr-position" style="background:#1e3222; color:#fff;">
+              <option value="Đoàn sinh">Đoàn sinh</option>
+              <option value="Huynh trưởng">Huynh trưởng</option>
+            </select>
+          </div>
+          <div class="adm-field">
+            <label>Cấp</label>
+            <input type="text" class="adm-input" id="add-usr-rank" placeholder="Tập sự, Kiên..." />
+          </div>
+          <div class="adm-field" style="grid-column: span 2;">
+            <label>Bậc học</label>
+            <input type="text" class="adm-input" id="add-usr-studyLevel" placeholder="Kiên, Trì, Hướng thiện..." />
+          </div>
+        </div>
+
+        <div class="auth-modal__error" id="add-usr-error" style="color:#ff6b6b; font-size:0.85rem; margin-top:12px; display:none;"></div>
+
+        <div class="auth-modal__footer">
+          <button class="adm-btn" id="add-usr-cancel">Hủy</button>
+          <button class="adm-btn adm-btn--primary" id="add-usr-save">Tạo tài khoản</button>
+        </div>
+      </div>
+    `;
+
+    overlay.classList.add("visible");
+    document.body.style.overflow = "hidden";
+
+    const closeMod = () => {
+      overlay.classList.remove("visible");
+      document.body.style.overflow = "";
+    };
+    overlay.querySelector("#add-user-close").addEventListener("click", closeMod);
+    overlay.querySelector("#add-usr-cancel").addEventListener("click", closeMod);
+
+    overlay.querySelector("#add-usr-save").addEventListener("click", async () => {
+      const username = overlay.querySelector("#add-usr-username").value.trim();
+      const password = overlay.querySelector("#add-usr-password").value;
+      const fullName = overlay.querySelector("#add-usr-fullName").value.trim();
+      const dharmaName = overlay.querySelector("#add-usr-dharmaName").value.trim();
+      const dob = overlay.querySelector("#add-usr-dob").value.trim();
+      const role = overlay.querySelector("#add-usr-role").value;
+      const position = overlay.querySelector("#add-usr-position").value;
+      const rank = overlay.querySelector("#add-usr-rank").value.trim();
+      const studyLevel = overlay.querySelector("#add-usr-studyLevel").value.trim();
+      const errEl = overlay.querySelector("#add-usr-error");
+
+      if (!username || !password || !fullName) {
+        errEl.textContent = "Vui lòng nhập đầy đủ các trường bắt buộc (*)";
+        errEl.style.display = "block";
+        return;
+      }
+      if (password.length < 6) {
+        errEl.textContent = "Mật khẩu tối thiểu 6 ký tự";
+        errEl.style.display = "block";
+        return;
+      }
+
+      try {
+        const res = await fetch(`${AUTH_URL}?action=create-user`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: 'same-origin',
+          body: JSON.stringify({ username, password, displayName: dharmaName || fullName, role, fullName, dob, position, rank, studyLevel, dharmaName }),
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          closeMod();
+          showToast(`Tạo thành công tài khoản @${username}`);
+          await refreshUsersList();
+        } else {
+          errEl.textContent = data.error || "Tạo tài khoản thất bại";
+          errEl.style.display = "block";
+        }
+      } catch (err) {
+        errEl.textContent = "Lỗi kết nối máy chủ";
+        errEl.style.display = "block";
+      }
+    });
+  }
+
+  // ===== ADMIN CHANGE USER PASSWORD =====
+  function openAdminChangeUserPasswordModal(userId, username) {
+    let overlay = document.getElementById("admin-password-modal-overlay");
+    if (!overlay) {
+      overlay = document.createElement("div");
+      overlay.id = "admin-password-modal-overlay";
+      overlay.className = "auth-modal-overlay";
+      document.body.appendChild(overlay);
+    }
+
+    overlay.innerHTML = `
+      <div class="auth-modal">
+        <button class="adm-btn-icon auth-modal__close" id="admin-pw-close">${ICONS.close}</button>
+        <h3>Đổi Mật Khẩu tài khoản</h3>
+        <p class="auth-modal__desc">Đang thay đổi mật khẩu cho tài khoản: <strong>@${esc(username)}</strong></p>
+        
+        <div class="auth-modal__grid">
+          <div class="adm-field">
+            <label>Mật khẩu mới</label>
+            <input type="password" class="adm-input" id="adm-pw-new" placeholder="Nhập mật khẩu mới..." required />
+          </div>
+        </div>
+
+        <div class="auth-modal__error" id="adm-pw-error" style="color:#ff6b6b; font-size:0.85rem; margin-top:12px; display:none;"></div>
+
+        <div class="auth-modal__footer">
+          <button class="adm-btn" id="adm-pw-cancel">Hủy</button>
+          <button class="adm-btn adm-btn--primary" id="adm-pw-save">Cập nhật mật khẩu</button>
+        </div>
+      </div>
+    `;
+
+    overlay.classList.add("visible");
+    document.body.style.overflow = "hidden";
+
+    const closeMod = () => {
+      overlay.classList.remove("visible");
+      document.body.style.overflow = "";
+    };
+    overlay.querySelector("#admin-pw-close").addEventListener("click", closeMod);
+    overlay.querySelector("#adm-pw-cancel").addEventListener("click", closeMod);
+
+    overlay.querySelector("#adm-pw-save").addEventListener("click", async () => {
+      const newPassword = overlay.querySelector("#adm-pw-new").value;
+      const errEl = overlay.querySelector("#adm-pw-error");
+
+      if (newPassword.length < 6) {
+        errEl.textContent = "Mật khẩu tối thiểu 6 ký tự";
+        errEl.style.display = "block";
+        return;
+      }
+
+      try {
+        const res = await fetch(`${AUTH_URL}?action=change-password`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: 'same-origin',
+          body: JSON.stringify({ userId, newPassword }),
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          closeMod();
+          showToast(`Đã đổi mật khẩu cho tài khoản @${username}`);
+        } else {
+          errEl.textContent = data.error || "Thay đổi thất bại";
+          errEl.style.display = "block";
+        }
+      } catch (err) {
+        errEl.textContent = "Lỗi kết nối máy chủ";
+        errEl.style.display = "block";
+      }
+    });
   }
 
   // ===== RENDER MODULE =====
@@ -337,8 +784,8 @@
     const mod = MODULES[module];
 
     content.innerHTML = `
-      <!-- Create Post Box -->
-      <div class="adm-create-box" id="adm-create-box">
+      <!-- Create Post Box (Admin only) -->
+      ${isAdmin() ? `<div class="adm-create-box" id="adm-create-box">
         <div class="adm-create-box__prompt">
           <div class="adm-create-box__avatar">${ICONS.plus}</div>
           <div class="adm-create-box__text">
@@ -346,7 +793,7 @@
             <span>${mod.createHint}</span>
           </div>
         </div>
-      </div>
+      </div>` : `<div class="adm-member-notice"><span>📋</span> Bạn đang xem ở chế độ Member (chỉ đọc)</div>`}
 
       <!-- Search bar -->
       <div class="adm-search-bar">
@@ -359,8 +806,9 @@
       <div class="adm-item-list" id="adm-items"></div>
     `;
 
-    // Create box click
-    document.getElementById("adm-create-box").addEventListener("click", () => openForm(module, -1));
+    // Create box click (admin only)
+    const createBox = document.getElementById("adm-create-box");
+    if (createBox) createBox.addEventListener("click", () => openForm(module, -1));
 
     // Search
     const searchInput = document.getElementById("adm-search");
@@ -409,10 +857,10 @@
             <div class="adm-card__meta">${esc(meta)}</div>
             ${tags ? `<div class="adm-card__tags">${tags}</div>` : ""}
           </div>
-          <div class="adm-card__actions">
+          ${isAdmin() ? `<div class="adm-card__actions">
             <button class="adm-btn-icon adm-btn-icon--sm" data-action="edit" data-index="${realIdx}" title="Sửa">${ICONS.edit}</button>
             <button class="adm-btn-icon adm-btn-icon--sm adm-btn-icon--danger" data-action="delete" data-index="${realIdx}" title="Xóa">${ICONS.trash}</button>
-          </div>
+          </div>` : ''}
         </div>`;
     }).join("");
 
@@ -818,6 +1266,9 @@
     if (!item.title) { showToast("Vui lòng nhập tiêu đề", true); return; }
 
     if (index >= 0) items[index] = item; else items.unshift(item);
+    if (module === "nhac") {
+      items.sort((a, b) => a.title.localeCompare(b.title, "vi", { sensitivity: "accent" }));
+    }
     moduleData[module] = items;
 
     const result = await DataService.save(module, items);
@@ -866,7 +1317,14 @@
       const text = await file.text();
       const allData = JSON.parse(text);
       for (const [mod, data] of Object.entries(allData)) {
-        if (MODULES[mod]) { moduleData[mod] = data; await DataService.save(mod, data); }
+        if (MODULES[mod]) {
+          let sortedData = data;
+          if (mod === "nhac" && Array.isArray(sortedData)) {
+            sortedData.sort((a, b) => a.title.localeCompare(b.title, "vi", { sensitivity: "accent" }));
+          }
+          moduleData[mod] = sortedData;
+          await DataService.save(mod, sortedData);
+        }
       }
       showToast("Đã nhập dữ liệu thành công!");
       await switchModule(currentModule);
@@ -875,24 +1333,63 @@
   }
 
   // ===== OPEN / CLOSE =====
-  function openAdmin() {
+  async function openAdmin() {
     buildAdminHTML();
-    const root = document.getElementById("adm-root");
-    root.classList.add("visible");
-    document.body.style.overflow = "hidden";
 
-    const sessionHash = sessionStorage.getItem("gdpt_admin");
-    if (sessionHash) {
-      adminHash = sessionHash;
-      isLoggedIn = true;
-      document.getElementById("adm-login").style.display = "none";
-      document.getElementById("adm-dashboard").style.display = "flex";
-      switchModule("sinhhoat");
-    } else {
-      document.getElementById("adm-login").style.display = "flex";
-      document.getElementById("adm-dashboard").style.display = "none";
-      setTimeout(() => document.getElementById("adm-pwd")?.focus(), 300);
+    // Check session via auth API
+    try {
+      const res = await fetch(`${AUTH_URL}?action=me`, { credentials: 'same-origin' });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.authenticated && data.user) {
+          currentUser = data.user;
+          isLoggedIn = true;
+
+          if (currentUser.role === 'admin') {
+            // Admin: Open Dashboard Panel
+            const root = document.getElementById('adm-root');
+            root.classList.add('visible');
+            document.body.style.overflow = 'hidden';
+            
+            document.getElementById('adm-login').style.display = 'none';
+            document.getElementById('adm-dashboard').style.display = 'flex';
+            
+            // Legacy compat: store hash in session for DataService
+            const config = await DataService.fetch('config');
+            if (config && config.adminPasswordHash) {
+              adminHash = config.adminPasswordHash;
+              sessionStorage.setItem('gdpt_admin', adminHash);
+            }
+            
+            buildSidebar();
+            updateUserInfoUI();
+            applyRoleRestrictions();
+            
+            await switchModule(currentModule || 'sinhhoat');
+          } else {
+            // Member: Prohibited from entering Admin Panel
+            showToast("Tài khoản thành viên không thể truy cập trang quản trị", true);
+            closeAdmin();
+          }
+          
+          // Sync header avatar
+          renderHeaderUser(currentUser);
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn('Auth check failed:', e);
     }
+
+    // Not authenticated — show inline login modal
+    const root = document.getElementById('adm-root');
+    root.classList.add('visible');
+    document.body.style.overflow = 'hidden';
+    
+    document.getElementById('adm-dashboard').style.display = 'none';
+    document.getElementById('adm-login').style.display = 'flex';
+    document.getElementById('adm-login-err').textContent = '';
+    setTimeout(() => document.getElementById('adm-username')?.focus(), 300);
   }
 
   function closeAdmin() {
@@ -901,6 +1398,428 @@
       root.classList.remove("visible");
       document.body.style.overflow = "";
     }
+  }
+
+  // ===== HEADER AUTH & USER MENUS =====
+  async function initHeaderAuth() {
+    try {
+      const res = await fetch(`${AUTH_URL}?action=me`, { credentials: 'same-origin' });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.authenticated && data.user) {
+          currentUser = data.user;
+          isLoggedIn = true;
+          
+          // Legacy compat: store hash in session for DataService
+          const config = await DataService.fetch('config');
+          if (config && config.adminPasswordHash && currentUser.role === 'admin') {
+            adminHash = config.adminPasswordHash;
+            sessionStorage.setItem('gdpt_admin', adminHash);
+          }
+          
+          renderHeaderUser(currentUser);
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn("Failed to check header session", e);
+    }
+    
+    renderHeaderGuest();
+  }
+
+  function renderHeaderGuest() {
+    // Remove avatar if exists
+    const existingAvatar = document.getElementById("header-user-menu");
+    if (existingAvatar) existingAvatar.remove();
+
+    // Desktop Menu Login Button
+    const deskNavDiv = document.querySelector("#desktop-nav > div");
+    if (deskNavDiv && !document.getElementById("nav-login-btn")) {
+      const loginLink = document.createElement("a");
+      loginLink.href = "#";
+      loginLink.id = "nav-login-btn";
+      loginLink.className = "nav-link";
+      loginLink.textContent = "Đăng nhập";
+      loginLink.addEventListener("click", e => {
+        e.preventDefault();
+        openAdmin();
+      });
+      deskNavDiv.appendChild(loginLink);
+    }
+
+    // Mobile Menu Login Button
+    const mobMenu = document.getElementById("mobile-menu");
+    if (mobMenu && !document.getElementById("nav-login-btn-mob")) {
+      const loginLinkMob = document.createElement("a");
+      loginLinkMob.href = "#";
+      loginLinkMob.id = "nav-login-btn-mob";
+      loginLinkMob.className = "nav-link-mobile";
+      loginLinkMob.textContent = "Đăng nhập";
+      loginLinkMob.addEventListener("click", e => {
+        e.preventDefault();
+        mobMenu.classList.add("hidden");
+        openAdmin();
+      });
+      mobMenu.appendChild(loginLinkMob);
+    }
+  }
+
+  function renderHeaderUser(user) {
+    // Remove login buttons if they exist
+    const deskBtn = document.getElementById("nav-login-btn");
+    if (deskBtn) deskBtn.remove();
+    const mobBtn = document.getElementById("nav-login-btn-mob");
+    if (mobBtn) mobBtn.remove();
+
+    // Check if avatar already exists
+    let userWrap = document.getElementById("header-user-menu");
+    if (!userWrap) {
+      const headerContainer = document.querySelector("#main-header .container > div");
+      if (!headerContainer) return;
+
+      userWrap = document.createElement("div");
+      userWrap.id = "header-user-menu";
+      userWrap.className = "header-user-wrap";
+
+      const mobBtnEl = document.getElementById("mobile-menu-button");
+      if (mobBtnEl) {
+        headerContainer.insertBefore(userWrap, mobBtnEl);
+      } else {
+        headerContainer.appendChild(userWrap);
+      }
+    }
+
+    // Render User Avatar and Dropdown Menu
+    const initial = user.displayName ? user.displayName.charAt(0).toUpperCase() : "?";
+    const avatarContent = user.avatarUrl
+      ? `<img src="${user.avatarUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;" />`
+      : initial;
+    userWrap.innerHTML = `
+      <div class="header-avatar" id="header-avatar-btn">${avatarContent}</div>
+      <div class="header-dropdown" id="header-dropdown-menu">
+        <div class="header-dropdown__user">
+          <div class="header-dropdown__name">${esc(user.fullName || user.displayName)}</div>
+          <div class="header-dropdown__meta">
+            @${esc(user.username)}
+            <span class="adm-role-badge adm-role-badge--${user.role}">${user.role === 'admin' ? 'Admin' : 'Member'}</span>
+          </div>
+        </div>
+        <button class="header-dropdown__item" id="hdr-btn-profile">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          <span>Thông tin cá nhân</span>
+        </button>
+        <button class="header-dropdown__item" id="hdr-btn-password">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <span>Đổi mật khẩu</span>
+        </button>
+        ${user.role === 'admin' ? `
+        <button class="header-dropdown__item" id="hdr-btn-admin">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          <span>Trang quản trị</span>
+        </button>
+        ` : ''}
+        <div class="header-dropdown__divider"></div>
+        <button class="header-dropdown__item header-dropdown__item--logout" id="hdr-btn-logout">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          <span>Đăng xuất</span>
+        </button>
+      </div>
+    `;
+
+    // Dropdown toggling logic
+    const avatarBtn = userWrap.querySelector("#header-avatar-btn");
+    const dropdownMenu = userWrap.querySelector("#header-dropdown-menu");
+    
+    avatarBtn.addEventListener("click", e => {
+      e.stopPropagation();
+      dropdownMenu.classList.toggle("visible");
+    });
+
+    document.addEventListener("click", () => {
+      dropdownMenu.classList.remove("visible");
+    });
+
+    dropdownMenu.addEventListener("click", e => e.stopPropagation());
+
+    // Action listeners
+    userWrap.querySelector("#hdr-btn-profile").addEventListener("click", () => {
+      dropdownMenu.classList.remove("visible");
+      openProfileModal();
+    });
+    userWrap.querySelector("#hdr-btn-password").addEventListener("click", () => {
+      dropdownMenu.classList.remove("visible");
+      openChangePasswordModal();
+    });
+    if (user.role === 'admin') {
+      userWrap.querySelector("#hdr-btn-admin").addEventListener("click", () => {
+        dropdownMenu.classList.remove("visible");
+        openAdmin();
+      });
+    }
+    userWrap.querySelector("#hdr-btn-logout").addEventListener("click", () => {
+      dropdownMenu.classList.remove("visible");
+      handleLogout();
+    });
+  }
+
+  // ===== PROFILE MODAL =====
+  function openProfileModal() {
+    if (!currentUser) return;
+    
+    let overlay = document.getElementById("profile-modal-overlay");
+    if (!overlay) {
+      overlay = document.createElement("div");
+      overlay.id = "profile-modal-overlay";
+      overlay.className = "auth-modal-overlay";
+      document.body.appendChild(overlay);
+    }
+
+    const initial = (currentUser.displayName || "?").charAt(0).toUpperCase();
+    const avatarHtml = currentUser.avatarUrl
+      ? `<img src="${currentUser.avatarUrl}" style="width:100%; height:100%; object-fit:cover;" />`
+      : initial;
+
+    overlay.innerHTML = `
+      <div class="auth-modal">
+        <button class="adm-btn-icon auth-modal__close" id="profile-modal-close">${ICONS.close}</button>
+        <h3>Thông Tin Cá Nhân</h3>
+        <p class="auth-modal__desc">Xem và cập nhật thông tin thành viên của bạn</p>
+        
+        <div style="display:flex; flex-direction:column; align-items:center; margin-bottom:20px;">
+          <div class="profile-avatar-container" style="position:relative; width:80px; height:80px; cursor:pointer;" id="profile-avatar-btn">
+            <div class="profile-avatar-display" style="width:100%; height:100%; border-radius:50%; background:linear-gradient(135deg, #b8860b 0%, #d4a843 100%); color:#fff; font-weight:700; font-size:2rem; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+              ${avatarHtml}
+            </div>
+            <div class="profile-avatar-overlay" style="position:absolute; inset:0; border-radius:50%; background:rgba(0,0,0,0.5); color:#fff; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity 0.2s; font-size:0.75rem;">
+              Thay đổi
+            </div>
+          </div>
+          <input type="file" id="profile-avatar-input" accept="image/*" style="display:none;" />
+          <span style="font-size:0.72rem; color:rgba(255,255,255,0.4); margin-top:8px;">Nhấp để thay ảnh đại diện (Tối đa 2MB)</span>
+        </div>
+
+        <div class="auth-modal__grid">
+          <div class="adm-field">
+            <label>Tên đăng nhập / Số điện thoại</label>
+            <input type="text" class="adm-input" value="${escAttr(currentUser.username)}" disabled />
+          </div>
+          <div class="adm-field">
+            <label>Pháp danh</label>
+            <input type="text" class="adm-input" id="prof-dharmaName" value="${escAttr(currentUser.dharmaName || '')}" />
+          </div>
+          <div class="adm-field">
+            <label>Họ và tên</label>
+            <input type="text" class="adm-input" id="prof-fullName" value="${escAttr(currentUser.fullName || '')}" required />
+          </div>
+          <div class="adm-field">
+            <label>Ngày sinh</label>
+            <input type="text" class="adm-input" id="prof-dob" value="${escAttr(currentUser.dob || '')}" placeholder="DD/MM/YYYY" />
+          </div>
+          
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
+            <div class="auth-modal__read-only-badge">Chức vụ: <strong>${esc(currentUser.position || 'Đoàn sinh')}</strong></div>
+            ${currentUser.rank ? `<div class="auth-modal__read-only-badge">Cấp: <strong>${esc(currentUser.rank)}</strong></div>` : ''}
+            <div class="auth-modal__read-only-badge">Bậc học: <strong>${esc(currentUser.studyLevel || 'Hướng thiện')}</strong></div>
+          </div>
+        </div>
+
+        <div class="auth-modal__error" id="prof-error" style="color:#ff6b6b; font-size:0.85rem; margin-top:12px; display:none;"></div>
+
+        <div class="auth-modal__footer">
+          <button class="adm-btn" id="prof-btn-cancel">Hủy</button>
+          <button class="adm-btn adm-btn--primary" id="prof-btn-save">Lưu thay đổi</button>
+        </div>
+      </div>
+    `;
+
+    overlay.classList.add("visible");
+    document.body.style.overflow = "hidden";
+
+    const closeProfile = () => {
+      overlay.classList.remove("visible");
+      document.body.style.overflow = "";
+    };
+    overlay.querySelector("#profile-modal-close").addEventListener("click", closeProfile);
+    overlay.querySelector("#prof-btn-cancel").addEventListener("click", closeProfile);
+
+    // Avatar upload handlers
+    const profAvatarBtn = overlay.querySelector("#profile-avatar-btn");
+    const profAvatarInput = overlay.querySelector("#profile-avatar-input");
+    const profAvatarDisplay = overlay.querySelector(".profile-avatar-display");
+
+    profAvatarBtn.addEventListener("click", () => profAvatarInput.click());
+
+    profAvatarInput.addEventListener("change", async () => {
+      const file = profAvatarInput.files[0];
+      if (!file) return;
+
+      if (file.size > 2 * 1024 * 1024) {
+        showToast("Kích thước ảnh tối đa là 2MB", true);
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("avatar", file);
+
+      profAvatarDisplay.innerHTML = `<div style="font-size:0.8rem;color:#fff;">...</div>`;
+
+      try {
+        const res = await fetch(`${AUTH_URL}?action=upload-avatar`, {
+          method: "POST",
+          body: formData,
+          credentials: "same-origin"
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          currentUser.avatarUrl = data.avatarUrl;
+          profAvatarDisplay.innerHTML = `<img src="${data.avatarUrl}" style="width:100%; height:100%; object-fit:cover;" />`;
+          
+          renderHeaderUser(currentUser);
+          updateUserInfoUI();
+          showToast("Cập nhật ảnh đại diện thành công!");
+        } else {
+          showToast(data.error || "Tải ảnh lên thất bại", true);
+          // Restore
+          const initial = (currentUser.displayName || "?").charAt(0).toUpperCase();
+          profAvatarDisplay.innerHTML = currentUser.avatarUrl
+            ? `<img src="${currentUser.avatarUrl}" style="width:100%; height:100%; object-fit:cover;" />`
+            : initial;
+        }
+      } catch (err) {
+        showToast("Lỗi kết nối máy chủ", true);
+        // Restore
+        const initial = (currentUser.displayName || "?").charAt(0).toUpperCase();
+        profAvatarDisplay.innerHTML = currentUser.avatarUrl
+          ? `<img src="${currentUser.avatarUrl}" style="width:100%; height:100%; object-fit:cover;" />`
+          : initial;
+      }
+    });
+
+    overlay.querySelector("#prof-btn-save").addEventListener("click", async () => {
+      const fullName = overlay.querySelector("#prof-fullName").value.trim();
+      const dob = overlay.querySelector("#prof-dob").value.trim();
+      const dharmaName = overlay.querySelector("#prof-dharmaName").value.trim();
+      const errEl = overlay.querySelector("#prof-error");
+
+      if (!fullName) {
+        errEl.textContent = "Họ và tên không được để trống";
+        errEl.style.display = "block";
+        return;
+      }
+
+      try {
+        const res = await fetch(`${AUTH_URL}?action=update-profile`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin",
+          body: JSON.stringify({ fullName, dob, dharmaName }),
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          currentUser.fullName = fullName;
+          currentUser.dob = dob;
+          currentUser.dharmaName = dharmaName;
+          
+          renderHeaderUser(currentUser);
+          closeProfile();
+          showToast("Cập nhật thông tin thành công");
+        } else {
+          errEl.textContent = data.error || "Cập nhật thất bại";
+          errEl.style.display = "block";
+        }
+      } catch (e) {
+        errEl.textContent = "Không thể kết nối đến máy chủ";
+        errEl.style.display = "block";
+      }
+    });
+  }
+
+  // ===== CHANGE PASSWORD MODAL =====
+  function openChangePasswordModal() {
+    if (!currentUser) return;
+
+    let overlay = document.getElementById("password-modal-overlay");
+    if (!overlay) {
+      overlay = document.createElement("div");
+      overlay.id = "password-modal-overlay";
+      overlay.className = "auth-modal-overlay";
+      document.body.appendChild(overlay);
+    }
+
+    overlay.innerHTML = `
+      <div class="auth-modal">
+        <button class="adm-btn-icon auth-modal__close" id="password-modal-close">${ICONS.close}</button>
+        <h3>Đổi Mật Khẩu</h3>
+        <p class="auth-modal__desc">Nhập mật khẩu mới của bạn (tối thiểu 6 ký tự)</p>
+        
+        <div class="auth-modal__grid">
+          <div class="adm-field">
+            <label>Mật khẩu mới</label>
+            <input type="password" class="adm-input" id="pw-new" placeholder="Nhập mật khẩu mới..." required />
+          </div>
+          <div class="adm-field">
+            <label>Xác nhận mật khẩu mới</label>
+            <input type="password" class="adm-input" id="pw-confirm" placeholder="Nhập lại mật khẩu..." required />
+          </div>
+        </div>
+
+        <div class="auth-modal__error" id="pw-error" style="color:#ff6b6b; font-size:0.85rem; margin-top:12px; display:none;"></div>
+
+        <div class="auth-modal__footer">
+          <button class="adm-btn" id="pw-btn-cancel">Hủy</button>
+          <button class="adm-btn adm-btn--primary" id="pw-btn-save">Cập nhật mật khẩu</button>
+        </div>
+      </div>
+    `;
+
+    overlay.classList.add("visible");
+    document.body.style.overflow = "hidden";
+
+    const closePw = () => {
+      overlay.classList.remove("visible");
+      document.body.style.overflow = "";
+    };
+    overlay.querySelector("#password-modal-close").addEventListener("click", closePw);
+    overlay.querySelector("#pw-btn-cancel").addEventListener("click", closePw);
+
+    overlay.querySelector("#pw-btn-save").addEventListener("click", async () => {
+      const newPassword = overlay.querySelector("#pw-new").value;
+      const confirmPassword = overlay.querySelector("#pw-confirm").value;
+      const errEl = overlay.querySelector("#pw-error");
+
+      if (newPassword.length < 6) {
+        errEl.textContent = "Mật khẩu phải từ 6 ký tự trở lên";
+        errEl.style.display = "block";
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        errEl.textContent = "Mật khẩu xác nhận không khớp";
+        errEl.style.display = "block";
+        return;
+      }
+
+      try {
+        const res = await fetch(`${AUTH_URL}?action=change-password`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin",
+          body: JSON.stringify({ newPassword }),
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          closePw();
+          showToast("Đổi mật khẩu thành công. Vui lòng đăng nhập lại.");
+          handleLogout();
+        } else {
+          errEl.textContent = data.error || "Đổi mật khẩu thất bại";
+          errEl.style.display = "block";
+        }
+      } catch (e) {
+        errEl.textContent = "Không thể kết nối đến máy chủ";
+        errEl.style.display = "block";
+      }
+    });
   }
 
   // ===== ENTRY POINTS =====
@@ -914,6 +1833,11 @@
 
   document.addEventListener("keydown", e => {
     if (e.ctrlKey && e.shiftKey && e.key === "A") { e.preventDefault(); openAdmin(); }
+  });
+
+  // Check auth and render header buttons/avatar
+  document.addEventListener("DOMContentLoaded", () => {
+    initHeaderAuth();
   });
 
   if (window.location.search.includes("admin")) {

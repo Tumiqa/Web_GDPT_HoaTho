@@ -512,6 +512,8 @@
           }
           return { ...track, src };
         });
+        // Sắp xếp danh sách bài hát theo bảng chữ cái tiếng Việt (alpha beta)
+        PLAYLIST.sort((a, b) => a.title.localeCompare(b.title, "vi", { sensitivity: "accent" }));
       }
     } catch (e) {
       console.warn("Could not load nhac.json", e);
