@@ -22,9 +22,7 @@ RewriteRule ^(.*)$ $1.html [NC,L]
 </FilesMatch>
 
 # 5. Chặn truy cập thư mục data/backups
-<DirectoryMatch ".*/data/backups">
-    Require all denied
-</DirectoryMatch>
+RewriteRule ^data/backups - [F,L]
 
 # 6. Cache Control
 <IfModule mod_headers.c>
