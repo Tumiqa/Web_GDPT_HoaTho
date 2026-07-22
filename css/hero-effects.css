@@ -23,7 +23,36 @@
   to { opacity: 1; }
 }
 
-/* Cho phép chuột "xuyên qua" văn bản tiêu đề để tương tác với hiệu ứng Canvas phía sau */
+/* ============================================================
+   SEAMLESS HERO-TO-CONTENT TRANSITION MASK
+   ============================================================ */
+.sh-hero,
+.music-hero,
+.tailieu-hero,
+.kynang-hero,
+.lienhe-hero {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Master bottom fade mask: z-index 2 ensures canvas (z-index 1) smoothly fades into var(--bg-dark) with zero harsh line */
+.sh-hero::after,
+.music-hero::after,
+.tailieu-hero::after,
+.kynang-hero::after,
+.lienhe-hero::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 150px;
+  background: linear-gradient(to bottom, rgba(18, 30, 23, 0) 0%, var(--bg-dark) 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Text content sitting on z-index 3 to stay crisp above bottom fade mask */
 .hero-content,
 .sh-hero-content,
 .music-hero-content,
@@ -31,7 +60,7 @@
 .kynang-hero-content,
 .lienhe-hero-content {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   pointer-events: none;
 }
 

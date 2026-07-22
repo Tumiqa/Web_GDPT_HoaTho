@@ -72,6 +72,38 @@
   <body class="loading">
     <div class="page-transition-overlay"></div>
 
+    <!-- ===== PRELOADER ===== -->
+    <div id="preloader">
+      <div class="preloader-particle" style="left: 15%; top: 70%; animation-delay: 0s"></div>
+      <div class="preloader-particle" style="left: 30%; top: 80%; animation-delay: 0.8s"></div>
+      <div class="preloader-particle" style="left: 55%; top: 75%; animation-delay: 1.6s"></div>
+      <div class="preloader-particle" style="left: 75%; top: 85%; animation-delay: 0.4s"></div>
+      <div class="preloader-particle" style="left: 85%; top: 70%; animation-delay: 1.2s"></div>
+      <div class="preloader-particle" style="left: 40%; top: 90%; animation-delay: 2s"></div>
+
+      <div class="preloader-logo-wrap">
+        <div class="preloader-logo-ring"></div>
+        <div class="preloader-logo-ring-2"></div>
+        <div class="preloader-logo-circle">
+          <img src="images/logo.png" alt="GĐPT Hòa Thọ" onerror="this.style.display='none'" />
+        </div>
+      </div>
+
+      <p class="preloader-title">GĐPT Hòa Thọ</p>
+      <p class="preloader-subtitle">Bi · Trí · Dũng</p>
+
+      <div class="preloader-progress">
+        <div class="preloader-progress-track">
+          <div class="preloader-progress-fill" id="preloader-fill"></div>
+        </div>
+        <span class="preloader-progress-text" id="preloader-percent">0%</span>
+      </div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+
     <header id="main-header">
       <div class="container">
         <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 0;">
