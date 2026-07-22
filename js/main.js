@@ -750,9 +750,9 @@ function initCompass() {
   const contentDisplay = document.getElementById("culture-content-display");
   const ring = document.querySelector(".compass-ring");
 
-  const radius = window.innerWidth < 768 ? 150 : 250; 
-  const centerX = radius;
-  const centerY = radius;
+  // Dùng tỷ lệ phần trăm thay vì pixel để luôn căn đúng với ring bất kể kích thước CSS
+  const radiusPercent = 50; // 50% = mép ngoài ring từ tâm
+  const centerPercent = 50; // tâm = 50%
 
   // Xóa nội dung cũ nếu có
   container.innerHTML = "";
@@ -763,13 +763,13 @@ function initCompass() {
     const angle = (index * (360 / compassPoints.length)) - 90;
     const radian = angle * (Math.PI / 180);
 
-    const x = centerX + radius * Math.cos(radian);
-    const y = centerY + radius * Math.sin(radian);
+    const xPercent = centerPercent + radiusPercent * Math.cos(radian);
+    const yPercent = centerPercent + radiusPercent * Math.sin(radian);
 
     const pointEl = document.createElement("div");
     pointEl.className = "compass-point";
-    pointEl.style.left = `${x}px`;
-    pointEl.style.top = `${y}px`;
+    pointEl.style.left = `${xPercent}%`;
+    pointEl.style.top = `${yPercent}%`;
 
     pointEl.innerHTML = `
       <div class="compass-point-icon">${point.icon}</div>

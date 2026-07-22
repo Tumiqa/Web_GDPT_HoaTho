@@ -86,7 +86,7 @@
   padding: 2rem 0 0.5rem;
   position: sticky;
   top: 64px;
-  z-index: 50;
+  z-index: 40;
   background: linear-gradient(to bottom, var(--bg-dark) 80%, transparent);
 }
 
