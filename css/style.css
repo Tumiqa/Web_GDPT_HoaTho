@@ -254,6 +254,15 @@ section {
 }
 
 .preloader-title {
+  font-family: "Be Vietnam Pro", "Inter", sans-serif;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #ffffff;
+  background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   opacity: 0;
   transform: translateY(10px);
   animation: fadeUp 0.8s 0.3s ease-out forwards;
