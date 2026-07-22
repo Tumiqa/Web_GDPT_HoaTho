@@ -35,13 +35,6 @@
       createLabel: "Thêm bài kỹ năng mới",
       createHint: "Hướng dẫn kết dây, morse, dựng trại...",
     },
-    config: {
-      label: "Cấu Hình",
-      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
-      createLabel: "",
-      createHint: "",
-      adminOnly: true,
-    },
     users: {
       label: "Tài Khoản",
       icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>`,
@@ -487,6 +480,8 @@
           return;
         }
 
+        const isSuperAdmin = currentUser && currentUser.username === '0903549528';
+
         listContainer.innerHTML = users.map(u => {
           const roleBadge = u.role === 'admin' 
             ? '<span class="adm-role-badge adm-role-badge--admin">Admin</span>' 
@@ -495,6 +490,27 @@
             ? `<img src="${u.avatar_url}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;" />`
             : (u.full_name || u.display_name || "?").charAt(0).toUpperCase();
           
+          // Super admin 0903549528 can change password & delete other users.
+          // Other admins can only change password for their own account, and CANNOT delete or change passwords of other users.
+          const canChangePw = isSuperAdmin || (currentUser && u.id === currentUser.userId);
+          const canDelete = isSuperAdmin && currentUser && (u.id !== currentUser.userId);
+
+          const actionButtons = [];
+          if (canChangePw) {
+            actionButtons.push(`
+              <button class="adm-btn adm-btn--sm" data-user-action="password" data-user-id="${u.id}" data-username="${escAttr(u.username)}">
+                Đổi mật khẩu
+              </button>
+            `);
+          }
+          if (canDelete) {
+            actionButtons.push(`
+              <button class="adm-btn adm-btn--sm adm-btn--danger" data-user-action="delete" data-user-id="${u.id}" data-username="${escAttr(u.username)}">
+                Xóa
+              </button>
+            `);
+          }
+
           return `
             <div class="adm-card" style="flex-direction:column; align-items:stretch; gap:12px;">
               <div style="display:flex; align-items:center; gap:12px;">
@@ -514,16 +530,11 @@
                 ${u.study_level ? `<div>Bậc học: <strong>${esc(u.study_level)}</strong></div>` : ''}
               </div>
 
-              <div style="display:flex; justify-content:flex-end; gap:8px; border-top:1px solid rgba(255,255,255,0.06); padding-top:10px; margin-top:4px;">
-                <button class="adm-btn adm-btn--sm" data-user-action="password" data-user-id="${u.id}" data-username="${escAttr(u.username)}">
-                  Đổi mật khẩu
-                </button>
-                ${u.id !== currentUser.userId ? `
-                  <button class="adm-btn adm-btn--sm adm-btn--danger" data-user-action="delete" data-user-id="${u.id}" data-username="${escAttr(u.username)}">
-                    Xóa
-                  </button>
-                ` : ''}
-              </div>
+              ${actionButtons.length > 0 ? `
+                <div style="display:flex; justify-content:flex-end; gap:8px; border-top:1px solid rgba(255,255,255,0.06); padding-top:10px; margin-top:4px;">
+                  ${actionButtons.join('')}
+                </div>
+              ` : ''}
             </div>
           `;
         }).join("");
@@ -584,6 +595,8 @@
       document.body.appendChild(overlay);
     }
 
+    const isSuperAdmin = currentUser && currentUser.username === '0903549528';
+
     overlay.innerHTML = `
       <div class="auth-modal" style="width: min(540px, 94vw);">
         <button class="adm-btn-icon auth-modal__close" id="add-user-close">${ICONS.close}</button>
@@ -614,8 +627,8 @@
           <div class="adm-field">
             <label>Vai trò hệ thống</label>
             <select class="adm-input" id="add-usr-role" style="background:#1e3222; color:#fff;">
-              <option value="member">Member (Chỉ đọc)</option>
-              <option value="admin">Admin (Toàn quyền CMS)</option>
+              <option value="member">Member (Chỉ đọc / Tu học)</option>
+              ${isSuperAdmin ? '<option value="admin">Admin (Toàn quyền CMS)</option>' : ''}
             </select>
           </div>
           <div class="adm-field">
@@ -778,8 +791,6 @@
   function renderModule(module, data) {
     const content = document.getElementById("adm-content");
 
-    if (module === "config") { renderConfig(data); return; }
-
     const items = Array.isArray(data) ? data : [];
     const mod = MODULES[module];
 
@@ -891,85 +902,7 @@
     return null;
   }
 
-  // ===== CONFIG MODULE =====
-  function renderConfig(data) {
-    const content = document.getElementById("adm-content");
-    if (!data) data = {};
-    content.innerHTML = `
-      <div class="adm-config-section">
-        <h3>⚙️ Cấu Hình Website</h3>
-        <p class="adm-config-desc">Thay đổi các thông tin hiển thị trên website</p>
 
-        <div class="adm-form-grid">
-          <div class="adm-field">
-            <label>Tên website</label>
-            <input type="text" class="adm-input" id="cfg-siteName" value="${escAttr(data.siteName || "")}" />
-          </div>
-          <div class="adm-field">
-            <label>Châm ngôn</label>
-            <input type="text" class="adm-input" id="cfg-motto" value="${escAttr(data.motto || "")}" />
-          </div>
-          <div class="adm-field">
-            <label>Email</label>
-            <input type="email" class="adm-input" id="cfg-email" value="${escAttr(data.email || "")}" />
-          </div>
-          <div class="adm-field">
-            <label>Link Facebook</label>
-            <input type="url" class="adm-input" id="cfg-facebook" value="${escAttr(data.facebook || "")}" />
-          </div>
-          <div class="adm-field">
-            <label>Địa chỉ</label>
-            <input type="text" class="adm-input" id="cfg-address" value="${escAttr(data.address || "")}" />
-          </div>
-        </div>
-
-        <div class="adm-form-actions">
-          <button class="adm-btn adm-btn--primary" id="cfg-save">Lưu cấu hình</button>
-        </div>
-      </div>
-
-      <div class="adm-config-section" style="margin-top: 2rem;">
-        <h3>🔑 Đổi Mật Khẩu Admin</h3>
-        <div class="adm-form-grid">
-          <div class="adm-field">
-            <label>Mật khẩu mới</label>
-            <input type="password" class="adm-input" id="cfg-newpwd" placeholder="Nhập mật khẩu mới..." />
-          </div>
-          <div class="adm-field">
-            <label>Xác nhận</label>
-            <input type="password" class="adm-input" id="cfg-newpwd2" placeholder="Nhập lại mật khẩu..." />
-          </div>
-        </div>
-        <div class="adm-form-actions">
-          <button class="adm-btn adm-btn--ghost" id="cfg-changepwd">Đổi mật khẩu</button>
-        </div>
-      </div>
-    `;
-
-    document.getElementById("cfg-save").addEventListener("click", async () => {
-      data.siteName = document.getElementById("cfg-siteName").value;
-      data.motto = document.getElementById("cfg-motto").value;
-      data.email = document.getElementById("cfg-email").value;
-      data.facebook = document.getElementById("cfg-facebook").value;
-      data.address = document.getElementById("cfg-address").value;
-      const result = await DataService.save("config", data);
-      showToast(result.success ? "Đã lưu cấu hình!" : "Lỗi khi lưu", !result.success);
-    });
-
-    document.getElementById("cfg-changepwd").addEventListener("click", async () => {
-      const p1 = document.getElementById("cfg-newpwd").value;
-      const p2 = document.getElementById("cfg-newpwd2").value;
-      if (!p1 || p1.length < 4) { showToast("Mật khẩu phải ít nhất 4 ký tự", true); return; }
-      if (p1 !== p2) { showToast("Mật khẩu xác nhận không khớp", true); return; }
-      data.adminPasswordHash = await sha256(p1);
-      adminHash = data.adminPasswordHash;
-      sessionStorage.setItem("gdpt_admin", adminHash);
-      const result = await DataService.save("config", data);
-      showToast(result.success ? "Đã đổi mật khẩu!" : "Lỗi khi đổi", !result.success);
-      document.getElementById("cfg-newpwd").value = "";
-      document.getElementById("cfg-newpwd2").value = "";
-    });
-  }
 
   // ===== FORM: Build fields per module =====
   function getFormFields(module, item, isEdit) {

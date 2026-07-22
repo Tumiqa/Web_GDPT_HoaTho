@@ -1,11 +1,50 @@
 [
-  {
-    "id": "kn-001",
-    "title": "Kết Dây Cơ Bản",
-    "category": "Kết Dây",
-    "content": "Hướng dẫn các nút dây cơ bản trong sinh hoạt GĐPT: nút dẹt, nút thợ dệt, nút ghế, nút thòng lọng... Đây là kỹ năng nền tảng mà mọi đoàn sinh cần nắm vững.",
-    "images": [],
-    "videos": [],
-    "date": "2025"
-  }
+    {
+        "id": "kn-001",
+        "title": "Bộ gút dây cơ bản ",
+        "category": "Kết Dây",
+        "content": "<h2>Bộ gút dây cơ bản<\/h2><ol><li><strong>Nút chịu đơn: <\/strong>Không cho đầu dây chui qua lỗ nhỏ, làm điểm tựa bám tay (sợi dây kéo nước giếng, dây kéo thuyền vào bờ.<\/li><li><strong>Nút chịu kép:<\/strong> Giống như nút chịu đơn, để lại gút to, chắc chắn hơn, dùng trang trí...<\/li><li><strong>Nút chịu tam:<\/strong> Giống như nút chịu đơn, để lại gút to, chắc chắn hơn, dùng trang trí<\/li><li><strong>Nút số 8<\/strong>: Giống như nút chịu đơn, do có một vòng xoắn nên nút chắc chắn hơn, nút được sử dụng làm thang dây, trang trí...<\/li><li><strong>Nút chân chó:<\/strong> Loại bỏ phần dây bị hư, gút ngắn dây thừa, trùng.<\/li><\/ol><h2>Bộ nối dây cơ bản<\/h2><ol><li><strong>Nút dẹt<\/strong>: Là nút nối thông dụng nhất. Dùng để nối hai đầu dây có tiết diện bằng nhau, buộc đồ, gói hàng, là nút kết của bằng cứu thương.<\/li><li><strong>Nút bò:<\/strong> Là một kiểu nút rất giống với nút dẹt. Chỗ khác là đầu thắt vòng của mỗi dây đi lên trên rồi đi xuống dưới hai sợi dây của dây kia chứ không ở dùng khi giao với hai sợi dây của dây kia.<\/li><li><strong>Nút thợ dệt: <\/strong>Là một loại nút có liên hệ cấu trúc với nút ghế đơn. Nó được thắt nhanh chóng và hữu dụng để nối hai dây khác tiết diện.<\/li><li><strong>Nút nối chỉ câu:<\/strong> Dùng để nối chỉ câu, nối hai đầu dây trơn có tiết diện bằng nhau hoặc không bằng nhau, ứng dụng kéo màn sân khấu<\/li><\/ol><h3>Đây là kỹ năng nền tảng mà mọi đoàn sinh cần nắm vững.<\/h3>",
+        "videos": [
+            "https:\/\/youtu.be\/8V2EwCzpPQk?list=PLfRk1ZV0X6-K4f5iNwhzkv25Uv1bgKYsz",
+            "https:\/\/youtu.be\/dN7xvo8gryk?list=PLfRk1ZV0X6-K4f5iNwhzkv25Uv1bgKYsz"
+        ],
+        "images": [],
+        "date": "2026"
+    },
+    {
+        "id": "kn-1782451021969",
+        "title": "Bộ tăng đơ",
+        "category": "Kết Dây",
+        "content": "<h3 class=\"ql-align-justify\">Nút chạy<\/h3><p class=\"ql-align-justify\"><img src=\"https:\/\/pathtoeagle.org\/wp-content\/uploads\/2023\/02\/Taut-Line-Hitch.jpg\" alt=\"How to Tie Each Scouting Required Knot – Path to Eagle\"><\/p><p class=\"ql-align-justify\"><strong>Công dụng<\/strong>: Nút chạy được sử dụng để tăng, giảm dây lều, dung trong trường hợp dây ngắn. Cách thắt nút này giúp bạn có thể điều chỉnh được độ dài, ngắn của đoạn dây. Là một nút thắt có thể điều chỉnh để được sử dụng trên các đường chịu lực<\/p><h3 class=\"ql-align-justify\">Nút bồ cầu (Thòng lọng ngược)<\/h3><p class=\"ql-align-justify\"><img src=\"https:\/\/knotspedia.com\/wp-content\/uploads\/2025\/02\/Truckers-hitch-diagram-1024x1024.jpg\" alt=\"How to Tie an Overhand Knot: Step-by-Step Guide\"><\/p><p class=\"ql-align-justify\"><strong>Công dụng: <\/strong>Nút bồ câu dừng để tăng giảm dây. Cách làm là dùng 1 nút thòng lọng ở giữa dây tạo thành 1 vòng dây. Dùng để tăng giảm dây lều<\/p><h3 class=\"ql-align-justify\">Nút phối hợp (2 nút dây trên)<\/h3><p class=\"ql-align-justify\">Đây là sự kết hợp giữa 2 nút dây có cùng công dụng. Nhằm giúp chúng ta thuận thiện trong việc tăng đơ.<\/p>",
+        "videos": [
+            "https:\/\/www.youtube.com\/watch?v=yRdzYFmipkc&t=5s"
+        ],
+        "images": [],
+        "date": "2026"
+    },
+    {
+        "id": "kn-1782450495820",
+        "title": "Bộ buộc, treo, neo cơ bản",
+        "category": "Kết Dây",
+        "content": "<h4><strong>1.Nút thòng lọng<\/strong><\/h4><p><img src=\"https:\/\/th.bing.com\/th\/id\/OIP.rjRcUifpK8JLNqDsTabNfwHaDR?w=348&amp;h=154&amp;c=7&amp;r=0&amp;o=7&amp;pid=1.7&amp;rm=3\" alt=\"Kết quả hình ảnh cho nút thòng lọng\"><strong>Công dụng: <\/strong>Là nút dùng để bắt súc vật, neo dây vào các vật dụng, buộc xiết một vật nào đó.<\/p><h4><strong>2.Nút thuyền chài<\/strong><\/h4><p><img src=\"https:\/\/th.bing.com\/th\/id\/R.647e3563eca72d6f23e9288f47c0c90e?rik=I5uf8N%2fROsxkHQ&amp;riu=http%3a%2f%2f1.bp.blogspot.com%2f_5h7iMv6ZUz8%2fSlxMb9RnPMI%2fAAAAAAAABs0%2fbNvLKnHp690%2fs320%2fthuyen%2bchai.gif&amp;ehk=WnVICxRvr%2fbql7rN0RtizQh456tjnblST4e9guSzyuM%3d&amp;risl=&amp;pid=ImgRaw&amp;r=0\" alt=\"NÚT DÂY: Nút thuyền chài (clove hitch)\" style=\"color: rgb(207, 204, 192); font-family: Helvetica, Arial, sans-serif; font-size: 1rem;\"><\/p><p><strong>Công dụng: <\/strong> Dùng để neo thuyền vào cọc trên bờ, buộc đầu gậy chính cảu lều, nút khởi đầu của tất cả các nút ráp cây. Nút thuyền cài còn được gọi là nút quai chèo.<\/p><h4>3.Nút kéo gỗ<\/h4><p><img src=\"https:\/\/www.technoven.com\/wp-content\/uploads\/2018\/03\/timber-hitch.jpg\" alt=\"How To Tie Rope Knots (21 Easy Method With Pictures)\"><\/p><p><strong>Công dụng:<\/strong> Dùng để kéo gỗ. Cũng có tác dụng xiết như nút thòng lọng. Có thể ứng dụng để căng dây phơi đồ, mắc võng vào thân cây.<\/p>",
+        "videos": [
+            "https:\/\/www.youtube.com\/watch?v=17SxjArTchI"
+        ],
+        "images": [],
+        "date": "2026"
+    },
+    {
+        "id": "kn-1781630619171",
+        "title": "Bộ cấp cứu cơ bản (bộ gút ghế)",
+        "category": "Kết Dây",
+        "content": "<p><strong>Họ Gút ghế (Bowline)<\/strong> được mệnh danh là \"vua của các loại nút\" nhờ đặc tính cốt lõi: càng chịu tải càng siết chặt, nhưng khi cần xả thì bẻ nút tháo rất dễ dàng.<\/p><p><strong>1. Nút ghế đơn<\/strong><\/p><p>Nút thắt nền tảng tạo ra một vòng cố định duy nhất ở đầu dây. Nó thường được ứng dụng để buộc neo thuyền vào cọc, làm dây bảo hiểm hoặc treo kéo vật tư cơ bản.<\/p><p><img src=\"https:\/\/knotspedia.com\/wp-content\/uploads\/2024\/10\/bowline-knot-diagram.jpg.webp\" alt=\"How to Tie the One Handed Bowline Knot: Step by Step Guide\"><\/p><p><strong>2. Nút ghế kép<\/strong><\/p><p>Được thắt bằng cách gập đôi sợi dây, tạo ra hai vòng cố định chịu lực đều nhau. Trong cứu hộ, hai vòng này hoạt động như một chiếc ghế treo: một vòng đỡ mông, một vòng đỡ nách giúp người được kéo lên giữ được tư thế thẳng đứng, không bị lật.<\/p><p><img src=\"https:\/\/knotspedia.com\/wp-content\/uploads\/2024\/12\/bowline-on-a-bight-knot-diagram-1024x1024.jpg\" alt=\"How to Tie a Double Bowline Knot: Step by Step Guide\"><\/p><p><strong>3. Nút ghế thợ sơn<\/strong><\/p><p>Biến thể này tạo ra hai vòng nhưng kích thước giữa chúng có thể dịch chuyển, cân chỉnh linh hoạt trước khi siết chặt. Nút này giúp thợ sơn hoặc thợ lau kính tòa nhà tự điều chỉnh một vòng làm ghế ngồi và một vòng đỡ lưng sao cho thoải mái nhất khi làm việc trên cao.<\/p><p><img src=\"https:\/\/i.ytimg.com\/vi\/QqoWvCDEtbQ\/maxresdefault.jpg\" alt=\"How to EASILY Tie the French Bowline Knot (Double Loop) - YouTube\"><\/p><p><strong>4. Nút ghế cứu hỏa<\/strong><\/p><p>Cấu trúc tạo ra hai vòng độc lập và được khóa chặn bằng các nút nửa khóa. Nút này chuyên dùng để hạ nạn nhân bất tỉnh từ tầng cao xuống vì nó ôm sát đùi và ngực, giữ nạn nhân không bị tuột rơi ngay cả khi họ đã mất ý thức.<\/p><p><img src=\"https:\/\/i.ytimg.com\/vi\/dwuU54_Y9PU\/maxresdefault.jpg\" alt=\"How to Tie a Fireman’s Chair Knot (Rescue Harness) - YouTube\"><\/p><p><strong>5. Nút ghế Anh<\/strong><\/p><p>Phiên bản nâng cấp tăng cường độ bám bằng cách thêm một vòng khóa ở lõi nút thắt. Ghế Anh được dùng chuyên dụng trong môi trường sông nước hoặc với các loại dây thừng sợi tổng hợp thế hệ mới vốn rất trơn, giúp nút thắt không bị tự nới lỏng khi ngập nước.<\/p><p><img src=\"https:\/\/i.ytimg.com\/vi\/wiYQH1Nq-ts\/maxresdefault.jpg\" alt=\"Hướng dẫn gút nút ghế anh | Hướng dẫn thắt dây | How to tie the knot ...\"><\/p><p><strong><em>Mẹo nhỏ:<\/em><\/strong><em> Khi ứng dụng họ gút ghế vào các việc liên quan đến an toàn hoặc chịu tải lớn, luôn nhớ thắt thêm một nút chặn ở phần đuôi dây thừa để chống tuột tuyệt đối.<\/em><\/p>",
+        "videos": [
+            "https:\/\/www.youtube.com\/watch?v=VDnXVU9z5Kc&list=PLfRk1ZV0X6-Kvjd4MG0qUBsib-wFR4R86&index=6",
+            "https:\/\/www.youtube.com\/watch?v=rM6XTsBUNaM&list=PLfRk1ZV0X6-Kvjd4MG0qUBsib-wFR4R86&index=2",
+            "https:\/\/www.youtube.com\/watch?v=6Is8qFGM7kM&list=PLfRk1ZV0X6-Kvjd4MG0qUBsib-wFR4R86&index=3",
+            "https:\/\/youtu.be\/wiYQH1Nq-ts?list=PLfRk1ZV0X6-Kvjd4MG0qUBsib-wFR4R86"
+        ],
+        "images": [],
+        "date": "2026"
+    }
 ]

@@ -157,6 +157,13 @@ switch ($action) {
             exit;
         }
 
+        // Only super-admin (0903549528) can create admin accounts
+        if ($role === 'admin' && $admin['username'] !== '0903549528') {
+            http_response_code(403);
+            echo json_encode(['error' => 'Chỉ có tài khoản Admin tối cao (0903549528) mới có quyền tạo tài khoản Admin']);
+            exit;
+        }
+
         $newUser = createUser($username, $password, $displayName, $role, $fullName, $dob, $position, $rank, $studyLevel, $dharmaName);
         if (!$newUser) {
             http_response_code(409);
@@ -200,28 +207,11 @@ switch ($action) {
             exit;
         }
 
-        // Check target user's role before deleting
-        $db = getAuthDB();
-        $stmt = $db->prepare('SELECT username, role FROM users WHERE id = :id');
-        $stmt->bindValue(':id', $userId, SQLITE3_TEXT);
-        $result = $stmt->execute();
-        $targetUser = $result->fetchArray(SQLITE3_ASSOC);
-        $stmt->close();
-        $db->close();
-
-        if (!$targetUser) {
-            http_response_code(404);
-            echo json_encode(['error' => 'Người dùng không tồn tại']);
+        // Only super-admin (0903549528) is allowed to delete any account
+        if ($admin['username'] !== '0903549528') {
+            http_response_code(403);
+            echo json_encode(['error' => 'Chỉ có tài khoản Admin tối cao (0903549528) mới có quyền xóa tài khoản']);
             exit;
-        }
-
-        // Only allow deleting admins if the current admin is the super-admin (username = '0903549528')
-        if ($targetUser['role'] === 'admin') {
-            if ($admin['username'] !== '0903549528') {
-                http_response_code(403);
-                echo json_encode(['error' => 'Bạn không có quyền xóa một tài khoản Admin khác. Chỉ có nhà phát triển mới thực hiện được việc này.']);
-                exit;
-            }
         }
 
         $deleted = deleteUser($userId);
@@ -251,7 +241,7 @@ switch ($action) {
         $targetUserId = $body['userId'] ?? $currentUser['userId'];
         $newPassword = $body['newPassword'] ?? '';
 
-        // Only admin can change other users' passwords
+        // Only super-admin (0903549528) can change other users' passwords
         if ($targetUserId !== $currentUser['userId']) {
             if ($currentUser['role'] !== 'admin') {
                 http_response_code(403);
@@ -259,21 +249,10 @@ switch ($action) {
                 exit;
             }
 
-            // If the target is an admin, only allow the developer (username = '0903549528') to change it
-            $db = getAuthDB();
-            $stmt = $db->prepare('SELECT username, role FROM users WHERE id = :id');
-            $stmt->bindValue(':id', $targetUserId, SQLITE3_TEXT);
-            $result = $stmt->execute();
-            $targetUser = $result->fetchArray(SQLITE3_ASSOC);
-            $stmt->close();
-            $db->close();
-
-            if ($targetUser && $targetUser['role'] === 'admin') {
-                if ($currentUser['username'] !== '0903549528') {
-                    http_response_code(403);
-                    echo json_encode(['error' => 'Bạn không có quyền thay đổi mật khẩu của một tài khoản Admin khác. Chỉ có nhà phát triển mới thực hiện được việc này.']);
-                    exit;
-                }
+            if ($currentUser['username'] !== '0903549528') {
+                http_response_code(403);
+                echo json_encode(['error' => 'Chỉ có tài khoản Admin tối cao (0903549528) mới có quyền thay đổi mật khẩu của tài khoản khác']);
+                exit;
             }
         }
 

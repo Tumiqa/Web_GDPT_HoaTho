@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-$ALLOWED_MODULES = ['sinhhoat', 'nhac', 'tailieu', 'kynang', 'config'];
+$ALLOWED_MODULES = ['sinhhoat', 'nhac', 'tailieu', 'kynang'];
 $DATA_DIR = __DIR__ . '/data/';
 $BACKUP_DIR = $DATA_DIR . 'backups/';
 $CONFIG_FILE = $DATA_DIR . 'config.json';
