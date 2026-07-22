@@ -12,7 +12,11 @@ document.addEventListener("DOMContentLoaded", () => {
     'P': [1,2,3,4],   'Q': [1,2,3,4,5], 'R': [1,2,3,5],
     'S': [2,3,4],     'T': [2,3,4,5],   'U': [1,3,6],
     'V': [1,2,3,6],   'W': [2,4,5,6],   'X': [1,3,4,6],
-    'Y': [1,3,4,5,6], 'Z': [1,3,5,6]
+    'Y': [1,3,4,5,6], 'Z': [1,3,5,6],
+    '1': [1],         '2': [1,2],       '3': [1,4],
+    '4': [1,4,5],     '5': [1,5],       '6': [1,2,4],
+    '7': [1,2,4,5],   '8': [1,2,5],     '9': [2,4],
+    '0': [2,4,5]
   };
 
   // Build a Braille cell HTML (2x3 grid showing all 6 dots)
@@ -91,7 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentPracAnswer = "";
 
   // Practice word bank
-  const pracChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
+  const pracChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
   const pracWords = [
     "HELLO", "SCOUT", "PEACE", "BRAVE", "UNITY",
     "TRUST", "HONOR", "LIGHT", "TRUTH", "NOBLE",
@@ -197,7 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===== BUILD KEYBOARD =====
   function buildKeyboard() {
     keyboard.innerHTML = "";
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').forEach(c => {
+    "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').forEach(c => {
       const li = document.createElement("li");
       const a = document.createElement("a");
       a.href = "#";
@@ -242,7 +246,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (tag === "INPUT" || tag === "TEXTAREA") return;
 
     let key = e.key.toUpperCase();
-    if (key >= 'A' && key <= 'Z') {
+    if ((key >= 'A' && key <= 'Z') || (key >= '0' && key <= '9')) {
       e.preventDefault();
       showChar(key, document.getElementById("cipher-key-" + key));
     }
