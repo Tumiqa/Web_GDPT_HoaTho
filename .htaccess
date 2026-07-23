@@ -34,7 +34,7 @@ RewriteRule ^data/backups - [F,L]
     </FilesMatch>
 
     # Tài nguyên tĩnh (CSS, JS, Fonts, Ảnh): Cache dài hạn (đã có cơ chế cache-busting ?v=...)
-    <FilesMatch "\.(css|js|png|jpg|jpeg|gif|webp|svg|woff|woff2|ttf|eot|mp3|mp4)$">
+    <FilesMatch "\.(css|js|png|jpg|jpeg|gif|webp|svg|woff|woff2|ttf|eot|mp3|mp4|pdf|doc|docx|xls|xlsx)$">
         Header set Cache-Control "max-age=31536000, public"
     </FilesMatch>
 </IfModule>

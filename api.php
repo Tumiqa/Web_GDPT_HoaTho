@@ -33,6 +33,94 @@ if (!$module || !in_array($module, $ALLOWED_MODULES)) {
 
 $filePath = $DATA_DIR . $module . '.json';
 
+// ===== FILE UPLOAD: Upload document files (tailieu module only) =====
+$action = isset($_GET['action']) ? strtolower(trim($_GET['action'])) : '';
+
+if ($action === 'upload' && $module === 'tailieu' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Auth check — admin only
+    $currentUser = getCurrentUser();
+    if (!$currentUser || $currentUser['role'] !== 'admin') {
+        http_response_code(403);
+        echo json_encode(['error' => 'Bạn không có quyền upload file (cần quyền Admin)']);
+        exit;
+    }
+
+    if (!isset($_FILES['file'])) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Không tìm thấy file tải lên']);
+        exit;
+    }
+
+    $file = $_FILES['file'];
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Lỗi tải file lên server (code: ' . $file['error'] . ')']);
+        exit;
+    }
+
+    // Validate size (max 10MB)
+    if ($file['size'] > 10 * 1024 * 1024) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Kích thước file tối đa là 10MB']);
+        exit;
+    }
+
+    // Validate MIME type
+    $allowedMimes = [
+        'application/pdf'                                                                 => 'pdf',
+        'application/msword'                                                              => 'doc',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'          => 'docx',
+        'application/vnd.ms-excel'                                                        => 'xls',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'                => 'xlsx',
+    ];
+
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mimeType = finfo_file($finfo, $file['tmp_name']);
+    finfo_close($finfo);
+
+    if (!isset($allowedMimes[$mimeType])) {
+        // Fallback: check file extension
+        $origExt = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $allowedExts = ['pdf', 'doc', 'docx', 'xls', 'xlsx'];
+        if (!in_array($origExt, $allowedExts)) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Chỉ chấp nhận file PDF, DOC, DOCX, XLS, XLSX']);
+            exit;
+        }
+        $ext = $origExt;
+    } else {
+        $ext = $allowedMimes[$mimeType];
+    }
+
+    // Prepare upload directory
+    $uploadDir = __DIR__ . '/uploads/tailieu';
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0755, true);
+    }
+
+    // Generate clean file name (timestamp + sanitized original name)
+    $baseName = pathinfo($file['name'], PATHINFO_FILENAME);
+    $baseName = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $baseName);
+    $baseName = substr($baseName, 0, 50); // Limit length
+    $fileName = time() . '_' . $baseName . '.' . $ext;
+    $destPath = $uploadDir . '/' . $fileName;
+
+    if (move_uploaded_file($file['tmp_name'], $destPath)) {
+        $fileUrl = 'uploads/tailieu/' . $fileName;
+        echo json_encode([
+            'success'  => true,
+            'url'      => $fileUrl,
+            'fileName' => $file['name'],
+            'fileType' => $ext,
+            'fileSize' => $file['size'],
+        ]);
+    } else {
+        http_response_code(500);
+        echo json_encode(['error' => 'Không thể lưu file trên máy chủ']);
+    }
+    exit;
+}
+
 // ===== GET: Read data (Public — no auth required) =====
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (!file_exists($filePath)) { echo json_encode([]); exit; }

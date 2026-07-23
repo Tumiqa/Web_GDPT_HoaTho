@@ -890,7 +890,12 @@
     switch (module) {
       case "sinhhoat": return `${item.year || ""} · ${item.date || ""} · ${(item.images || []).length} ảnh · ${(item.videos || []).length} video`;
       case "nhac": return `${item.artist || "Nhạc GĐPT"} · ${item.duration || ""}`;
-      case "tailieu": return `${item.category || ""} · ${(item.fileType || "").toUpperCase()}`;
+      case "tailieu": {
+        const nganh = item.nganh || item.category || "Tài liệu chung";
+        const bac = item.bac ? ` · ${item.bac}` : "";
+        const access = item.access === 'internal' ? '🔒 Nội bộ' : '🌐 Công khai';
+        return `${nganh}${bac} · ${access} · ${(item.fileType || "").toUpperCase()}`;
+      }
       case "kynang": return `${item.category || ""} · ${(item.images || []).length} ảnh · ${(item.videos || []).length} video`;
       default: return "";
     }
@@ -931,13 +936,18 @@
         break;
       case "tailieu":
         fields.push(
-          { type: "text", id: "title", label: "Tên tài liệu", placeholder: "Ví dụ: Giáo Án Ngành Thiếu", value: item.title, required: true },
+          { type: "text", id: "title", label: "Tên tài liệu", placeholder: "Ví dụ: Giáo Án Ngành Thiếu - Bậc Hướng Thiện", value: item.title, required: true },
           { type: "textarea", id: "description", label: "Mô tả", placeholder: "Mô tả ngắn về tài liệu...", value: item.description, rows: 3 },
           { type: "row", children: [
-            { type: "select", id: "category", label: "Danh mục", value: item.category, options: ["Phật Pháp", "Giáo Án", "Kỹ Năng", "Sách Tham Khảo", "Khác"] },
-            { type: "select", id: "fileType", label: "Loại file", value: item.fileType, options: ["pdf", "doc", "ppt", "link", "video"] },
+            { type: "select", id: "nganh", label: "Ngành", value: item.nganh || 'Tài liệu chung', options: ["Tài liệu chung", "Ngành Oanh", "Ngành Thiếu", "Ngành Thanh", "Huynh Trưởng"] },
+            { type: "select", id: "bac", label: "Bậc", value: item.bac || '', options: [''] },
+          ]},
+          { type: "row", children: [
+            { type: "select", id: "access", label: "Quyền truy cập", value: item.access || 'public', options: ["public", "internal"], optionLabels: { "public": "🌐 Công khai", "internal": "🔒 Nội bộ" } },
+            { type: "select", id: "attachmentType", label: "Loại đính kèm", value: item.attachmentType || 'link', options: ["link", "upload"], optionLabels: { "link": "🔗 Đường link", "upload": "📎 Upload file" } },
           ]},
           { type: "text", id: "url", label: "Link tài liệu", placeholder: "https://drive.google.com/...", value: item.url || "", hint: "Google Drive, PDF URL, hoặc link tải" },
+          { type: "file_upload", id: "fileUpload", label: "Upload tài liệu", accept: ".pdf,.doc,.docx,.xls,.xlsx", hint: "Chấp nhận PDF, DOC, DOCX, XLS, XLSX (tối đa 10MB)", existingFile: item.attachmentType === 'upload' ? item.url : '' },
         );
         break;
       case "kynang":
@@ -981,11 +991,35 @@
         </div>`;
     }
     if (field.type === "select") {
-      const opts = (field.options || []).map(o => `<option value="${escAttr(o)}" ${field.value === o ? "selected" : ""}>${esc(o)}</option>`).join("");
+      const labels = field.optionLabels || {};
+      const opts = (field.options || []).map(o => {
+        const displayText = labels[o] || o;
+        return `<option value="${escAttr(o)}" ${field.value === o ? "selected" : ""}>${esc(displayText)}</option>`;
+      }).join("");
       return `
         <div class="adm-field">
           <label>${field.label}</label>
           <select class="adm-input" id="form-${field.id}">${opts}</select>
+        </div>`;
+    }
+    if (field.type === "file_upload") {
+      const existingInfo = field.existingFile
+        ? `<div class="adm-file-existing" style="margin-top:8px; padding:8px 12px; background:rgba(138,176,151,0.08); border-radius:8px; font-size:0.8rem; color:rgba(255,255,255,0.7);">
+             📎 File hiện tại: <strong>${esc(field.existingFile.split('/').pop())}</strong>
+             <input type="hidden" id="form-${field.id}-existing" value="${escAttr(field.existingFile)}" />
+           </div>`
+        : `<input type="hidden" id="form-${field.id}-existing" value="" />`;
+      return `
+        <div class="adm-field adm-field--file-upload" id="field-${field.id}">
+          <label>${field.label}</label>
+          <div class="adm-file-dropzone" id="dropzone-${field.id}" style="border:2px dashed rgba(138,176,151,0.2); border-radius:12px; padding:1.5rem; text-align:center; cursor:pointer; transition:all 0.3s; background:rgba(138,176,151,0.03);">
+            <div style="font-size:2rem; margin-bottom:0.5rem;">📂</div>
+            <div style="font-size:0.85rem; color:rgba(255,255,255,0.6);">Kéo thả file vào đây hoặc <span style="color:var(--brand-primary); font-weight:600;">nhấp để chọn</span></div>
+            <div id="file-info-${field.id}" style="margin-top:8px; font-size:0.8rem; color:var(--brand-primary); display:none;"></div>
+            <input type="file" id="form-${field.id}" accept="${field.accept || ''}" style="display:none;" />
+          </div>
+          ${existingInfo}
+          ${field.hint ? `<small>${field.hint}</small>` : ""}
         </div>`;
     }
     if (field.type === "richtext") {
@@ -1065,6 +1099,80 @@
 
     // Init media preview
     initMediaPreview(module);
+
+    // Init file upload dropzones
+    document.querySelectorAll('.adm-field--file-upload').forEach(fieldEl => {
+      const input = fieldEl.querySelector('input[type="file"]');
+      const dropzone = fieldEl.querySelector('.adm-file-dropzone');
+      const fileInfoId = 'file-info-' + input.id.replace('form-', '');
+      const fileInfo = document.getElementById(fileInfoId);
+      if (!input || !dropzone) return;
+
+      dropzone.addEventListener('click', () => input.click());
+      dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.style.borderColor = 'var(--brand-primary)'; dropzone.style.background = 'rgba(138,176,151,0.08)'; });
+      dropzone.addEventListener('dragleave', () => { dropzone.style.borderColor = 'rgba(138,176,151,0.2)'; dropzone.style.background = 'rgba(138,176,151,0.03)'; });
+      dropzone.addEventListener('drop', e => {
+        e.preventDefault();
+        dropzone.style.borderColor = 'rgba(138,176,151,0.2)';
+        dropzone.style.background = 'rgba(138,176,151,0.03)';
+        if (e.dataTransfer.files.length) {
+          input.files = e.dataTransfer.files;
+          input.dispatchEvent(new Event('change'));
+        }
+      });
+      input.addEventListener('change', () => {
+        if (input.files.length && fileInfo) {
+          const f = input.files[0];
+          const sizeMB = (f.size / 1024 / 1024).toFixed(2);
+          fileInfo.innerHTML = `✅ ${esc(f.name)} (${sizeMB} MB)`;
+          fileInfo.style.display = 'block';
+        }
+      });
+    });
+
+    // === TAILIEU MODULE: Dynamic Ngành/Bậc + AttachmentType toggle ===
+    if (module === 'tailieu') {
+      const NGANH_BAC_MAP = {
+        'Ngành Oanh': ['Mở Mắt', 'Cánh Mềm', 'Chân Cứng', 'Tung Bay'],
+        'Ngành Thiếu': ['Hướng Thiện', 'Sơ Thiện', 'Trung Thiện', 'Chánh Thiện'],
+        'Ngành Thanh': ['Hòa', 'Minh', 'Kiến', 'Trực'],
+        'Huynh Trưởng': ['Kiên', 'Trì', 'Định', 'Lực'],
+      };
+
+      const nganhSelect = document.getElementById('form-nganh');
+      const bacSelect = document.getElementById('form-bac');
+      const attachTypeSelect = document.getElementById('form-attachmentType');
+      const urlField = document.getElementById('form-url')?.closest('.adm-field');
+      const fileUploadField = document.getElementById('field-fileUpload');
+
+      // Populate Bậc based on Ngành
+      function updateBacOptions() {
+        const nganh = nganhSelect.value;
+        const bacs = NGANH_BAC_MAP[nganh] || [];
+        const currentBac = bacSelect.value;
+        bacSelect.innerHTML = '<option value="">— Không chọn —</option>' +
+          bacs.map(b => `<option value="${escAttr(b)}" ${currentBac === b ? 'selected' : ''}>${esc(b)}</option>`).join('');
+        bacSelect.closest('.adm-field').style.display = bacs.length ? '' : 'none';
+      }
+
+      // Toggle URL vs Upload
+      function updateAttachmentFields() {
+        const isUpload = attachTypeSelect.value === 'upload';
+        if (urlField) urlField.style.display = isUpload ? 'none' : '';
+        if (fileUploadField) fileUploadField.style.display = isUpload ? '' : 'none';
+      }
+
+      nganhSelect.addEventListener('change', updateBacOptions);
+      attachTypeSelect.addEventListener('change', updateAttachmentFields);
+
+      // Init on load
+      updateBacOptions();
+      // If editing, restore the bac value
+      if (isEdit && item.bac) {
+        bacSelect.value = item.bac;
+      }
+      updateAttachmentFields();
+    }
 
     // Init Quill instances
     quillInstances = {};
@@ -1171,17 +1279,70 @@
           duration: document.getElementById("form-duration").value,
         };
         break;
-      case "tailieu":
+      case "tailieu": {
+        const attachType = document.getElementById("form-attachmentType").value;
+        let fileUrl = '';
+        let fileType = 'link';
+
+        if (attachType === 'upload') {
+          // Check if a new file was uploaded
+          const uploadInput = document.getElementById('form-fileUpload');
+          const existingUrl = document.getElementById('form-fileUpload-existing');
+          
+          if (uploadInput && uploadInput.files && uploadInput.files.length > 0) {
+            // Upload file to server
+            const formData = new FormData();
+            formData.append('file', uploadInput.files[0]);
+            
+            try {
+              showToast('Đang tải file lên...');
+              const uploadRes = await fetch(`${API_URL}?module=tailieu&action=upload`, {
+                method: 'POST',
+                body: formData,
+                credentials: 'same-origin',
+              });
+              const uploadData = await uploadRes.json();
+              if (uploadRes.ok && uploadData.success) {
+                fileUrl = uploadData.url;
+                fileType = uploadData.fileType || 'pdf';
+              } else {
+                showToast(uploadData.error || 'Upload thất bại', true);
+                return;
+              }
+            } catch (e) {
+              showToast('Lỗi kết nối khi upload file', true);
+              return;
+            }
+          } else if (existingUrl && existingUrl.value) {
+            // Keep existing uploaded file
+            fileUrl = existingUrl.value;
+            const ext = fileUrl.split('.').pop().toLowerCase();
+            fileType = ['pdf','doc','docx','xls','xlsx'].includes(ext) ? ext : 'pdf';
+          }
+        } else {
+          fileUrl = document.getElementById("form-url").value;
+          // Auto-detect file type from URL
+          const urlLower = fileUrl.toLowerCase();
+          if (urlLower.endsWith('.pdf')) fileType = 'pdf';
+          else if (urlLower.endsWith('.doc') || urlLower.endsWith('.docx')) fileType = 'doc';
+          else if (urlLower.endsWith('.xls') || urlLower.endsWith('.xlsx')) fileType = 'xlsx';
+          else fileType = 'link';
+        }
+
         item = {
           id: index >= 0 ? items[index].id : "tl-" + Date.now(),
           title: document.getElementById("form-title").value,
           description: document.getElementById("form-description").value,
-          category: document.getElementById("form-category").value,
-          url: document.getElementById("form-url").value,
-          fileType: document.getElementById("form-fileType").value,
+          nganh: document.getElementById("form-nganh").value,
+          bac: document.getElementById("form-bac").value,
+          access: document.getElementById("form-access").value,
+          attachmentType: attachType,
+          url: fileUrl,
+          fileType: fileType,
           date: new Date().getFullYear().toString(),
         };
         break;
+      }
       case "kynang":
         item = {
           id: index >= 0 ? items[index].id : "kn-" + Date.now(),

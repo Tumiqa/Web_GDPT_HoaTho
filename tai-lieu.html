@@ -65,7 +65,7 @@
 
     <link rel="stylesheet" href="css/style.css?v=1.0.1" />
     <link rel="stylesheet" href="css/hero-effects.css?v=2.0.0" />
-    <link rel="stylesheet" href="css/tai-lieu.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/tai-lieu.css?v=2.0.2" />
     <link rel="stylesheet" href="css/admin.css?v=1.0.1" />
   </head>
 
@@ -145,8 +145,15 @@
       </section>
 
       <section class="bg-dark" style="min-height: 60vh;">
-        <div class="tl-filters" id="tl-filters">
-          <!-- Rendered by JS -->
+        <!-- Hierarchical Filters -->
+        <div class="tl-filters-wrap" id="tl-filters-wrap">
+          <div class="tl-filters-primary" id="tl-filters-primary">
+            <!-- Rendered by JS -->
+          </div>
+          <div class="tl-filters-secondary" id="tl-filters-secondary">
+            <!-- Rendered by JS -->
+          </div>
+          <div class="tl-stats" id="tl-stats"></div>
         </div>
 
         <div class="container">
@@ -156,7 +163,13 @@
           
           <div class="tl-empty" id="tl-empty">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
-            <p>Chưa có tài liệu trong thư mục này.</p>
+            <p>Chưa có tài liệu trong danh mục này.</p>
+          </div>
+
+          <!-- Login prompt for hidden internal docs -->
+          <div class="tl-login-prompt" id="tl-login-prompt" style="display:none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <p id="tl-login-msg">Tài liệu nội bộ chỉ dành cho thành viên. <a class="tl-login-link">Đăng nhập</a> để xem đầy đủ.</p>
           </div>
         </div>
       </section>
@@ -192,56 +205,225 @@
     <script defer src="js/admin.js?v=1.0.1"></script>
     <script>
       document.addEventListener('DOMContentLoaded', async () => {
+        // ===== CONFIG =====
+        const NGANH_BAC = {
+          'Ngành Oanh': ['Mở Mắt', 'Cánh Mềm', 'Chân Cứng', 'Tung Bay'],
+          'Ngành Thiếu': ['Hướng Thiện', 'Sơ Thiện', 'Trung Thiện', 'Chánh Thiện'],
+          'Ngành Thanh': ['Hòa', 'Minh', 'Kiến', 'Trực'],
+          'Huynh Trưởng': ['Kiên', 'Trì', 'Định', 'Lực'],
+        };
+
+        const AUTH_URL = 'auth.php';
+
+        // ===== LOAD DATA =====
         let docs = [];
         try {
           const res = await fetch('data/tailieu.json');
           if (res.ok) {
             docs = await res.json();
-            console.log("Loaded docs:", docs.length);
-          } else {
-            console.error("Failed to load tailieu.json, status:", res.status);
+            // Backward compatibility: map old category field to nganh
+            docs = docs.map(d => {
+              if (!d.nganh && d.category) {
+                d.nganh = d.category;
+              }
+              if (!d.access) d.access = 'public';
+              if (!d.attachmentType) d.attachmentType = d.url && d.url.startsWith('uploads/') ? 'upload' : 'link';
+              return d;
+            });
           }
         } catch(e) {
           console.error("Fetch error:", e);
         }
 
+        // ===== CHECK AUTH =====
+        let isLoggedIn = false;
+        try {
+          const authRes = await fetch(`${AUTH_URL}?action=me`, { credentials: 'same-origin' });
+          if (authRes.ok) {
+            const authData = await authRes.json();
+            if (authData.authenticated && authData.user) {
+              isLoggedIn = true;
+            }
+          }
+        } catch(e) {}
+
+        // ===== DOM ELEMENTS =====
         const grid = document.getElementById('tl-grid');
-        const filters = document.getElementById('tl-filters');
+        const primaryFilters = document.getElementById('tl-filters-primary');
+        const secondaryFilters = document.getElementById('tl-filters-secondary');
         const emptyState = document.getElementById('tl-empty');
+        const statsEl = document.getElementById('tl-stats');
+        const loginPrompt = document.getElementById('tl-login-prompt');
 
-        // Extract categories
-        const categories = [...new Set(docs.map(d => d.category))].filter(Boolean);
-
-        // Build filters
-        let filterHTML = '<button class="tl-filter-btn active" data-filter="all">Tất cả</button>';
-        categories.forEach(c => {
-          filterHTML += `<button class="tl-filter-btn" data-filter="${c}">${c}</button>`;
+        // Event delegation for login links
+        document.addEventListener('click', (e) => {
+          if (e.target && e.target.classList.contains('tl-login-link')) {
+            e.preventDefault();
+            if (window.openGDPTAdmin) window.openGDPTAdmin();
+          }
         });
-        filters.innerHTML = filterHTML;
 
-        // Render function
-        function render(filter) {
-          const filtered = filter === 'all' ? docs : docs.filter(d => d.category === filter);
-          
-          if (filtered.length === 0) {
-            grid.innerHTML = '';
-            emptyState.classList.add('visible');
+        let currentNganh = 'all';
+        let currentBac = 'all';
+
+        // ===== BUILD PRIMARY FILTERS =====
+        const nganhList = ['Tất cả', 'Tài liệu chung', ...Object.keys(NGANH_BAC)];
+        primaryFilters.innerHTML = nganhList.map((n, i) => {
+          const filter = i === 0 ? 'all' : n;
+          return `<button class="tl-filter-btn${i === 0 ? ' active' : ''}" data-filter="${filter}">${n}</button>`;
+        }).join('');
+
+        // ===== RENDER SECONDARY FILTERS =====
+        function renderSecondaryFilters(nganh) {
+          if (nganh === 'all' || nganh === 'Tài liệu chung' || !NGANH_BAC[nganh]) {
+            secondaryFilters.classList.remove('visible');
+            secondaryFilters.innerHTML = '';
             return;
           }
 
-          emptyState.classList.remove('visible');
+          const bacs = NGANH_BAC[nganh];
+          secondaryFilters.innerHTML = `<button class="tl-filter-btn active" data-bac="all">Tất cả bậc</button>` +
+            bacs.map(b => `<button class="tl-filter-btn" data-bac="${b}">${b}</button>`).join('');
           
-          const iconMap = {
-            'pdf': '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>',
-            'doc': '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/>',
-            'ppt': '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><rect x="8" y="13" width="8" height="4"/><line x1="8" y1="9" x2="10" y2="9"/>',
-            'video': '<path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14v-4z"/><rect x="3" y="6" width="12" height="12" rx="2" ry="2"/>',
-            'link': '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>'
-          };
+          secondaryFilters.setAttribute('data-nganh', nganh);
+          secondaryFilters.classList.add('visible');
+
+          // Bậc click events
+          secondaryFilters.querySelectorAll('.tl-filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+              secondaryFilters.querySelectorAll('.tl-filter-btn').forEach(b => b.classList.remove('active'));
+              btn.classList.add('active');
+              currentBac = btn.dataset.bac;
+              render();
+            });
+          });
+        }
+
+        // ===== PRIMARY FILTER EVENTS =====
+        primaryFilters.addEventListener('click', e => {
+          if (!e.target.classList.contains('tl-filter-btn')) return;
+          primaryFilters.querySelectorAll('.tl-filter-btn').forEach(b => b.classList.remove('active'));
+          e.target.classList.add('active');
+          currentNganh = e.target.dataset.filter;
+          currentBac = 'all';
+          renderSecondaryFilters(currentNganh);
+          render();
+        });
+
+        // ===== SVG ICONS =====
+        const iconMap = {
+          'pdf': '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>',
+          'doc': '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/>',
+          'docx': '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/>',
+          'xls': '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><rect x="8" y="12" width="8" height="6" rx="1"/>',
+          'xlsx': '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><rect x="8" y="12" width="8" height="6" rx="1"/>',
+          'ppt': '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><rect x="8" y="13" width="8" height="4"/>',
+          'video': '<path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14v-4z"/><rect x="3" y="6" width="12" height="12" rx="2" ry="2"/>',
+          'link': '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>'
+        };
+
+        const svgIcons = {
+          eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+          download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+          externalLink: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>',
+          lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
+          globe: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
+        };
+
+        // ===== RENDER =====
+        function render() {
+          // Filter documents
+          let filtered = docs.filter(d => {
+            // Access filter: hide internal docs for non-logged-in users
+            if (d.access === 'internal' && !isLoggedIn) return false;
+
+            // Ngành filter
+            if (currentNganh === 'all') return true;
+            if (currentNganh === 'Tài liệu chung') return !d.nganh || d.nganh === 'Tài liệu chung';
+            if (d.nganh !== currentNganh) return false;
+
+            // Bậc filter
+            if (currentBac !== 'all' && d.bac !== currentBac) return false;
+            return true;
+          });
+
+          // Count internal docs hidden (for login prompt)
+          const hiddenInternalCount = docs.filter(d => {
+            if (d.access !== 'internal' || isLoggedIn) return false;
+            if (currentNganh === 'all') return true;
+            if (currentNganh === 'Tài liệu chung') return !d.nganh || d.nganh === 'Tài liệu chung';
+            if (d.nganh !== currentNganh) return false;
+            if (currentBac !== 'all' && d.bac !== currentBac) return false;
+            return true;
+          }).length;
+
+          // Stats
+          const totalVisible = filtered.length;
+          statsEl.innerHTML = `<span>📄 ${totalVisible} tài liệu</span>` +
+            (hiddenInternalCount > 0 ? `<span>🔒 ${hiddenInternalCount} tài liệu nội bộ ẩn</span>` : '');
+
+          const loginMsgEl = document.getElementById('tl-login-msg');
+
+          if (filtered.length === 0) {
+            grid.innerHTML = '';
+            if (hiddenInternalCount > 0 && !isLoggedIn) {
+              // Internal documents exist but user is not logged in: Show login prompt only
+              emptyState.classList.remove('visible');
+              loginPrompt.style.display = 'flex';
+              if (loginMsgEl) {
+                loginMsgEl.innerHTML = `Danh mục này có <strong>${hiddenInternalCount} tài liệu nội bộ</strong> dành riêng cho thành viên. <a class="tl-login-link">Đăng nhập</a> để xem.`;
+              }
+            } else {
+              // Truly empty (0 public AND 0 internal)
+              emptyState.classList.add('visible');
+              loginPrompt.style.display = 'none';
+            }
+            return;
+          }
+
+          // If there are visible documents
+          emptyState.classList.remove('visible');
+
+          if (hiddenInternalCount > 0 && !isLoggedIn) {
+            loginPrompt.style.display = 'flex';
+            if (loginMsgEl) {
+              loginMsgEl.innerHTML = `Còn <strong>${hiddenInternalCount} tài liệu nội bộ</strong> khác trong danh mục này. <a class="tl-login-link">Đăng nhập</a> để xem đầy đủ.`;
+            }
+          } else {
+            loginPrompt.style.display = 'none';
+          }
 
           grid.innerHTML = filtered.map(d => {
             const type = d.fileType || 'link';
             const iconSvg = iconMap[type] || iconMap['link'];
+            const nganhLabel = d.nganh && d.nganh !== 'Tài liệu chung' 
+              ? `${d.nganh}${d.bac ? ' · ' + d.bac : ''}`
+              : 'Tài liệu chung';
+
+            // Access badge
+            const accessBadge = d.access === 'internal'
+              ? `<span class="tl-badge tl-badge--internal">${svgIcons.lock} Nội bộ</span>`
+              : `<span class="tl-badge tl-badge--public">${svgIcons.globe} Công khai</span>`;
+
+            // Smart action button based on file type
+            let actionBtn = '';
+            if (type === 'pdf') {
+              // PDF: open directly in browser
+              actionBtn = `<a href="${d.url}" target="_blank" rel="noopener noreferrer" class="tl-btn tl-btn--view">
+                ${svgIcons.eye} Xem tài liệu
+              </a>`;
+            } else if (['doc', 'docx', 'xls', 'xlsx'].includes(type)) {
+              // DOC/XLSX: download
+              actionBtn = `<a href="${d.url}" download class="tl-btn tl-btn--download">
+                ${svgIcons.download} Tải về
+              </a>`;
+            } else {
+              // Link or other: open in new tab
+              actionBtn = `<a href="${d.url}" target="_blank" rel="noopener noreferrer" class="tl-btn tl-btn--link">
+                ${svgIcons.externalLink} Mở liên kết
+              </a>`;
+            }
+
             return `
               <div class="tl-card">
                 <div class="tl-card__header">
@@ -249,17 +431,17 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${iconSvg}</svg>
                   </div>
                   <div class="tl-card__meta">
-                    <div class="tl-card__category">${d.category || ''}</div>
+                    <div class="tl-card__badges">
+                      ${accessBadge}
+                      <span class="tl-badge tl-badge--nganh">${nganhLabel}</span>
+                    </div>
                     <div class="tl-card__title">${d.title}</div>
-                    <div class="tl-card__date">${d.date || ''}</div>
+                    <div class="tl-card__date">${d.date || ''} · ${(type).toUpperCase()}</div>
                   </div>
                 </div>
                 <div class="tl-card__desc">${d.description || ''}</div>
                 <div class="tl-card__actions">
-                  <a href="${d.url}" target="_blank" rel="noopener noreferrer" class="tl-btn tl-btn--primary">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                    Mở tài liệu
-                  </a>
+                  ${actionBtn}
                 </div>
               </div>
             `;
@@ -270,21 +452,11 @@
               { opacity: 0, y: 30 },
               { opacity: 1, y: 0, duration: 0.5, stagger: 0.05, ease: "power2.out", clearProps: "all" }
             );
-          } else if (typeof ScrollTrigger !== 'undefined') {
-            ScrollTrigger.refresh();
           }
         }
 
         // Init
-        render('all');
-
-        // Filter events
-        filters.addEventListener('click', e => {
-          if (!e.target.classList.contains('tl-filter-btn')) return;
-          filters.querySelectorAll('.tl-filter-btn').forEach(b => b.classList.remove('active'));
-          e.target.classList.add('active');
-          render(e.target.dataset.filter);
-        });
+        render();
       });
     </script>
   </body>
