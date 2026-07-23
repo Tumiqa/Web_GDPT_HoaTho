@@ -52,16 +52,42 @@
 }
 
 
-/* ===== NOW PLAYING SECTION ===== */
-.now-playing-section {
-  padding: 3rem 0 4rem;
+/* ===== MUSIC APP SECTION (2-Column Layout) ===== */
+.music-app-section {
+  padding: 3rem 0 5rem;
   position: relative;
+}
+
+.music-app-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: start;
+  max-width: 1536px !important;
+  width: 95%;
+}
+
+@media (min-width: 992px) {
+  .music-app-grid {
+    grid-template-columns: 55% 45%;
+    gap: 3rem;
+  }
+  
+  .music-app-player {
+    position: sticky;
+    top: 90px; /* Stick under header */
+  }
+}
+
+@media (min-width: 1200px) {
+  .music-app-grid {
+    grid-template-columns: 60% 40%;
+  }
 }
 
 /* ===== PLAYER CONTAINER ===== */
 .player-container {
-  max-width: 900px;
-  margin: 0 auto;
+  width: 100%;
   background: linear-gradient(145deg, rgba(26, 43, 34, 0.8), rgba(18, 30, 23, 0.95));
   border-radius: 1.5rem;
   border: 1px solid rgba(138, 176, 151, 0.12);
@@ -340,8 +366,8 @@
 }
 
 /* ===== PLAYLIST SECTION ===== */
-.playlist-section {
-  padding: 2rem 0 6rem;
+.music-app-playlist {
+  width: 100%;
 }
 
 .playlist-header {
@@ -486,6 +512,34 @@
 }
 
 /* Playlist Items */
+.playlist-list-scroll {
+  padding-right: 8px;
+  margin-right: -8px;
+}
+
+@media (min-width: 992px) {
+  .playlist-list-scroll {
+    max-height: calc(100vh - 250px);
+    overflow-y: auto;
+  }
+}
+
+/* Custom Scrollbar for Playlist */
+.playlist-list-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.playlist-list-scroll::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+.playlist-list-scroll::-webkit-scrollbar-thumb {
+  background: rgba(138, 176, 151, 0.3);
+  border-radius: 4px;
+}
+.playlist-list-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(138, 176, 151, 0.5);
+}
+
 .playlist-list {
   display: flex;
   flex-direction: column;
