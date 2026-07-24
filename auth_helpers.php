@@ -551,6 +551,131 @@ function updateProfile(string $userId, string $fullName, string $dob, string $dh
 }
 
 // ============================================================
+// VIETNAMESE TEXT PROCESSING — Xử lý tiếng Việt
+// Dùng cho tự động tạo tài khoản từ Google Form
+// ============================================================
+
+/**
+ * Loại bỏ dấu tiếng Việt (Vietnamese accent removal)
+ * Ví dụ: "Chúc Vương" → "Chuc Vuong"
+ */
+function removeVietnameseAccents(string $str): string {
+    $search = [
+        // Lowercase vowels with accents
+        'à','á','ạ','ả','ã',
+        'â','ầ','ấ','ậ','ẩ','ẫ',
+        'ă','ằ','ắ','ặ','ẳ','ẵ',
+        'è','é','ẹ','ẻ','ẽ',
+        'ê','ề','ế','ệ','ể','ễ',
+        'ì','í','ị','ỉ','ĩ',
+        'ò','ó','ọ','ỏ','õ',
+        'ô','ồ','ố','ộ','ổ','ỗ',
+        'ơ','ờ','ớ','ợ','ở','ỡ',
+        'ù','ú','ụ','ủ','ũ',
+        'ư','ừ','ứ','ự','ử','ữ',
+        'ỳ','ý','ỵ','ỷ','ỹ',
+        'đ',
+        // Uppercase vowels with accents
+        'À','Á','Ạ','Ả','Ã',
+        'Â','Ầ','Ấ','Ậ','Ẩ','Ẫ',
+        'Ă','Ằ','Ắ','Ặ','Ẳ','Ẵ',
+        'È','É','Ẹ','Ẻ','Ẽ',
+        'Ê','Ề','Ế','Ệ','Ể','Ễ',
+        'Ì','Í','Ị','Ỉ','Ĩ',
+        'Ò','Ó','Ọ','Ỏ','Õ',
+        'Ô','Ồ','Ố','Ộ','Ổ','Ỗ',
+        'Ơ','Ờ','Ớ','Ợ','Ở','Ỡ',
+        'Ù','Ú','Ụ','Ủ','Ũ',
+        'Ư','Ừ','Ứ','Ự','Ử','Ữ',
+        'Ỳ','Ý','Ỵ','Ỷ','Ỹ',
+        'Đ',
+    ];
+
+    $replace = [
+        // Lowercase replacements
+        'a','a','a','a','a',
+        'a','a','a','a','a','a',
+        'a','a','a','a','a','a',
+        'e','e','e','e','e',
+        'e','e','e','e','e','e',
+        'i','i','i','i','i',
+        'o','o','o','o','o',
+        'o','o','o','o','o','o',
+        'o','o','o','o','o','o',
+        'u','u','u','u','u',
+        'u','u','u','u','u','u',
+        'y','y','y','y','y',
+        'd',
+        // Uppercase replacements
+        'A','A','A','A','A',
+        'A','A','A','A','A','A',
+        'A','A','A','A','A','A',
+        'E','E','E','E','E',
+        'E','E','E','E','E','E',
+        'I','I','I','I','I',
+        'O','O','O','O','O',
+        'O','O','O','O','O','O',
+        'O','O','O','O','O','O',
+        'U','U','U','U','U',
+        'U','U','U','U','U','U',
+        'Y','Y','Y','Y','Y',
+        'D',
+    ];
+
+    return str_replace($search, $replace, $str);
+}
+
+/**
+ * Viết hoa chữ cái đầu mỗi từ (Title Case cho tiếng Việt)
+ * Ví dụ: "nguyễn văn an" → "Nguyễn Văn An"
+ */
+function mbUcwordsVietnamese(string $str): string {
+    $str = mb_strtolower(trim($str), 'UTF-8');
+    // Split by spaces, capitalize first letter of each word
+    $words = preg_split('/\s+/', $str);
+    $result = [];
+    foreach ($words as $word) {
+        if ($word === '') continue;
+        $result[] = mb_strtoupper(mb_substr($word, 0, 1, 'UTF-8'), 'UTF-8')
+                  . mb_substr($word, 1, null, 'UTF-8');
+    }
+    return implode(' ', $result);
+}
+
+/**
+ * Sinh mật khẩu tự động theo quy tắc GĐPT Hòa Thọ
+ *
+ * Có pháp danh:  @PhápdanhKhôngDấu + DDMM
+ *   VD: Chúc Vương + 10/03/2004 → @ChucVuong1003
+ *
+ * Không pháp danh: @HọTênKhôngDấu + DDMMYYYY
+ *   VD: Nguyễn Văn An + 10/03/2004 → @NguyenVanAn10032004
+ *
+ * @param string $dharmaName Pháp danh (đã title-case), rỗng nếu không có
+ * @param string $fullName   Họ tên đầy đủ (đã title-case)
+ * @param string $dob        Ngày sinh dạng DD/MM/YYYY hoặc MM/DD/YYYY (Google Form)
+ * @return string Mật khẩu plain text
+ */
+function generatePasswordFromForm(string $dharmaName, string $fullName, string $dobDay, string $dobMonth, string $dobYear): string {
+    if (!empty($dharmaName)) {
+        // Có pháp danh: @PhápdanhKhôngDấu + DDMM
+        $nameNoAccent = removeVietnameseAccents($dharmaName);
+        $nameNoSpace = str_replace(' ', '', $nameNoAccent);
+        $datePart = str_pad($dobDay, 2, '0', STR_PAD_LEFT)
+                  . str_pad($dobMonth, 2, '0', STR_PAD_LEFT);
+        return '@' . $nameNoSpace . $datePart;
+    } else {
+        // Không pháp danh: @HọTênKhôngDấu + DDMMYYYY
+        $nameNoAccent = removeVietnameseAccents($fullName);
+        $nameNoSpace = str_replace(' ', '', $nameNoAccent);
+        $datePart = str_pad($dobDay, 2, '0', STR_PAD_LEFT)
+                  . str_pad($dobMonth, 2, '0', STR_PAD_LEFT)
+                  . $dobYear;
+        return '@' . $nameNoSpace . $datePart;
+    }
+}
+
+// ============================================================
 // BRUTE-FORCE PROTECTION — Chống dò mật khẩu
 // Khóa tạm thời IP sau khi nhập sai quá MAX_LOGIN_ATTEMPTS lần
 // Sử dụng file-based (không cần thêm bảng SQL)
