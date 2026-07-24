@@ -2,39 +2,144 @@
    KỸ NĂNG — Page Styles
    ============================================================ */
 
-/* ===== HERO ===== */
+/* ===== HYPER-PREMIUM HERO SIÊU CẤP ===== */
 .kynang-hero {
   position: relative;
-  min-height: 45vh;
+  min-height: 52vh;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  background: linear-gradient(135deg, var(--bg-dark) 0%, #0d1a12 30%, #162a1e 60%, var(--bg-dark) 100%);
+  background: radial-gradient(circle at 50% 30%, #163824 0%, #0d1e15 45%, var(--bg-dark) 90%);
   overflow: hidden;
-  padding: 8rem 2rem 4rem;
+  padding: 8rem 2rem 5rem;
 }
 
+/* Đốm sáng Ambient Glow nền */
 .kynang-hero::before {
   content: '';
   position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at 50% 0%, rgba(138, 176, 151, 0.08) 0%, transparent 60%);
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 300px;
+  background: radial-gradient(ellipse at center, rgba(52, 211, 153, 0.15) 0%, rgba(245, 158, 11, 0.08) 50%, transparent 80%);
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 1;
 }
 
+.kynang-hero-inner {
+  position: relative;
+  z-index: 3;
+  max-width: 850px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Glass Pill Badge */
+.kn-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 1.2rem;
+  border-radius: 50px;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(52, 211, 153, 0.25);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #34d399;
+  letter-spacing: 0.5px;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.1);
+  transition: all 0.3s ease;
+}
+
+.kn-hero-badge:hover {
+  border-color: rgba(52, 211, 153, 0.5);
+  box-shadow: 0 4px 25px rgba(52, 211, 153, 0.25);
+  transform: translateY(-2px);
+}
+
+.kn-badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #34d399;
+  box-shadow: 0 0 10px #34d399;
+  animation: badgePulse 1.8s infinite ease-in-out;
+}
+
+@keyframes badgePulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.5; }
+}
+
+/* H1 Metallic Gradient Title */
 .kynang-hero h1 {
   font-family: 'Inter', sans-serif;
-  font-size: clamp(2rem, 5vw, 3rem);
-  margin-bottom: 0.75rem;
-  position: relative;
+  font-size: clamp(2.4rem, 5.5vw, 3.8rem);
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 1rem;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+}
+
+.kn-hero-title .gradient-text {
+  background-image: linear-gradient(135deg, #ffffff 0%, #34d399 45%, #fbbf24 90%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  display: inline-block;
 }
 
 .kynang-hero p {
-  font-size: 1.05rem;
-  color: var(--text-dark);
-  max-width: 600px;
-  margin: 0 auto;
-  position: relative;
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  color: rgba(226, 232, 240, 0.85);
+  max-width: 680px;
+  margin: 0 auto 2rem;
+  line-height: 1.6;
+}
+
+/* Quick Access Tags Glass Bar */
+.kn-hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.kn-tag-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: rgba(226, 232, 240, 0.9);
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  cursor: pointer;
+}
+
+.kn-tag-item:hover {
+  background: rgba(52, 211, 153, 0.12);
+  border-color: rgba(52, 211, 153, 0.35);
+  color: #34d399;
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), 0 0 15px rgba(52, 211, 153, 0.15);
 }
 
 /* ===== LAYOUT ===== */

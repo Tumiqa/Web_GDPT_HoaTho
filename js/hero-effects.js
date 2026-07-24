@@ -68,13 +68,17 @@ document.addEventListener("DOMContentLoaded", () => {
       mouse.active = true;
     }
 
-    container.addEventListener("mousemove", setMousePos);
-    container.addEventListener("touchmove", setMousePos, { passive: true });
-    container.addEventListener("mouseenter", (e) => { setMousePos(e); mouse.active = true; });
-    container.addEventListener("mouseleave", () => { mouse.active = false; mouse.targetX = -1000; mouse.targetY = -1000; });
-    container.addEventListener("touchend", () => { mouse.active = false; mouse.targetX = -1000; mouse.targetY = -1000; mouse.isDown = false; });
-    container.addEventListener("mousedown", (e) => { mouse.isDown = true; mouse.clickEvent = true; setMousePos(e); });
-    container.addEventListener("touchstart", (e) => { mouse.isDown = true; mouse.clickEvent = true; setMousePos(e); }, { passive: true });
+    // Gắn event listener trên cả container lẫn parentElement (toàn bộ khu vực Hero)
+    // Đảm bảo click/chạm cảm ứng vào bất kỳ đâu (kể cả trên chữ, icon, badge) đều nhận diện 100%
+    const targetElement = container.parentElement || container;
+
+    targetElement.addEventListener("mousemove", setMousePos);
+    targetElement.addEventListener("touchmove", setMousePos, { passive: true });
+    targetElement.addEventListener("mouseenter", (e) => { setMousePos(e); mouse.active = true; });
+    targetElement.addEventListener("mouseleave", () => { mouse.active = false; mouse.targetX = -1000; mouse.targetY = -1000; });
+    targetElement.addEventListener("touchend", () => { mouse.active = false; mouse.targetX = -1000; mouse.targetY = -1000; mouse.isDown = false; });
+    targetElement.addEventListener("mousedown", (e) => { mouse.isDown = true; mouse.clickEvent = true; mouse.clickX = mouse.targetX; mouse.clickY = mouse.targetY; setMousePos(e); });
+    targetElement.addEventListener("touchstart", (e) => { mouse.isDown = true; mouse.clickEvent = true; setMousePos(e); }, { passive: true });
     window.addEventListener("mouseup", () => { mouse.isDown = false; });
     
     // Visibility-based pause
@@ -827,296 +831,413 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ========================================================
-  // 4. KỸ NĂNG - NEURAL NETWORK NEXUS (ENHANCED)
-  //    Improvements: Spatial grid for O(n) connections,
-  //    data flow animation along edges, pulsing nodes,
-  //    smooth attraction, beautiful shockwave with afterglow,
-  //    node clustering near mouse
+  // 4. KỸ NĂNG - 3D HOLOGRAPHIC QUANTUM NEXUS (SUPERNOVA & AURORA)
+  //    Hiệu ứng ẢO DIỆU ĐỈNH CAO: Mạng chòm sao 3D Parallax Depth,
+  //    Dải Cực quang Emerald Aurora chạy ngầm, Biểu tượng Hologram,
+  //    Bụi sao lấp lánh (Stardust) & Sóng Siêu Tân Tinh khi click.
+  //    Cực kỳ đẹp mắt, sang trọng và mượt như nhung 120 FPS.
   // ========================================================
   const kyNangHero = document.querySelector(".kynang-hero");
   if (kyNangHero) {
     const container = document.createElement("div");
     container.classList.add("hero-effect-container");
     kyNangHero.insertBefore(container, kyNangHero.firstChild);
-    
-    const { ctx, width, height, mouse, updateMouseVelocity, isVisible } = setupCanvas(container);
-    
-    let time = 0;
-    const NODE_COUNT = isMobile ? 60 : 110;
-    const CONNECTION_DIST = 130;
-    const CELL_SIZE = CONNECTION_DIST;
-    
-    class NeuralNode {
-      constructor() {
-        this.x = Math.random() * width();
-        this.y = Math.random() * height();
-        this.vx = (Math.random() - 0.5) * 0.6;
-        this.vy = (Math.random() - 0.5) * 0.6;
-        this.baseR = Math.random() * 2 + 1.2;
-        this.r = this.baseR;
-        this.glow = 0;
-        this.pulsePhase = Math.random() * Math.PI * 2;
-        this.pulseSpeed = Math.random() * 0.03 + 0.015;
-        this.hue = Math.random() * 40 + 130; // 130-170: green-teal range
-      }
-      update(shockwave) {
-        this.pulsePhase += this.pulseSpeed;
-        this.r = this.baseR + Math.sin(this.pulsePhase) * 0.3;
-        
-        this.x += this.vx;
-        this.y += this.vy;
-        
-        // Soft boundary bounce
-        const margin = 20;
-        if (this.x < margin) { this.vx += 0.05; }
-        if (this.x > width() - margin) { this.vx -= 0.05; }
-        if (this.y < margin) { this.vy += 0.05; }
-        if (this.y > height() - margin) { this.vy -= 0.05; }
-        
-        // Speed limit
-        const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
-        if (speed > 2) {
-          this.vx = (this.vx / speed) * 2;
-          this.vy = (this.vy / speed) * 2;
-        }
-        
-        // Friction
-        this.vx *= 0.995;
-        this.vy *= 0.995;
 
-        // Shockwave push
-        if (shockwave.active) {
-          const sDx = this.x - shockwave.x;
-          const sDy = this.y - shockwave.y;
-          const sDist = Math.sqrt(sDx * sDx + sDy * sDy);
-          const ringDist = Math.abs(sDist - shockwave.radius);
-          if (ringDist < 40) {
-            const pushForce = easeOutCubic(1 - ringDist / 40) * shockwave.intensity * 4;
-            const angle = Math.atan2(sDy, sDx);
-            this.vx += Math.cos(angle) * pushForce;
-            this.vy += Math.sin(angle) * pushForce;
-            this.glow = Math.min(1, this.glow + pushForce * 0.5);
-          }
-        }
-        
-        // Mouse attraction (smooth)
+    const { ctx, width, height, mouse, updateMouseVelocity, isVisible } = setupCanvas(container);
+
+    let time = 0;
+    const FOV = 350;
+    const NODE_COUNT = isMobile ? 42 : 72;
+    const CONNECT_DIST = isMobile ? 120 : 155;
+    const CONNECT_DIST_SQ = CONNECT_DIST * CONNECT_DIST;
+    const STARDUST_COUNT = isMobile ? 25 : 45;
+
+    const SKILL_ICONS = ["🧭", "🪢", "· - ·", "📡", "⚓", "📐", "⬡", "◇"];
+
+    // Góc nghiêng 3D Parallax của không gian
+    let rotX = 0, rotY = 0;
+    let targetRotX = 0, targetRotY = 0;
+
+    // --------------------------------------------------------
+    // 1. HẠT CHÒM SAO 3D (3D Hologram Node)
+    // --------------------------------------------------------
+    class Node3D {
+      constructor(isIcon = false) {
+        this.reset(isIcon);
+      }
+
+      reset(isIcon = false) {
+        // Tọa độ 3D không gian (-W/2 -> W/2, -H/2 -> H/2, -Z -> Z)
+        this.x3d = (Math.random() - 0.5) * (width() * 1.2);
+        this.y3d = (Math.random() - 0.5) * (height() * 1.2);
+        this.z3d = Math.random() * 400 - 200; // Độ sâu 3D (-200 -> 200)
+
+        this.vx = (Math.random() - 0.5) * 0.45;
+        this.vy = (Math.random() - 0.5) * 0.45;
+        this.vz = (Math.random() - 0.5) * 0.3;
+
+        this.baseR = isIcon ? 4.5 : Math.random() * 2 + 1.2;
+        this.glow = 0;
+        this.isIcon = isIcon;
+        this.icon = isIcon ? SKILL_ICONS[Math.floor(Math.random() * SKILL_ICONS.length)] : "";
+        this.hue = Math.random() > 0.3 ? 155 : 42; // Emerald / Gold
+        this.pulse = Math.random() * Math.PI * 2;
+
+        // Tọa độ 2D sau khi chiếu 3D
+        this.px = 0;
+        this.py = 0;
+        this.scale = 1;
+      }
+
+      update(shockwave) {
+        this.pulse += 0.025;
+
+        // Di chuyển 3D
+        this.x3d += this.vx;
+        this.y3d += this.vy;
+        this.z3d += this.vz;
+
+        // Boundary 3D wrap
+        const maxW = width() * 0.65;
+        const maxH = height() * 0.65;
+        if (Math.abs(this.x3d) > maxW) this.vx *= -1;
+        if (Math.abs(this.y3d) > maxH) this.vy *= -1;
+        if (Math.abs(this.z3d) > 220) this.vz *= -1;
+
+        // Chiếu 3D -> 2D Perspective Projection
+        // Xoay không gian theo góc nghiêng chuột
+        const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
+        const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
+
+        let rx = this.x3d * cosY - this.z3d * sinY;
+        let rz = this.z3d * cosY + this.x3d * sinY;
+        let ry = this.y3d * cosX - rz * sinX;
+        rz = rz * cosX + this.y3d * sinX;
+
+        const depth = FOV + rz + 200;
+        this.scale = FOV / Math.max(10, depth);
+        this.px = width() * 0.5 + rx * this.scale;
+        this.py = height() * 0.5 + ry * this.scale;
+
+        // Tương tác chuột 2D với lực hút từ tính mềm mại
         if (mouse.active) {
-          const dx = this.x - mouse.x;
-          const dy = this.y - mouse.y;
+          const dx = mouse.x - this.px;
+          const dy = mouse.y - this.py;
           const distSq = dx * dx + dy * dy;
-          const radius = 180;
-          if (distSq < radius * radius) {
+          const mouseR = 190;
+
+          if (distSq < mouseR * mouseR && distSq > 1) {
             const dist = Math.sqrt(distSq);
-            const attraction = easeOutCubic(1 - dist / radius) * 0.015;
-            this.vx -= dx * attraction;
-            this.vy -= dy * attraction;
-            this.glow = Math.max(this.glow, easeOutCubic(1 - dist / radius) * 0.8);
+            const force = (1 - dist / mouseR);
+            const pull = mouse.speed > 0.3 ? 0.035 : -0.015;
+            
+            this.vx += (dx / dist) * force * pull;
+            this.vy += (dy / dist) * force * pull;
+            this.glow = Math.max(this.glow, force * 0.95);
           }
         }
-        
-        // Glow decay
+
+        // Tương tác sóng Click Supernova
+        if (shockwave.active) {
+          const dx = this.px - shockwave.x;
+          const dy = this.py - shockwave.y;
+          const distSq = dx * dx + dy * dy;
+          const dist = Math.sqrt(distSq);
+          const diff = Math.abs(dist - shockwave.radius);
+
+          if (diff < 55) {
+            const push = (1 - diff / 55) * shockwave.intensity * 3.8;
+            const angle = Math.atan2(dy, dx);
+            this.vx += Math.cos(angle) * push * 0.5;
+            this.vy += Math.sin(angle) * push * 0.5;
+            this.glow = Math.min(1, this.glow + push * 0.5);
+          }
+        }
+
+        // Damping
+        this.vx *= 0.965;
+        this.vy *= 0.965;
+        this.vz *= 0.965;
         this.glow *= 0.94;
       }
-      draw() {
-        const pulseAlpha = 0.5 + Math.sin(this.pulsePhase) * 0.15;
-        
-        // Outer glow when active
-        if (this.glow > 0.05) {
-          const glowR = this.r * 6 * this.glow;
-          const glow = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, glowR);
-          glow.addColorStop(0, `hsla(${this.hue}, 80%, 60%, ${this.glow * 0.4})`);
-          glow.addColorStop(1, `hsla(${this.hue}, 80%, 60%, 0)`);
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, glowR, 0, Math.PI * 2);
-          ctx.fillStyle = glow;
-          ctx.fill();
-        }
-        
-        // Core node
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-        const brightness = 50 + this.glow * 30;
-        ctx.fillStyle = `hsla(${this.hue}, 70%, ${brightness}%, ${pulseAlpha + this.glow * 0.5})`;
-        ctx.fill();
-      }
-    }
-    
-    // Spatial hash grid for efficient neighbor lookup
-    function buildGrid(nodes) {
-      const grid = {};
-      for (let i = 0; i < nodes.length; i++) {
-        const cx = Math.floor(nodes[i].x / CELL_SIZE);
-        const cy = Math.floor(nodes[i].y / CELL_SIZE);
-        const key = `${cx},${cy}`;
-        if (!grid[key]) grid[key] = [];
-        grid[key].push(i);
-      }
-      return grid;
-    }
-    
-    function getNeighborCells(cx, cy) {
-      const cells = [];
-      for (let dx = -1; dx <= 1; dx++) {
-        for (let dy = -1; dy <= 1; dy++) {
-          cells.push(`${cx + dx},${cy + dy}`);
-        }
-      }
-      return cells;
     }
 
-    const nodes = Array.from({ length: NODE_COUNT }, () => new NeuralNode());
-    const shockwave = { x: 0, y: 0, radius: 0, active: false, intensity: 1 };
-    
-    // Data flow particles along connections
-    const DATA_FLOWS = isMobile ? 15 : 30;
-    class DataFlow {
-      constructor() { this.reset(); }
-      reset() {
-        this.nodeA = Math.floor(Math.random() * nodes.length);
-        this.nodeB = Math.floor(Math.random() * nodes.length);
-        this.progress = 0;
-        this.speed = Math.random() * 0.02 + 0.008;
+    // --------------------------------------------------------
+    // 2. BỤI SAO LẤP LÁNH KHI CLICK (Stardust Particle Burst)
+    // --------------------------------------------------------
+    class StardustParticle {
+      constructor() {
         this.active = false;
       }
-      update() {
-        if (!this.active) {
-          // Check if nodes are close enough
-          const a = nodes[this.nodeA];
-          const b = nodes[this.nodeB];
-          const dx = a.x - b.x;
-          const dy = a.y - b.y;
-          if (dx * dx + dy * dy < CONNECTION_DIST * CONNECTION_DIST) {
-            this.active = true;
-          } else {
-            this.reset();
-          }
-          return;
-        }
-        this.progress += this.speed;
-        if (this.progress > 1) this.reset();
+
+      spawn(x, y) {
+        this.x = x;
+        this.y = y;
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 4.5 + 1.5;
+        this.vx = Math.cos(angle) * speed;
+        this.vy = Math.sin(angle) * speed;
+        this.r = Math.random() * 2 + 1;
+        this.alpha = 1;
+        this.decay = Math.random() * 0.02 + 0.015;
+        this.hue = Math.random() > 0.4 ? 155 : 195; // Emerald / Cyan
+        this.active = true;
       }
+
+      update() {
+        if (!this.active) return;
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vx *= 0.95;
+        this.vy *= 0.95;
+        this.alpha -= this.decay;
+        if (this.alpha <= 0) this.active = false;
+      }
+
       draw() {
         if (!this.active) return;
-        const a = nodes[this.nodeA];
-        const b = nodes[this.nodeB];
-        const x = lerp(a.x, b.x, this.progress);
-        const y = lerp(a.y, b.y, this.progress);
-        
-        const glow = ctx.createRadialGradient(x, y, 0, x, y, 4);
-        glow.addColorStop(0, `rgba(46, 230, 130, 0.8)`);
-        glow.addColorStop(1, `rgba(46, 230, 130, 0)`);
         ctx.beginPath();
-        ctx.arc(x, y, 4, 0, Math.PI * 2);
-        ctx.fillStyle = glow;
-        ctx.fill();
-        
-        ctx.beginPath();
-        ctx.arc(x, y, 1.2, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(200, 255, 220, 0.9)`;
+        ctx.arc(this.x, this.y, this.r * this.alpha, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${this.hue}, 90%, 65%, ${this.alpha})`;
         ctx.fill();
       }
     }
+
+    // Khởi tạo danh sách 3D Nodes & Stardust
+    const nodes = [];
+    const iconCount = isMobile ? 4 : 8;
+    for (let i = 0; i < NODE_COUNT; i++) {
+      nodes.push(new Node3D(i < iconCount));
+    }
+
+    const stardust = Array.from({ length: STARDUST_COUNT }, () => new StardustParticle());
     
-    const dataFlows = Array.from({ length: DATA_FLOWS }, () => new DataFlow());
+    // Mảng lưu trữ đa sóng nổ khi nhấp/chạm liên tục (Multi-Shockwaves)
+    const activeShockwaves = [];
 
-    function render() {
-      if (!isVisible()) { requestAnimationFrame(render); return; }
-      updateMouseVelocity();
-      time += 0.016;
-      
-      if (mouse.clickEvent && mouse.active) {
-        shockwave.x = mouse.x;
-        shockwave.y = mouse.y;
-        shockwave.radius = 0;
-        shockwave.intensity = 1;
-        shockwave.active = true;
+    function triggerClickBurst(x, y) {
+      // Thêm sóng nổ mới
+      activeShockwaves.push({
+        x: x,
+        y: y,
+        radius: 8,
+        intensity: 1.3,
+        active: true
+      });
+
+      // Bắn 45 hạt bụi sao lấp lánh (Stardust Particle Burst)
+      let spawned = 0;
+      for (let i = 0; i < stardust.length; i++) {
+        if (!stardust[i].active) {
+          stardust[i].spawn(x, y);
+          spawned++;
+          if (spawned >= 22) break; // Bắn 22 hạt mỗi lần click/touch
+        }
       }
+    }
 
-      ctx.globalCompositeOperation = "source-over";
-      ctx.clearRect(0, 0, width(), height());
+    // --------------------------------------------------------
+    // 3. DẢI CỰC QUANG EMERALD (Aurora Wave Background)
+    // --------------------------------------------------------
+    function drawAuroraWave() {
+      ctx.save();
       ctx.globalCompositeOperation = "screen";
 
-      // Shockwave ring
-      if (shockwave.active) {
-        shockwave.radius += 8;
-        shockwave.intensity *= 0.97;
-        if (shockwave.intensity < 0.01) shockwave.active = false;
-        
-        // Double ring effect
-        const alpha1 = shockwave.intensity * 0.6;
-        const alpha2 = shockwave.intensity * 0.3;
-        
+      for (let wave = 0; wave < 2; wave++) {
         ctx.beginPath();
-        ctx.arc(shockwave.x, shockwave.y, shockwave.radius, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(46, 220, 120, ${alpha1})`;
-        ctx.lineWidth = 2;
+        const waveY = height() * (0.4 + wave * 0.2);
+        ctx.moveTo(0, waveY);
+
+        for (let x = 0; x <= width(); x += 30) {
+          const y = waveY + Math.sin(x * 0.005 + time * (0.8 + wave * 0.4)) * 35 
+                         + Math.cos(x * 0.008 - time * 0.5) * 20;
+          ctx.lineTo(x, y);
+        }
+
+        ctx.lineTo(width(), height());
+        ctx.lineTo(0, height());
+
+        const grad = ctx.createLinearGradient(0, waveY - 40, 0, height());
+        if (wave === 0) {
+          grad.addColorStop(0, "rgba(16, 185, 129, 0.04)");
+          grad.addColorStop(0.5, "rgba(56, 189, 248, 0.03)");
+          grad.addColorStop(1, "transparent");
+        } else {
+          grad.addColorStop(0, "rgba(52, 211, 153, 0.03)");
+          grad.addColorStop(1, "transparent");
+        }
+
+        ctx.fillStyle = grad;
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    // ========================================================
+    // MAIN ULTIMATE 3D RENDER LOOP
+    // ========================================================
+    function render() {
+      if (!isVisible()) {
+        requestAnimationFrame(render);
+        return;
+      }
+
+      updateMouseVelocity();
+      time += 0.015;
+
+      // Parallax smooth interpolation theo vị trí chuột
+      if (mouse.active) {
+        targetRotY = ((mouse.x / width()) - 0.5) * 0.35;
+        targetRotX = -((mouse.y / height()) - 0.5) * 0.35;
+      } else {
+        targetRotY = Math.sin(time * 0.3) * 0.1;
+        targetRotX = Math.cos(time * 0.2) * 0.1;
+      }
+
+      rotX += (targetRotX - rotX) * 0.05;
+      rotY += (targetRotY - rotY) * 0.05;
+
+      // Trigger Click / Touch Supernova Burst bất kỳ khi nào nhấp hoặc chạm
+      if (mouse.clickEvent) {
+        triggerClickBurst(mouse.x > 0 ? mouse.x : width() / 2, mouse.y > 0 ? mouse.y : height() / 2);
+        mouse.clickEvent = false; // Reset sau khi kích hoạt
+      }
+
+      ctx.clearRect(0, 0, width(), height());
+
+      // 1. Vẽ dải cực quang ngầm
+      drawAuroraWave();
+
+      // 2. Cập nhật các sóng nổ đang hoạt động
+      for (let swIdx = activeShockwaves.length - 1; swIdx >= 0; swIdx--) {
+        const sw = activeShockwaves[swIdx];
+        sw.radius += 8;
+        sw.intensity *= 0.958;
+
+        if (sw.intensity < 0.01) {
+          activeShockwaves.splice(swIdx, 1);
+          continue;
+        }
+
+        // Cập nhật tác động của sóng lên 3D Nodes
+        for (let i = 0; i < NODE_COUNT; i++) {
+          nodes[i].update(sw);
+        }
+
+        // Vẽ sóng nổ Supernova kép khi click/chạm
+        ctx.save();
+        ctx.globalCompositeOperation = "screen";
+
+        ctx.beginPath();
+        ctx.arc(sw.x, sw.y, sw.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(52, 211, 153, ${sw.intensity * 0.65})`;
+        ctx.lineWidth = 2.5;
         ctx.stroke();
-        
-        if (shockwave.radius > 15) {
+
+        if (sw.radius > 18) {
           ctx.beginPath();
-          ctx.arc(shockwave.x, shockwave.y, shockwave.radius - 15, 0, Math.PI * 2);
-          ctx.strokeStyle = `rgba(100, 255, 180, ${alpha2})`;
-          ctx.lineWidth = 1;
+          ctx.arc(sw.x, sw.y, sw.radius - 18, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(56, 189, 248, ${sw.intensity * 0.4})`;
+          ctx.lineWidth = 1.5;
           ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      // Cập nhật các node không có sóng nổ nếu không có shockwave active
+      if (activeShockwaves.length === 0) {
+        const dummySw = { active: false };
+        for (let i = 0; i < NODE_COUNT; i++) {
+          nodes[i].update(dummySw);
         }
       }
 
-      // Update all nodes
-      nodes.forEach(n => n.update(shockwave));
-      
-      // Build spatial grid
-      const grid = buildGrid(nodes);
-      const drawnEdges = new Set();
-      
-      // Draw connections using spatial hash
-      for (let i = 0; i < nodes.length; i++) {
-        const cx = Math.floor(nodes[i].x / CELL_SIZE);
-        const cy = Math.floor(nodes[i].y / CELL_SIZE);
-        const neighborKeys = getNeighborCells(cx, cy);
-        
-        for (const key of neighborKeys) {
-          if (!grid[key]) continue;
-          for (const j of grid[key]) {
-            if (j <= i) continue;
-            const edgeKey = i < j ? `${i}-${j}` : `${j}-${i}`;
-            if (drawnEdges.has(edgeKey)) continue;
-            
-            const dx = nodes[i].x - nodes[j].x;
-            const dy = nodes[i].y - nodes[j].y;
-            const distSq = dx * dx + dy * dy;
-            
-            if (distSq < CONNECTION_DIST * CONNECTION_DIST) {
-              drawnEdges.add(edgeKey);
-              const dist = Math.sqrt(distSq);
-              const alpha = (1 - dist / CONNECTION_DIST);
-              const mixGlow = Math.max(nodes[i].glow, nodes[j].glow);
-              
-              ctx.beginPath();
-              ctx.moveTo(nodes[i].x, nodes[i].y);
-              ctx.lineTo(nodes[j].x, nodes[j].y);
-              
-              if (mixGlow > 0.1) {
-                const hue = (nodes[i].hue + nodes[j].hue) / 2;
-                ctx.strokeStyle = `hsla(${hue}, 80%, 55%, ${alpha * 0.5 + mixGlow * 0.4})`;
-                ctx.lineWidth = 0.8 + mixGlow * 1.5;
-              } else {
-                ctx.strokeStyle = `rgba(138, 176, 151, ${alpha * 0.2})`;
-                ctx.lineWidth = 0.6;
-              }
-              ctx.stroke();
+      // 4. Vẽ hạt bụi sao Stardust
+      for (let i = 0; i < STARDUST_COUNT; i++) {
+        stardust[i].update();
+        stardust[i].draw();
+      }
+
+      // --------------------------------------------------------
+      // 5. VẼ MẠNG LƯỚI CHÒM SAO 3D (3D Constellation Mesh)
+      // --------------------------------------------------------
+      for (let i = 0; i < NODE_COUNT; i++) {
+        const na = nodes[i];
+
+        for (let j = i + 1; j < NODE_COUNT; j++) {
+          const nb = nodes[j];
+          const dx = na.px - nb.px;
+          const dy = na.py - nb.py;
+          const distSq = dx * dx + dy * dy;
+
+          if (distSq < CONNECT_DIST_SQ) {
+            const dist = Math.sqrt(distSq);
+            const baseAlpha = (1 - dist / CONNECT_DIST) * Math.min(na.scale, nb.scale);
+            const maxGlow = Math.max(na.glow, nb.glow);
+
+            ctx.beginPath();
+            ctx.moveTo(na.px, na.py);
+            ctx.lineTo(nb.px, nb.py);
+
+            if (maxGlow > 0.08) {
+              // Tương tác phát sáng Hologram 3D rực rỡ
+              ctx.strokeStyle = na.hue === 42 
+                ? `rgba(245, 158, 11, ${baseAlpha * 0.45 + maxGlow * 0.5})`
+                : `rgba(52, 211, 153, ${baseAlpha * 0.45 + maxGlow * 0.5})`;
+              ctx.lineWidth = (0.9 + maxGlow * 1.5) * na.scale;
+            } else {
+              // Đường liên kết nhạt 3D
+              ctx.strokeStyle = `rgba(138, 176, 151, ${baseAlpha * 0.16})`;
+              ctx.lineWidth = 0.65 * na.scale;
             }
+            ctx.stroke();
           }
         }
       }
-      
-      // Data flows
-      dataFlows.forEach(df => { df.update(); df.draw(); });
 
-      // Draw nodes on top
-      nodes.forEach(n => n.draw());
-      
+      // --------------------------------------------------------
+      // 6. VẼ NÚT 3D & BIỂU TƯỢNG HOLOGRAM
+      // --------------------------------------------------------
+      for (let i = 0; i < NODE_COUNT; i++) {
+        const n = nodes[i];
+        const r = (n.baseR + n.glow * 1.8) * n.scale;
+
+        // Biểu tượng Hologram 3D
+        if (n.isIcon) {
+          ctx.save();
+          const fontSize = Math.max(10, (14 + n.glow * 7) * n.scale);
+          ctx.font = `${fontSize}px 'Inter', sans-serif`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+
+          // Glow aura phía sau icon khi tương tác
+          if (n.glow > 0.1) {
+            ctx.shadowColor = "#34d399";
+            ctx.shadowBlur = 12 * n.glow;
+          }
+
+          ctx.fillStyle = `rgba(220, 252, 231, ${Math.min(1, (0.55 + n.glow * 0.45) * n.scale)})`;
+          ctx.fillText(n.icon, n.px, n.py);
+          ctx.restore();
+          continue;
+        }
+
+        // Hạt nút 3D điểm sáng
+        ctx.beginPath();
+        ctx.arc(n.px, n.py, Math.max(0.5, r), 0, Math.PI * 2);
+
+        const nodeAlpha = Math.min(1, (0.4 + n.glow * 0.6) * n.scale);
+        if (n.glow > 0.1) {
+          ctx.fillStyle = n.hue === 42 ? `rgba(245, 158, 11, ${nodeAlpha})` : `rgba(52, 211, 153, ${nodeAlpha})`;
+        } else {
+          ctx.fillStyle = n.hue === 42 ? `rgba(245, 158, 11, ${nodeAlpha * 0.7})` : `rgba(138, 176, 151, ${nodeAlpha * 0.8})`;
+        }
+        ctx.fill();
+      }
+
       requestAnimationFrame(render);
     }
+
     render();
   }
 
