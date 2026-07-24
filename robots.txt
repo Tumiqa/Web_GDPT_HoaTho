@@ -1,4 +1,90 @@
+# ============================================================
+# GĐPT HÒA THỌ — robots.txt
+# Cho phép Google/Bing index nội dung chính
+# Chặn các bot cào dữ liệu và tool clone web tự động
+# ============================================================
+
+# === GOOGLE & BING — Cho phép index bình thường ===
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# === CHẶN CÁC BOT CÀO DỮ LIỆU & AI SCRAPER ===
+# Chặn bot AI training (GPTBot, ChatGPT, Google AI, Claude, etc.)
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: FacebookBot
+Disallow: /
+
+# Chặn tool clone web tự động
+User-agent: HTTrack
+Disallow: /
+
+User-agent: Wget
+Disallow: /
+
+User-agent: Teleport
+Disallow: /
+
+User-agent: Offline Explorer
+Disallow: /
+
+User-agent: WebCopier
+Disallow: /
+
+User-agent: WebStripper
+Disallow: /
+
+User-agent: SiteSnagger
+Disallow: /
+
+User-agent: WebZIP
+Disallow: /
+
+# Chặn các bot SEO đáng ngờ cào dữ liệu
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+# === MẶC ĐỊNH — Cho phép các bot khác (các search engine nhỏ) ===
 User-agent: *
 Allow: /
 
+# Chặn truy cập thư mục nhạy cảm cho TẤT CẢ bot
+User-agent: *
+Disallow: /data/
+Disallow: /uploads/
+Disallow: /api.php
+Disallow: /auth.php
+Disallow: /auth_helpers.php
+Disallow: /auth_seed.php
+Disallow: /.git/
+
+# === SITEMAP ===
 Sitemap: https://gdpthoatho.id.vn/sitemap.xml

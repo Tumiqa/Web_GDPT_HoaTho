@@ -8,10 +8,28 @@
 require_once __DIR__ . '/auth_helpers.php';
 
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
+
+// ===== CORS — Chỉ cho phép request từ domain chính thức =====
+// Wildcard '*' đã bị thay thế bằng domain cụ thể để tăng bảo mật
+$allowedOrigins = [
+    'https://gdpthoatho.id.vn',
+    'https://www.gdpthoatho.id.vn',
+    'http://localhost',
+    'http://127.0.0.1',
+];
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+if (in_array($origin, $allowedOrigins)) {
+    header('Access-Control-Allow-Origin: ' . $origin);
+} else {
+    // Fallback: cho phép same-origin (không gửi header → trình duyệt tự cho phép)
+}
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, X-Admin-Token');
+header('Access-Control-Allow-Headers: Content-Type, X-Admin-Token, X-CSRF-Token');
 header('Access-Control-Allow-Credentials: true');
+
+// ===== Security Headers cho API Response =====
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: DENY');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(204);

@@ -11,6 +11,12 @@ define('SESSION_LIFETIME', 60 * 60 * 24); // 24 hours
 define('SESSION_COOKIE_NAME', 'gdpt_session');
 define('BCRYPT_COST', 12);
 
+// ===== BRUTE-FORCE PROTECTION CONFIG =====
+// Khóa tạm thời sau khi nhập sai mật khẩu liên tục
+define('MAX_LOGIN_ATTEMPTS', 5);        // Số lần thử tối đa
+define('LOCKOUT_DURATION', 15 * 60);    // Khóa 15 phút (tính bằng giây)
+define('CSRF_TOKEN_NAME', 'gdpt_csrf'); // Tên cookie chứa CSRF token
+
 // ===== DATABASE =====
 
 /**
@@ -255,7 +261,9 @@ function deleteUserSessions(string $userId): void {
 // ===== COOKIE MANAGEMENT =====
 
 /**
- * Set session cookie (HttpOnly, Secure, SameSite=Lax)
+ * Set session cookie (HttpOnly, Secure, SameSite=Strict)
+ * SameSite=Strict: Cookie chỉ gửi kèm request cùng domain
+ * → Chống CSRF mạnh nhất (không gửi cookie khi click link từ trang khác)
  */
 function setSessionCookie(string $token): void {
     $isSecure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
@@ -264,7 +272,7 @@ function setSessionCookie(string $token): void {
         'path'     => '/',
         'httponly'  => true,
         'secure'   => $isSecure,
-        'samesite' => 'Lax',
+        'samesite' => 'Strict',
     ]);
 }
 
@@ -277,7 +285,7 @@ function clearSessionCookie(): void {
         'path'     => '/',
         'httponly'  => true,
         'secure'   => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
-        'samesite' => 'Lax',
+        'samesite' => 'Strict',
     ]);
 }
 
@@ -540,4 +548,158 @@ function updateProfile(string $userId, string $fullName, string $dob, string $dh
     $db->close();
 
     return $changes > 0;
+}
+
+// ============================================================
+// BRUTE-FORCE PROTECTION — Chống dò mật khẩu
+// Khóa tạm thời IP sau khi nhập sai quá MAX_LOGIN_ATTEMPTS lần
+// Sử dụng file-based (không cần thêm bảng SQL)
+// ============================================================
+
+/**
+ * Lấy đường dẫn file lưu số lần đăng nhập thất bại của IP
+ * Mỗi IP có 1 file riêng trong data/rate_limit/
+ */
+function getRateLimitFile(string $ip): string {
+    $dir = __DIR__ . '/data/rate_limit/';
+    if (!is_dir($dir)) {
+        mkdir($dir, 0755, true);
+    }
+    // Sanitize IP thành tên file an toàn
+    $safeIp = preg_replace('/[^a-zA-Z0-9\.\-_]/', '_', $ip);
+    return $dir . $safeIp . '.json';
+}
+
+/**
+ * Kiểm tra IP có đang bị khóa tạm thời không
+ * Trả về: ['locked' => bool, 'attempts' => int, 'remaining_seconds' => int]
+ */
+function checkLoginRateLimit(): array {
+    $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+    $file = getRateLimitFile($ip);
+
+    if (!file_exists($file)) {
+        return ['locked' => false, 'attempts' => 0, 'remaining_seconds' => 0];
+    }
+
+    $data = json_decode(file_get_contents($file), true);
+    if (!$data) {
+        return ['locked' => false, 'attempts' => 0, 'remaining_seconds' => 0];
+    }
+
+    $attempts = $data['attempts'] ?? 0;
+    $lockedUntil = $data['locked_until'] ?? 0;
+
+    // Nếu đang trong thời gian khóa
+    if ($lockedUntil > time()) {
+        $remaining = $lockedUntil - time();
+        return [
+            'locked' => true,
+            'attempts' => $attempts,
+            'remaining_seconds' => $remaining,
+        ];
+    }
+
+    // Nếu thời gian khóa đã hết → reset bộ đếm
+    if ($lockedUntil > 0 && $lockedUntil <= time()) {
+        unlink($file);
+        return ['locked' => false, 'attempts' => 0, 'remaining_seconds' => 0];
+    }
+
+    return ['locked' => false, 'attempts' => $attempts, 'remaining_seconds' => 0];
+}
+
+/**
+ * Ghi nhận 1 lần đăng nhập thất bại
+ * Nếu vượt quá MAX_LOGIN_ATTEMPTS → kích hoạt khóa tạm thời
+ */
+function recordFailedLogin(): void {
+    $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+    $file = getRateLimitFile($ip);
+
+    $data = ['attempts' => 0, 'locked_until' => 0];
+    if (file_exists($file)) {
+        $data = json_decode(file_get_contents($file), true) ?? $data;
+    }
+
+    $data['attempts'] = ($data['attempts'] ?? 0) + 1;
+    $data['last_attempt'] = time();
+
+    // Vượt quá giới hạn → khóa IP
+    if ($data['attempts'] >= MAX_LOGIN_ATTEMPTS) {
+        $data['locked_until'] = time() + LOCKOUT_DURATION;
+    }
+
+    file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT));
+}
+
+/**
+ * Reset bộ đếm khi đăng nhập thành công
+ */
+function clearLoginAttempts(): void {
+    $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+    $file = getRateLimitFile($ip);
+    if (file_exists($file)) {
+        unlink($file);
+    }
+}
+
+/**
+ * Dọn dẹp file rate limit đã hết hạn (gọi định kỳ)
+ */
+function cleanupExpiredRateLimits(): void {
+    $dir = __DIR__ . '/data/rate_limit/';
+    if (!is_dir($dir)) return;
+
+    $files = glob($dir . '*.json');
+    foreach ($files as $file) {
+        $data = json_decode(file_get_contents($file), true);
+        if (!$data) {
+            unlink($file);
+            continue;
+        }
+        // Xóa file cũ hơn 1 giờ (đã hết khóa từ lâu)
+        $lastAttempt = $data['last_attempt'] ?? 0;
+        if (time() - $lastAttempt > 3600) {
+            unlink($file);
+        }
+    }
+}
+
+// ============================================================
+// CSRF TOKEN — Chống tấn công Cross-Site Request Forgery
+// Tạo token ngẫu nhiên gắn vào session, kiểm tra khi POST
+// ============================================================
+
+/**
+ * Tạo CSRF token mới (gắn vào cookie)
+ * Token sẽ được JS đọc từ cookie và gửi kèm trong Header X-CSRF-Token
+ */
+function generateCsrfToken(): string {
+    $token = bin2hex(random_bytes(32)); // 256-bit random token
+    $isSecure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+    setcookie(CSRF_TOKEN_NAME, $token, [
+        'expires'  => 0, // Session cookie (hết hạn khi đóng trình duyệt)
+        'path'     => '/',
+        'httponly'  => false, // JS cần đọc được để gửi kèm header
+        'secure'   => $isSecure,
+        'samesite' => 'Strict',
+    ]);
+    return $token;
+}
+
+/**
+ * Kiểm tra CSRF token từ Header X-CSRF-Token
+ * So sánh với giá trị cookie (Double Submit Cookie pattern)
+ */
+function validateCsrfToken(): bool {
+    $headerToken = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+    $cookieToken = $_COOKIE[CSRF_TOKEN_NAME] ?? '';
+
+    // Cả hai phải tồn tại và khớp nhau
+    if (empty($headerToken) || empty($cookieToken)) {
+        return false;
+    }
+
+    return hash_equals($cookieToken, $headerToken);
 }

@@ -7,10 +7,25 @@
 require_once __DIR__ . '/auth_helpers.php';
 
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
+
+// ===== CORS — Chỉ cho phép request từ domain chính thức =====
+$allowedOrigins = [
+    'https://gdpthoatho.id.vn',
+    'https://www.gdpthoatho.id.vn',
+    'http://localhost',
+    'http://127.0.0.1',
+];
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+if (in_array($origin, $allowedOrigins)) {
+    header('Access-Control-Allow-Origin: ' . $origin);
+}
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Headers: Content-Type, X-CSRF-Token');
 header('Access-Control-Allow-Credentials: true');
+
+// ===== Security Headers =====
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: DENY');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(204);
@@ -32,6 +47,20 @@ switch ($action) {
             exit;
         }
 
+        // --- BRUTE-FORCE PROTECTION ---
+        // Kiểm tra IP có đang bị khóa tạm thời không
+        $rateLimit = checkLoginRateLimit();
+        if ($rateLimit['locked']) {
+            $minutes = ceil($rateLimit['remaining_seconds'] / 60);
+            http_response_code(429); // Too Many Requests
+            echo json_encode([
+                'error' => "Tài khoản bị khóa tạm thời do nhập sai quá {$rateLimit['attempts']} lần. Vui lòng thử lại sau {$minutes} phút.",
+                'locked' => true,
+                'remaining_seconds' => $rateLimit['remaining_seconds'],
+            ]);
+            exit;
+        }
+
         $body = json_decode(file_get_contents('php://input'), true);
         $username = trim($body['username'] ?? '');
         $password = $body['password'] ?? '';
@@ -45,6 +74,8 @@ switch ($action) {
         // Lookup user
         $user = getUserByUsername($username);
         if (!$user) {
+            // Ghi nhận thất bại (chống brute-force)
+            recordFailedLogin();
             // Use same error message to prevent username enumeration
             http_response_code(401);
             echo json_encode(['error' => 'Tên đăng nhập hoặc mật khẩu không đúng']);
@@ -53,14 +84,27 @@ switch ($action) {
 
         // Verify password (bcrypt)
         if (!verifyPassword($password, $user['password_hash'])) {
+            // Ghi nhận thất bại (chống brute-force)
+            recordFailedLogin();
             http_response_code(401);
             echo json_encode(['error' => 'Tên đăng nhập hoặc mật khẩu không đúng']);
             exit;
         }
 
+        // Đăng nhập thành công → reset bộ đếm brute-force
+        clearLoginAttempts();
+
+        // Dọn dẹp file rate limit cũ (housekeeping, chạy 10% request)
+        if (random_int(1, 10) === 1) {
+            cleanupExpiredRateLimits();
+        }
+
         // Create session
         $token = createSession($user['id']);
         setSessionCookie($token);
+
+        // Tạo CSRF token cho session mới
+        generateCsrfToken();
 
         echo json_encode([
             'success' => true,

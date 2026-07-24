@@ -1,40 +1,172 @@
+# ============================================================
+# GĐPT HÒA THỌ — .htaccess — Server Security & Rewrite Rules
+# Phiên bản: 2.0 (Security Hardened)
+# Cập nhật: 2025-07
+# ============================================================
+
 RewriteEngine On
+
+# ==============================
+# 1. BẮT BUỘC HTTPS (Force TLS)
+# Chuyển hướng toàn bộ HTTP → HTTPS
+# ==============================
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-# 1. Chuyển hướng các đường dẫn có đuôi .html về dạng không có đuôi (301 Redirect)
+# ==============================
+# 2. CLEAN URL — Ẩn đuôi .html
+# Người dùng truy cập /tai-lieu thay vì /tai-lieu.html
+# ==============================
+
+# 2a. Nếu trình duyệt request URL có đuôi .html → redirect 301 sang URL không đuôi
 RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /([^\ ]+)\.html
 RewriteRule ^/?(.*)\\.html$ /$1 [L,R=301]
 
-# 2. Xử lý ngầm phía máy chủ: Nếu gọi một đường dẫn không đuôi, hãy load file .html tương ứng
+# 2b. Phía server: nếu URL không đuôi thì ngầm load file .html tương ứng
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}\.html -f
 RewriteRule ^(.*)$ $1.html [NC,L]
 
-# 3. Bảo vệ file nhạy cảm — Auth System
+# ============================================================
+# 3. CHẶN BOT CÀO WEB & TOOL CLONE (Anti-Scraper / Anti-Clone)
+# Chặn User-Agent phổ biến của tool clone web tự động
+# ============================================================
+RewriteCond %{HTTP_USER_AGENT} (HTTrack|WebCopier|WebZIP|Teleport|Offline\ Explorer|Wget|curl/|python-requests|Python-urllib|Scrapy|Go-http-client|libwww-perl|CopyRightCheck|SiteSnagger|WebStripper|NetSpider|Xenu|TurnitinBot|GrabNet|Download\ Ninja|Mass\ Downloader|SuperHTTP) [NC]
+RewriteRule .* - [F,L]
+
+# ============================================================
+# 4. BẢO VỆ FILE NHẠY CẢM — Chặn truy cập trực tiếp từ web
+# ============================================================
+
+# 4a. Chặn file PHP nội bộ (auth_helpers, auth_seed — chỉ được gọi qua require)
 <FilesMatch "^(auth_helpers\.php|auth_seed\.php)$">
     Require all denied
 </FilesMatch>
 
-# 4. Bảo vệ database SQLite
+# 4b. Chặn truy cập cơ sở dữ liệu SQLite
 <FilesMatch "\.db$">
     Require all denied
 </FilesMatch>
 
-# 5. Chặn truy cập thư mục data/backups
+# 4c. Chặn tải file backup nguồn (zip, sql, tar, gz, bak)
+<FilesMatch "\.(zip|sql|tar|gz|bak|sqlite|log)$">
+    Require all denied
+</FilesMatch>
+
+# 4d. Chặn truy cập thư mục data/backups (chứa backup JSON)
 RewriteRule ^data/backups - [F,L]
 
-# 6. Cache Control
+# 4e. Chặn truy cập thư mục data/rate_limit (chứa dữ liệu brute-force protection)
+RewriteRule ^data/rate_limit - [F,L]
+
+# 4f. Chặn truy cập các file ẩn (dotfiles: .git, .env, .gitignore, .htpasswd)
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+# 4g. Chặn truy cập file cấu hình config.json (chứa admin password hash)
+<FilesMatch "^config\.json$">
+    Require all denied
+</FilesMatch>
+
+# ============================================================
+# 5. ẨN THÔNG TIN MÁY CHỦ — Không để lộ phiên bản Apache/PHP
+# ============================================================
+ServerSignature Off
+
 <IfModule mod_headers.c>
-    # Các file HTML: Không bao giờ cache (Luôn kiểm tra phiên bản mới)
+    # Xóa header X-Powered-By (thường chứa phiên bản PHP)
+    Header always unset X-Powered-By
+    Header unset X-Powered-By
+</IfModule>
+
+# ============================================================
+# 6. HTTP SECURITY HEADERS (Chuẩn OWASP)
+# Bảo vệ trình duyệt người dùng khỏi XSS, Clickjacking, MIME Sniffing
+# ============================================================
+<IfModule mod_headers.c>
+
+    # --- X-Frame-Options ---
+    # Chặn nhúng trang web vào <iframe> của bên thứ 3 (chống Clickjacking & Frame Mirror)
+    Header always set X-Frame-Options "SAMEORIGIN"
+
+    # --- X-Content-Type-Options ---
+    # Ngăn trình duyệt đoán sai MIME type (chống MIME-type confusion attack)
+    Header always set X-Content-Type-Options "nosniff"
+
+    # --- X-XSS-Protection ---
+    # Bật bộ lọc XSS tích hợp sẵn trong trình duyệt (fallback cho trình duyệt cũ)
+    Header always set X-XSS-Protection "1; mode=block"
+
+    # --- Referrer-Policy ---
+    # Chỉ gửi domain (không gửi full URL) khi chuyển hướng sang trang khác
+    # Bảo vệ URL nội bộ không bị lộ ra bên ngoài
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # --- Permissions-Policy ---
+    # Tắt các API thiết bị mà website không sử dụng (camera, microphone, geolocation)
+    # Giảm bề mặt tấn công nếu trang bị XSS
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(self), payment=(), usb=(), magnetometer=(), gyroscope=()"
+
+    # --- Content-Security-Policy (CSP) ---
+    # Chỉ cho phép tải tài nguyên từ nguồn uy tín đã xác định
+    # Chặn inline script/style nguy hiểm từ bên thứ 3 chèn vào
+    # 'unsafe-inline' cần thiết vì trang hiện tại dùng inline style + script trong HTML
+    Header always set Content-Security-Policy "\
+default-src 'self'; \
+script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://unpkg.com https://api.mapbox.com https://www.googletagmanager.com https://www.google-analytics.com; \
+style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.mapbox.com https://cdnjs.cloudflare.com; \
+font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; \
+img-src 'self' data: blob: https://*.mapbox.com https://*.googleapis.com; \
+connect-src 'self' https://*.mapbox.com https://events.mapbox.com https://www.google-analytics.com; \
+media-src 'self' blob:; \
+frame-ancestors 'self'; \
+base-uri 'self'; \
+form-action 'self';"
+
+    # --- Strict-Transport-Security (HSTS) ---
+    # Buộc trình duyệt chỉ truy cập qua HTTPS trong 1 năm
+    # includeSubDomains: áp dụng luôn cho subdomain
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+    # --- Cross-Origin Headers ---
+    # Chặn trang web khác nhúng hoặc đọc tài nguyên (hình ảnh, script, data)
+    Header always set Cross-Origin-Opener-Policy "same-origin"
+    Header always set Cross-Origin-Resource-Policy "same-origin"
+
+</IfModule>
+
+# ============================================================
+# 7. CACHE CONTROL — Tối ưu hiệu suất tải trang
+# ============================================================
+<IfModule mod_headers.c>
+    # HTML: Không cache — luôn kiểm tra phiên bản mới nhất
     <FilesMatch "\.(html|htm)$">
         Header set Cache-Control "no-cache, no-store, must-revalidate"
         Header set Pragma "no-cache"
         Header set Expires 0
     </FilesMatch>
 
-    # Tài nguyên tĩnh (CSS, JS, Fonts, Ảnh): Cache dài hạn (đã có cơ chế cache-busting ?v=...)
+    # Tài nguyên tĩnh (CSS, JS, Fonts, Ảnh, Media): Cache dài hạn 1 năm
+    # Đã có cơ chế cache-busting qua query string ?v=x.x.x
     <FilesMatch "\.(css|js|png|jpg|jpeg|gif|webp|svg|woff|woff2|ttf|eot|mp3|mp4|pdf|doc|docx|xls|xlsx)$">
         Header set Cache-Control "max-age=31536000, public"
     </FilesMatch>
 </IfModule>
+
+# ============================================================
+# 8. CHẶN HOTLINK — Chặn trang khác nhúng trực tiếp hình ảnh/media
+# Chỉ cho phép truy cập ảnh từ domain chính hoặc truy cập trực tiếp
+# ============================================================
+<IfModule mod_rewrite.c>
+    RewriteCond %{HTTP_REFERER} !^$
+    RewriteCond %{HTTP_REFERER} !^https?://(www\.)?gdpthoatho\.id\.vn [NC]
+    RewriteCond %{HTTP_REFERER} !^https?://localhost [NC]
+    RewriteCond %{HTTP_REFERER} !^https?://127\.0\.0\.1 [NC]
+    RewriteRule \.(jpg|jpeg|png|gif|webp|svg|mp3|mp4|pdf|doc|docx)$ - [F,NC,L]
+</IfModule>
+
+# ============================================================
+# 9. CHẶN DUYỆT THƯ MỤC — Không cho liệt kê file trong thư mục
+# ============================================================
+Options -Indexes

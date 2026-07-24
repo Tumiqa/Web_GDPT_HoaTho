@@ -20,8 +20,9 @@ data/auth.db
 data/auth.db-wal
 data/auth.db-shm
 
-# Backups
+# Backups & Rate Limits
 data/backups/
+data/rate_limit/
 
 # Python cache
 __pycache__/
