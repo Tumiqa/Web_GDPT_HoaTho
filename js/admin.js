@@ -44,6 +44,212 @@
     },
   };
 
+  // ===== NGÀNH (BRANCH) CONFIGURATION =====
+  // Maps each Ngành to its Bậc Học list with optional badge images
+  const NGANH_CONFIG = {
+    'Oanh Vũ Nam': {
+      label: 'Oanh Vũ Nam',
+      position: 'Đoàn sinh',
+      studyLevels: [
+        { name: 'Mở Mắt',    img: 'images/badges/mo-mat.jpg' },
+        { name: 'Cánh Mềm',  img: 'images/badges/canh-mem.jpg' },
+        { name: 'Chân Cứng',  img: 'images/badges/chan-cung.jpg' },
+        { name: 'Tung Bay',  img: 'images/badges/tung-bay.jpg' },
+      ],
+      ranks: [],
+    },
+    'Oanh Vũ Nữ': {
+      label: 'Oanh Vũ Nữ',
+      position: 'Đoàn sinh',
+      studyLevels: [
+        { name: 'Mở Mắt',    img: 'images/badges/mo-mat.jpg' },
+        { name: 'Cánh Mềm',  img: 'images/badges/canh-mem.jpg' },
+        { name: 'Chân Cứng',  img: 'images/badges/chan-cung.jpg' },
+        { name: 'Tung Bay',  img: 'images/badges/tung-bay.jpg' },
+      ],
+      ranks: [],
+    },
+    'Thiếu Nam': {
+      label: 'Thiếu Nam',
+      position: 'Đoàn sinh',
+      studyLevels: [
+        { name: 'Hướng Thiện', img: 'images/badges/huong-thien.jpg' },
+        { name: 'Sơ Thiện',    img: 'images/badges/so-thien.jpg' },
+        { name: 'Trung Thiện', img: 'images/badges/trung-thien.jpg' },
+        { name: 'Chánh Thiện', img: 'images/badges/chanh-thien.jpg' },
+      ],
+      ranks: [],
+    },
+    'Thiếu Nữ': {
+      label: 'Thiếu Nữ',
+      position: 'Đoàn sinh',
+      studyLevels: [
+        { name: 'Hướng Thiện', img: 'images/badges/huong-thien.jpg' },
+        { name: 'Sơ Thiện',    img: 'images/badges/so-thien.jpg' },
+        { name: 'Trung Thiện', img: 'images/badges/trung-thien.jpg' },
+        { name: 'Chánh Thiện', img: 'images/badges/chanh-thien.jpg' },
+      ],
+      ranks: [],
+    },
+    'Thanh Nam': {
+      label: 'Thanh Nam',
+      position: 'Đoàn sinh',
+      studyLevels: [
+        { name: 'Hòa',  img: 'images/badges/hoa.jpg' },
+        { name: 'Minh',  img: 'images/badges/minh.jpg' },
+        { name: 'Kiến',  img: 'images/badges/kien.jpg' },
+        { name: 'Trực',  img: 'images/badges/truc.jpg' },
+      ],
+      ranks: [],
+    },
+    'Thanh Nữ': {
+      label: 'Thanh Nữ',
+      position: 'Đoàn sinh',
+      studyLevels: [
+        { name: 'Hòa',  img: 'images/badges/hoa.jpg' },
+        { name: 'Minh',  img: 'images/badges/minh.jpg' },
+        { name: 'Kiến',  img: 'images/badges/kien.jpg' },
+        { name: 'Trực',  img: 'images/badges/truc.jpg' },
+      ],
+      ranks: [],
+    },
+    'Huynh Trưởng': {
+      label: 'Huynh Trưởng',
+      position: 'Huynh trưởng',
+      studyLevels: [
+        { name: 'Kiên', img: null },
+        { name: 'Trì',  img: null },
+        { name: 'Định', img: null },
+        { name: 'Lực',  img: null },
+      ],
+      ranks: [
+        { name: 'Tập Sự', img: 'images/badges/tap-su.jpg' },
+        { name: 'Tập', img: 'images/badges/tap.jpg' },
+        { name: 'Tín', img: 'images/badges/tin.jpg' },
+        { name: 'Tấn', img: 'images/badges/tan.jpg' },
+        { name: 'Dũng', img: 'images/badges/dung.jpg' },
+      ],
+    },
+  };
+
+  /**
+   * Render badge items HTML for a list of levels/ranks
+   * @param {Array} items - [{name, img}]
+   * @param {string} currentValue - Currently selected value
+   * @param {string} dataAttr - Data attribute name ('study-level' or 'rank')
+   * @param {boolean} isSquare - If true, render square photo frame (for Cấp Huynh Trưởng)
+   * @returns {string} HTML
+   */
+  function renderBadgeItems(items, currentValue, dataAttr, isSquare = false) {
+    return items.map(item => {
+      const isActive = currentValue === item.name ? ' active' : '';
+      if (isSquare && item.img) {
+        // Square photo frame for Cấp Huynh Trưởng (Tập, Tín, Tấn, Dũng)
+        return `
+          <div class="badge-item badge-item--square${isActive}" data-badge-${dataAttr}="${escAttr(item.name)}">
+            <div class="badge-square-frame">
+              <img src="${item.img}" alt="${esc(item.name)}" />
+            </div>
+            <div class="badge-label">${esc(item.name)}</div>
+          </div>
+        `;
+      } else if (item.img) {
+        // Diamond image badge for Bậc học Đoàn sinh
+        return `
+          <div class="badge-item badge-item--has-img${isActive}" data-badge-${dataAttr}="${escAttr(item.name)}">
+            <div class="badge-diamond-frame">
+              <div class="badge-diamond-border"></div>
+              <div class="badge-diamond-inner">
+                <img src="${item.img}" alt="${esc(item.name)}" />
+              </div>
+            </div>
+            <div class="badge-label">${esc(item.name)}</div>
+          </div>
+        `;
+      } else {
+        // Text-only 45° diamond box (Kiên, Trì, Định, Lực, Minh, Kiến) - NO sub-label
+        return `
+          <div class="badge-item badge-item--text-only${isActive}" data-badge-${dataAttr}="${escAttr(item.name)}">
+            <div class="badge-diamond-text-box">
+              <span>${esc(item.name)}</span>
+            </div>
+          </div>
+        `;
+      }
+    }).join('');
+  }
+
+  /**
+   * Render the full badge selector section for position / nganh
+   * @param {string} position - 'Đoàn sinh' or 'Huynh trưởng'
+   * @param {string} nganhKey - Key in NGANH_CONFIG
+   * @param {string} currentStudyLevel - Current study level
+   * @param {string} currentRank - Current rank
+   * @returns {string} HTML for study level + rank badge sections
+   */
+  function renderBadgeSections(position, nganhKey, currentStudyLevel, currentRank) {
+    let html = '';
+
+    if (position === 'Huynh trưởng') {
+      const htConfig = NGANH_CONFIG['Huynh Trưởng'];
+      if (htConfig) {
+        // Bậc Học — Huynh Trưởng (Text-only 4 diamond boxes)
+        if (htConfig.studyLevels && htConfig.studyLevels.length > 0) {
+          html += `
+            <div class="badge-section" id="badge-study-level-section">
+              <div class="badge-section__header">Bậc Học — Huynh Trưởng</div>
+              <div class="badge-selector" id="badge-study-level-selector">
+                ${renderBadgeItems(htConfig.studyLevels, currentStudyLevel, 'study-level', false)}
+              </div>
+            </div>
+          `;
+        }
+        // Cấp — Huynh Trưởng (Square photo cards: Tập, Tín, Tấn, Dũng)
+        if (htConfig.ranks && htConfig.ranks.length > 0) {
+          html += `
+            <div class="badge-section" id="badge-rank-section">
+              <div class="badge-section__header">Cấp — Huynh Trưởng</div>
+              <div class="badge-selector" id="badge-rank-selector">
+                ${renderBadgeItems(htConfig.ranks, currentRank, 'rank', true)}
+              </div>
+            </div>
+          `;
+        }
+      }
+    } else {
+      // Đoàn sinh
+      const config = NGANH_CONFIG[nganhKey];
+      if (config && config.studyLevels && config.studyLevels.length > 0) {
+        html += `
+          <div class="badge-section" id="badge-study-level-section">
+            <div class="badge-section__header">Bậc Học — ${esc(config.label)}</div>
+            <div class="badge-selector" id="badge-study-level-selector">
+              ${renderBadgeItems(config.studyLevels, currentStudyLevel, 'study-level', false)}
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    return html;
+  }
+
+  /**
+   * Render the Ngành dropdown select HTML
+   * @param {string} id - Element ID
+   * @param {string} currentNganh - Current value
+   * @returns {string} HTML
+   */
+  function renderNganhSelect(id, currentNganh) {
+    const nganhOptions = ['Oanh Vũ Nam', 'Oanh Vũ Nữ', 'Thiếu Nam', 'Thiếu Nữ', 'Thanh Nam', 'Thanh Nữ'];
+    let opts = '<option value="">— Chọn ngành —</option>';
+    nganhOptions.forEach(key => {
+      const selected = currentNganh === key ? 'selected' : '';
+      opts += `<option value="${escAttr(key)}" ${selected}>${esc(key)}</option>`;
+    });
+    return `<select class="adm-input" id="${id}" style="background:#1e3222; color:#fff;">${opts}</select>`;
+  }
+
   let isLoggedIn = false;
   let adminHash = "";
   let currentUser = null; // { id, username, displayName, role }
@@ -550,6 +756,7 @@
               <div style="display:flex; gap:10px; flex-wrap:wrap; font-size:0.75rem; color:rgba(255,255,255,0.6);">
                 ${u.dharma_name ? `<div>PD: <strong>${esc(u.dharma_name)}</strong></div>` : ''}
                 ${u.position ? `<div>Chức vụ: <strong>${esc(u.position)}</strong></div>` : ''}
+                ${u.nganh ? `<div>Ngành: <span class="nganh-badge">${esc(u.nganh)}</span></div>` : ''}
                 ${u.rank ? `<div>Cấp: <strong>${esc(u.rank)}</strong></div>` : ''}
                 ${u.study_level ? `<div>Bậc học: <strong>${esc(u.study_level)}</strong></div>` : ''}
               </div>
@@ -612,6 +819,7 @@
   }
 
   // ===== ADMIN CREATE USER MODAL =====
+  // ===== ADMIN CREATE USER MODAL =====
   function openAddUserModal() {
     let overlay = document.getElementById("add-user-modal-overlay");
     if (!overlay) {
@@ -623,8 +831,11 @@
 
     const isSuperAdmin = currentUser && currentUser.username === '0903549528';
 
+    // State for badge selections
+    let state = { position: 'Đoàn sinh', nganh: '', studyLevel: '', rank: '' };
+
     overlay.innerHTML = `
-      <div class="auth-modal" style="width: min(540px, 94vw);">
+      <div class="auth-modal" style="width: min(600px, 94vw); max-height:90vh; overflow-y:auto;">
         <button class="adm-btn-icon auth-modal__close" id="add-user-close">${ICONS.close}</button>
         <h3>Thêm Tài Khoản Mới</h3>
         <p class="auth-modal__desc">Tạo tài khoản thành viên tu học cho huynh trưởng, đoàn sinh</p>
@@ -664,14 +875,13 @@
               <option value="Huynh trưởng">Huynh trưởng</option>
             </select>
           </div>
-          <div class="adm-field">
-            <label>Cấp</label>
-            <input type="text" class="adm-input" id="add-usr-rank" placeholder="Tập sự, Kiên..." />
+          <div class="adm-field" id="add-usr-nganh-group">
+            <label>Ngành</label>
+            ${renderNganhSelect('add-usr-nganh', '')}
           </div>
-          <div class="adm-field" style="grid-column: span 2;">
-            <label>Bậc học</label>
-            <input type="text" class="adm-input" id="add-usr-studyLevel" placeholder="Kiên, Trì, Hướng thiện..." />
-          </div>
+
+          <!-- Badge sections container -->
+          <div id="add-usr-badge-container" style="grid-column: span 2;"></div>
         </div>
 
         <div class="auth-modal__error" id="add-usr-error" style="color:#ff6b6b; font-size:0.85rem; margin-top:12px; display:none;"></div>
@@ -693,6 +903,72 @@
     overlay.querySelector("#add-user-close").addEventListener("click", closeMod);
     overlay.querySelector("#add-usr-cancel").addEventListener("click", closeMod);
 
+    const posSelect = overlay.querySelector("#add-usr-position");
+    const nganhGroup = overlay.querySelector("#add-usr-nganh-group");
+    const nganhSelect = overlay.querySelector("#add-usr-nganh");
+    const badgeContainer = overlay.querySelector("#add-usr-badge-container");
+
+    function updateModalBadges() {
+      const currentPos = posSelect.value;
+      if (currentPos === 'Huynh trưởng') {
+        nganhGroup.style.display = 'none';
+        state.nganh = '';
+        badgeContainer.innerHTML = renderBadgeSections('Huynh trưởng', '', state.studyLevel, state.rank);
+      } else {
+        nganhGroup.style.display = 'block';
+        state.nganh = nganhSelect.value;
+        badgeContainer.innerHTML = renderBadgeSections('Đoàn sinh', state.nganh, state.studyLevel, state.rank);
+      }
+    }
+
+    updateModalBadges();
+
+    posSelect.addEventListener("change", () => {
+      state.position = posSelect.value;
+      state.studyLevel = '';
+      state.rank = '';
+      updateModalBadges();
+    });
+
+    nganhSelect.addEventListener("change", () => {
+      state.nganh = nganhSelect.value;
+      state.studyLevel = '';
+      state.rank = '';
+      updateModalBadges();
+    });
+
+    // Event delegation on badgeContainer for instant responsive clicks
+    badgeContainer.addEventListener("click", (e) => {
+      const studyItem = e.target.closest("[data-badge-study-level]");
+      if (studyItem) {
+        const val = studyItem.dataset.badgeStudyLevel;
+        const isAlreadyActive = studyItem.classList.contains("active");
+        badgeContainer.querySelectorAll("[data-badge-study-level]").forEach(el => el.classList.remove("active"));
+        if (!isAlreadyActive) {
+          studyItem.classList.add("active");
+          state.studyLevel = val;
+        } else {
+          state.studyLevel = "";
+        }
+        return;
+      }
+
+      const rankItem = e.target.closest("[data-badge-rank]");
+      if (rankItem) {
+        const val = rankItem.dataset.badgeRank;
+        const isAlreadyActive = rankItem.classList.contains("active");
+        badgeContainer.querySelectorAll("[data-badge-rank]").forEach(el => el.classList.remove("active"));
+        if (!isAlreadyActive) {
+          rankItem.classList.add("active");
+          state.rank = val;
+        } else {
+          state.rank = "";
+        }
+        return;
+      }
+    });
+
+    // Save handler
     overlay.querySelector("#add-usr-save").addEventListener("click", async () => {
       const username = overlay.querySelector("#add-usr-username").value.trim();
       const password = overlay.querySelector("#add-usr-password").value;
@@ -700,9 +976,10 @@
       const dharmaName = overlay.querySelector("#add-usr-dharmaName").value.trim();
       const dob = overlay.querySelector("#add-usr-dob").value.trim();
       const role = overlay.querySelector("#add-usr-role").value;
-      const position = overlay.querySelector("#add-usr-position").value;
-      const rank = overlay.querySelector("#add-usr-rank").value.trim();
-      const studyLevel = overlay.querySelector("#add-usr-studyLevel").value.trim();
+      const position = posSelect.value;
+      const nganh = state.nganh;
+      const rank = state.rank;
+      const studyLevel = state.studyLevel;
       const errEl = overlay.querySelector("#add-usr-error");
 
       if (!username || !password || !fullName) {
@@ -721,7 +998,7 @@
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: 'same-origin',
-          body: JSON.stringify({ username, password, displayName: dharmaName || fullName, role, fullName, dob, position, rank, studyLevel, dharmaName }),
+          body: JSON.stringify({ username, password, displayName: dharmaName || fullName, role, fullName, dob, position, rank, studyLevel, dharmaName, nganh }),
         });
         const data = await res.json();
         if (res.ok && data.success) {
@@ -751,8 +1028,20 @@
       document.body.appendChild(overlay);
     }
 
+    const initialPosition = u.position || 'Đoàn sinh';
+    const initialNganh = u.nganh || '';
+    const initialStudyLevel = u.study_level || '';
+    const initialRank = u.rank || '';
+
+    let state = {
+      position: initialPosition,
+      nganh: initialNganh,
+      studyLevel: initialStudyLevel,
+      rank: initialRank
+    };
+
     overlay.innerHTML = `
-      <div class="auth-modal" style="width: min(540px, 94vw);">
+      <div class="auth-modal" style="width: min(600px, 94vw); max-height:90vh; overflow-y:auto;">
         <button class="adm-btn-icon auth-modal__close" id="edit-usr-close">${ICONS.close}</button>
         <h3>Sửa Thông Tin Đoàn Sinh</h3>
         <p class="auth-modal__desc">Chỉnh sửa thông tin cá nhân tài khoản <strong>@${esc(u.username)}</strong></p>
@@ -773,18 +1062,17 @@
           <div class="adm-field">
             <label>Chức vụ</label>
             <select class="adm-input" id="edit-usr-position" style="background:#1e3222; color:#fff;">
-              <option value="Đoàn sinh" ${(u.position || '') === 'Đoàn sinh' ? 'selected' : ''}>Đoàn sinh</option>
-              <option value="Huynh trưởng" ${(u.position || '') === 'Huynh trưởng' ? 'selected' : ''}>Huynh trưởng</option>
+              <option value="Đoàn sinh" ${initialPosition === 'Đoàn sinh' ? 'selected' : ''}>Đoàn sinh</option>
+              <option value="Huynh trưởng" ${initialPosition === 'Huynh trưởng' ? 'selected' : ''}>Huynh trưởng</option>
             </select>
           </div>
-          <div class="adm-field">
-            <label>Cấp</label>
-            <input type="text" class="adm-input" id="edit-usr-rank" value="${escAttr(u.rank || '')}" placeholder="Tập sự, Kiên..." />
+          <div class="adm-field" id="edit-usr-nganh-group" style="${initialPosition === 'Huynh trưởng' ? 'display:none;' : ''}">
+            <label>Ngành</label>
+            ${renderNganhSelect('edit-usr-nganh', initialNganh)}
           </div>
-          <div class="adm-field">
-            <label>Bậc học</label>
-            <input type="text" class="adm-input" id="edit-usr-studyLevel" value="${escAttr(u.study_level || '')}" placeholder="Kiên, Trì, Hướng thiện..." />
-          </div>
+
+          <!-- Badge section container -->
+          <div id="edit-usr-badge-container" style="grid-column: span 2;"></div>
         </div>
 
         <div class="auth-modal__error" id="edit-usr-error" style="color:#ff6b6b; font-size:0.85rem; margin-top:12px; display:none;"></div>
@@ -806,13 +1094,79 @@
     overlay.querySelector("#edit-usr-close").addEventListener("click", closeMod);
     overlay.querySelector("#edit-usr-cancel").addEventListener("click", closeMod);
 
+    const posSelect = overlay.querySelector("#edit-usr-position");
+    const nganhGroup = overlay.querySelector("#edit-usr-nganh-group");
+    const nganhSelect = overlay.querySelector("#edit-usr-nganh");
+    const badgeContainer = overlay.querySelector("#edit-usr-badge-container");
+
+    function updateModalBadges() {
+      const currentPos = posSelect.value;
+      if (currentPos === 'Huynh trưởng') {
+        nganhGroup.style.display = 'none';
+        state.nganh = '';
+        badgeContainer.innerHTML = renderBadgeSections('Huynh trưởng', '', state.studyLevel, state.rank);
+      } else {
+        nganhGroup.style.display = 'block';
+        state.nganh = nganhSelect.value;
+        badgeContainer.innerHTML = renderBadgeSections('Đoàn sinh', state.nganh, state.studyLevel, state.rank);
+      }
+    }
+
+    updateModalBadges();
+
+    posSelect.addEventListener("change", () => {
+      state.position = posSelect.value;
+      state.studyLevel = '';
+      state.rank = '';
+      updateModalBadges();
+    });
+
+    nganhSelect.addEventListener("change", () => {
+      state.nganh = nganhSelect.value;
+      state.studyLevel = '';
+      state.rank = '';
+      updateModalBadges();
+    });
+
+    // Event delegation on badgeContainer
+    badgeContainer.addEventListener("click", (e) => {
+      const studyItem = e.target.closest("[data-badge-study-level]");
+      if (studyItem) {
+        const val = studyItem.dataset.badgeStudyLevel;
+        const isAlreadyActive = studyItem.classList.contains("active");
+        badgeContainer.querySelectorAll("[data-badge-study-level]").forEach(el => el.classList.remove("active"));
+        if (!isAlreadyActive) {
+          studyItem.classList.add("active");
+          state.studyLevel = val;
+        } else {
+          state.studyLevel = "";
+        }
+        return;
+      }
+
+      const rankItem = e.target.closest("[data-badge-rank]");
+      if (rankItem) {
+        const val = rankItem.dataset.badgeRank;
+        const isAlreadyActive = rankItem.classList.contains("active");
+        badgeContainer.querySelectorAll("[data-badge-rank]").forEach(el => el.classList.remove("active"));
+        if (!isAlreadyActive) {
+          rankItem.classList.add("active");
+          state.rank = val;
+        } else {
+          state.rank = "";
+        }
+        return;
+      }
+    });
+
     overlay.querySelector("#edit-usr-save").addEventListener("click", async () => {
       const fullName = overlay.querySelector("#edit-usr-fullName").value.trim();
       const dharmaName = overlay.querySelector("#edit-usr-dharmaName").value.trim();
       const dob = overlay.querySelector("#edit-usr-dob").value.trim();
-      const position = overlay.querySelector("#edit-usr-position").value;
-      const rank = overlay.querySelector("#edit-usr-rank").value.trim();
-      const studyLevel = overlay.querySelector("#edit-usr-studyLevel").value.trim();
+      const position = posSelect.value;
+      const nganh = state.nganh;
+      const rank = state.rank;
+      const studyLevel = state.studyLevel;
       const errEl = overlay.querySelector("#edit-usr-error");
 
       if (!fullName) {
@@ -826,7 +1180,7 @@
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: 'same-origin',
-          body: JSON.stringify({ userId: u.id, fullName, dharmaName, dob, position, rank, studyLevel }),
+          body: JSON.stringify({ userId: u.id, fullName, dharmaName, dob, position, rank, studyLevel, nganh }),
         });
         const data = await res.json();
         if (res.ok && data.success) {
@@ -843,6 +1197,7 @@
       }
     });
   }
+
 
   // ===== ADMIN CHANGE USER PASSWORD =====
   function openAdminChangeUserPasswordModal(userId, username) {
@@ -1805,8 +2160,20 @@
       ? `<img src="${currentUser.avatarUrl}" style="width:100%; height:100%; object-fit:cover;" />`
       : initial;
 
+    const initialPosition = currentUser.position || 'Đoàn sinh';
+    const initialNganh = currentUser.nganh || '';
+    const initialStudyLevel = currentUser.studyLevel || '';
+    const initialRank = currentUser.rank || '';
+
+    let state = {
+      position: initialPosition,
+      nganh: initialNganh,
+      studyLevel: initialStudyLevel,
+      rank: initialRank
+    };
+
     overlay.innerHTML = `
-      <div class="auth-modal">
+      <div class="auth-modal" style="width: min(600px, 94vw); max-height:90vh; overflow-y:auto;">
         <button class="adm-btn-icon auth-modal__close" id="profile-modal-close">${ICONS.close}</button>
         <h3>Thông Tin Cá Nhân</h3>
         <p class="auth-modal__desc">Xem và cập nhật thông tin thành viên của bạn</p>
@@ -1824,7 +2191,7 @@
           <span style="font-size:0.72rem; color:rgba(255,255,255,0.4); margin-top:8px;">Nhấp để thay ảnh đại diện (Tối đa 2MB)</span>
         </div>
 
-        <div class="auth-modal__grid">
+        <div class="auth-modal__grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
           <div class="adm-field">
             <label>Tên đăng nhập / Số điện thoại</label>
             <input type="text" class="adm-input" value="${escAttr(currentUser.username)}" disabled />
@@ -1844,18 +2211,17 @@
           <div class="adm-field">
             <label>Chức vụ</label>
             <select class="adm-input" id="prof-position" style="background:#1e3222; color:#fff;">
-              <option value="Đoàn sinh" ${(currentUser.position || '') === 'Đoàn sinh' ? 'selected' : ''}>Đoàn sinh</option>
-              <option value="Huynh trưởng" ${(currentUser.position || '') === 'Huynh trưởng' ? 'selected' : ''}>Huynh trưởng</option>
+              <option value="Đoàn sinh" ${initialPosition === 'Đoàn sinh' ? 'selected' : ''}>Đoàn sinh</option>
+              <option value="Huynh trưởng" ${initialPosition === 'Huynh trưởng' ? 'selected' : ''}>Huynh trưởng</option>
             </select>
           </div>
-          <div class="adm-field" id="prof-rank-group" style="${(currentUser.position || '') === 'Huynh trưởng' ? '' : 'display:none;'}">
-            <label>Cấp <span style="font-size:0.75rem; color:rgba(255,255,255,0.5);">(dành cho Huynh trưởng)</span></label>
-            <input type="text" class="adm-input" id="prof-rank" value="${escAttr(currentUser.rank || '')}" placeholder="Tập sự, Kiên..." />
+          <div class="adm-field" id="prof-nganh-group" style="${initialPosition === 'Huynh trưởng' ? 'display:none;' : ''}">
+            <label>Ngành</label>
+            ${renderNganhSelect('prof-nganh', initialNganh)}
           </div>
-          <div class="adm-field" style="grid-column: span 2;">
-            <label>Bậc học</label>
-            <input type="text" class="adm-input" id="prof-studyLevel" value="${escAttr(currentUser.studyLevel || '')}" placeholder="Kiên, Trì, Hướng thiện..." />
-          </div>
+
+          <!-- Badge section container -->
+          <div id="prof-badge-container" style="grid-column: span 2;"></div>
         </div>
 
         <div class="auth-modal__error" id="prof-error" style="color:#ff6b6b; font-size:0.85rem; margin-top:12px; display:none;"></div>
@@ -1877,21 +2243,70 @@
     overlay.querySelector("#profile-modal-close").addEventListener("click", closeProfile);
     overlay.querySelector("#prof-btn-cancel").addEventListener("click", closeProfile);
 
-    // Position & Rank dynamic toggle
-    const profPosSelect = overlay.querySelector("#prof-position");
-    const profRankGroup = overlay.querySelector("#prof-rank-group");
-    const profRankInput = overlay.querySelector("#prof-rank");
+    const posSelect = overlay.querySelector("#prof-position");
+    const nganhGroup = overlay.querySelector("#prof-nganh-group");
+    const nganhSelect = overlay.querySelector("#prof-nganh");
+    const badgeContainer = overlay.querySelector("#prof-badge-container");
 
-    if (profPosSelect && profRankGroup) {
-      profPosSelect.addEventListener("change", () => {
-        if (profPosSelect.value === "Huynh trưởng") {
-          profRankGroup.style.display = "block";
-        } else {
-          profRankGroup.style.display = "none";
-          if (profRankInput) profRankInput.value = "";
-        }
-      });
+    function updateModalBadges() {
+      const currentPos = posSelect.value;
+      if (currentPos === 'Huynh trưởng') {
+        nganhGroup.style.display = 'none';
+        state.nganh = '';
+        badgeContainer.innerHTML = renderBadgeSections('Huynh trưởng', '', state.studyLevel, state.rank);
+      } else {
+        nganhGroup.style.display = 'block';
+        state.nganh = nganhSelect.value;
+        badgeContainer.innerHTML = renderBadgeSections('Đoàn sinh', state.nganh, state.studyLevel, state.rank);
+      }
     }
+
+    updateModalBadges();
+
+    posSelect.addEventListener("change", () => {
+      state.position = posSelect.value;
+      state.studyLevel = '';
+      state.rank = '';
+      updateModalBadges();
+    });
+
+    nganhSelect.addEventListener("change", () => {
+      state.nganh = nganhSelect.value;
+      state.studyLevel = '';
+      state.rank = '';
+      updateModalBadges();
+    });
+
+    // Event delegation on badgeContainer
+    badgeContainer.addEventListener("click", (e) => {
+      const studyItem = e.target.closest("[data-badge-study-level]");
+      if (studyItem) {
+        const val = studyItem.dataset.badgeStudyLevel;
+        const isAlreadyActive = studyItem.classList.contains("active");
+        badgeContainer.querySelectorAll("[data-badge-study-level]").forEach(el => el.classList.remove("active"));
+        if (!isAlreadyActive) {
+          studyItem.classList.add("active");
+          state.studyLevel = val;
+        } else {
+          state.studyLevel = "";
+        }
+        return;
+      }
+
+      const rankItem = e.target.closest("[data-badge-rank]");
+      if (rankItem) {
+        const val = rankItem.dataset.badgeRank;
+        const isAlreadyActive = rankItem.classList.contains("active");
+        badgeContainer.querySelectorAll("[data-badge-rank]").forEach(el => el.classList.remove("active"));
+        if (!isAlreadyActive) {
+          rankItem.classList.add("active");
+          state.rank = val;
+        } else {
+          state.rank = "";
+        }
+        return;
+      }
+    });
 
     // Avatar upload handlers
     const profAvatarBtn = overlay.querySelector("#profile-avatar-btn");
@@ -1930,29 +2345,29 @@
           showToast("Cập nhật ảnh đại diện thành công!");
         } else {
           showToast(data.error || "Tải ảnh lên thất bại", true);
-          // Restore
-          const initial = (currentUser.displayName || "?").charAt(0).toUpperCase();
+          const initialStr = (currentUser.displayName || "?").charAt(0).toUpperCase();
           profAvatarDisplay.innerHTML = currentUser.avatarUrl
             ? `<img src="${currentUser.avatarUrl}" style="width:100%; height:100%; object-fit:cover;" />`
-            : initial;
+            : initialStr;
         }
       } catch (err) {
         showToast("Lỗi kết nối máy chủ", true);
-        // Restore
-        const initial = (currentUser.displayName || "?").charAt(0).toUpperCase();
+        const initialStr = (currentUser.displayName || "?").charAt(0).toUpperCase();
         profAvatarDisplay.innerHTML = currentUser.avatarUrl
           ? `<img src="${currentUser.avatarUrl}" style="width:100%; height:100%; object-fit:cover;" />`
-          : initial;
+          : initialStr;
       }
     });
 
+    // Save profile handler
     overlay.querySelector("#prof-btn-save").addEventListener("click", async () => {
       const fullName = overlay.querySelector("#prof-fullName").value.trim();
       const dob = overlay.querySelector("#prof-dob").value.trim();
       const dharmaName = overlay.querySelector("#prof-dharmaName").value.trim();
-      const position = overlay.querySelector("#prof-position").value;
-      const rank = overlay.querySelector("#prof-rank") ? overlay.querySelector("#prof-rank").value.trim() : "";
-      const studyLevel = overlay.querySelector("#prof-studyLevel").value.trim();
+      const position = posSelect.value;
+      const nganh = state.nganh;
+      const rank = state.rank;
+      const studyLevel = state.studyLevel;
       const errEl = overlay.querySelector("#prof-error");
 
       if (!fullName) {
@@ -1966,7 +2381,7 @@
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "same-origin",
-          body: JSON.stringify({ fullName, dob, dharmaName, position, rank, studyLevel }),
+          body: JSON.stringify({ fullName, dob, dharmaName, position, rank, studyLevel, nganh }),
         });
         const data = await res.json();
         if (res.ok && data.success) {
@@ -1977,6 +2392,7 @@
           currentUser.position = position;
           currentUser.rank = rank;
           currentUser.studyLevel = studyLevel;
+          currentUser.nganh = nganh;
           
           renderHeaderUser(currentUser);
           closeProfile();

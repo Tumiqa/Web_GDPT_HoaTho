@@ -120,6 +120,7 @@ switch ($action) {
                 'studyLevel'  => $user['study_level'],
                 'dharmaName'  => $user['dharma_name'],
                 'avatarUrl'   => $user['avatar_url'] ?? '',
+                'nganh'       => $user['nganh'] ?? '',
             ]
         ]);
         break;
@@ -156,6 +157,7 @@ switch ($action) {
                 'studyLevel'  => $currentUser['studyLevel'],
                 'dharmaName'  => $currentUser['dharmaName'],
                 'avatarUrl'   => $currentUser['avatarUrl'] ?? '',
+                'nganh'       => $currentUser['nganh'] ?? '',
             ]
         ]);
         break;
@@ -194,6 +196,7 @@ switch ($action) {
         $rank = trim($body['rank'] ?? '');
         $studyLevel = trim($body['studyLevel'] ?? '');
         $dharmaName = trim($body['dharmaName'] ?? '');
+        $nganh = trim($body['nganh'] ?? '');
 
         if (!in_array($role, ['admin', 'member'])) {
             http_response_code(400);
@@ -208,7 +211,7 @@ switch ($action) {
             exit;
         }
 
-        $newUser = createUser($username, $password, $displayName, $role, $fullName, $dob, $position, $rank, $studyLevel, $dharmaName);
+        $newUser = createUser($username, $password, $displayName, $role, $fullName, $dob, $position, $rank, $studyLevel, $dharmaName, $nganh);
         if (!$newUser) {
             http_response_code(409);
             echo json_encode(['error' => 'Tên đăng nhập đã tồn tại']);
@@ -399,6 +402,7 @@ switch ($action) {
         $position = trim($body['position'] ?? '');
         $rank = trim($body['rank'] ?? '');
         $studyLevel = trim($body['studyLevel'] ?? '');
+        $nganh = trim($body['nganh'] ?? '');
 
         if (!$fullName) {
             http_response_code(400);
@@ -420,13 +424,13 @@ switch ($action) {
                 exit;
             }
 
-            updateUserProfileByAdmin($targetUserId, $fullName, $dob, $dharmaName, $position, $rank, $studyLevel);
+            updateUserProfileByAdmin($targetUserId, $fullName, $dob, $dharmaName, $position, $rank, $studyLevel, $nganh);
             echo json_encode(['success' => true]);
             exit;
         }
 
         // Updating own profile
-        $updated = updateProfile($currentUser['userId'], $fullName, $dob, $dharmaName, $position, $rank, $studyLevel);
+        $updated = updateProfile($currentUser['userId'], $fullName, $dob, $dharmaName, $position, $rank, $studyLevel, $nganh);
         echo json_encode(['success' => true]);
         break;
 

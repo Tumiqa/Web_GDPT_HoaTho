@@ -56,13 +56,19 @@ function initAuthDB(): void {
             rank TEXT DEFAULT "",
             study_level TEXT DEFAULT "",
             dharma_name TEXT DEFAULT "",
-            avatar_url TEXT DEFAULT ""
+            avatar_url TEXT DEFAULT "",
+            nganh TEXT DEFAULT ""
         )
     ');
 
-    // Attempt to add column if it doesn't exist (for existing DBs)
+    // Attempt to add columns if they don't exist (for existing DBs)
     try {
         @$db->exec('ALTER TABLE users ADD COLUMN avatar_url TEXT DEFAULT ""');
+    } catch (Exception $e) {
+        // Ignore if column already exists
+    }
+    try {
+        @$db->exec('ALTER TABLE users ADD COLUMN nganh TEXT DEFAULT ""');
     } catch (Exception $e) {
         // Ignore if column already exists
     }
@@ -185,7 +191,7 @@ function validateSession(string $token): ?array {
     // Lookup session + user in one query
     $stmt = $db->prepare('
         SELECT s.id, s.secret_hash, s.created_at, s.expires_at, s.user_id,
-               u.username, u.display_name, u.role, u.full_name, u.dob, u.position, u.rank, u.study_level, u.dharma_name, u.avatar_url
+               u.username, u.display_name, u.role, u.full_name, u.dob, u.position, u.rank, u.study_level, u.dharma_name, u.avatar_url, u.nganh
         FROM sessions s
         JOIN users u ON s.user_id = u.id
         WHERE s.id = :sid
@@ -228,6 +234,7 @@ function validateSession(string $token): ?array {
         'studyLevel'  => $row['study_level'],
         'dharmaName'  => $row['dharma_name'],
         'avatarUrl'   => $row['avatar_url'] ?? '',
+        'nganh'       => $row['nganh'] ?? '',
         'sessionId'   => $row['id'],
         'createdAt'   => $row['created_at'],
         'expiresAt'   => $row['expires_at'],
@@ -352,7 +359,8 @@ function createUser(
     string $position = '',
     string $rank = '',
     string $studyLevel = '',
-    string $dharmaName = ''
+    string $dharmaName = '',
+    string $nganh = ''
 ): ?array {
     $db = getAuthDB();
 
@@ -372,8 +380,8 @@ function createUser(
     $now = time();
 
     $stmt = $db->prepare('
-        INSERT INTO users (id, username, password_hash, display_name, role, created_at, full_name, dob, position, rank, study_level, dharma_name)
-        VALUES (:id, :u, :ph, :dn, :r, :ca, :fn, :dob, :pos, :rank, :sl, :dn_name)
+        INSERT INTO users (id, username, password_hash, display_name, role, created_at, full_name, dob, position, rank, study_level, dharma_name, nganh)
+        VALUES (:id, :u, :ph, :dn, :r, :ca, :fn, :dob, :pos, :rank, :sl, :dn_name, :nganh)
     ');
     $stmt->bindValue(':id', $userId, SQLITE3_TEXT);
     $stmt->bindValue(':u', $username, SQLITE3_TEXT);
@@ -387,6 +395,7 @@ function createUser(
     $stmt->bindValue(':rank', $rank, SQLITE3_TEXT);
     $stmt->bindValue(':sl', $studyLevel, SQLITE3_TEXT);
     $stmt->bindValue(':dn_name', $dharmaName, SQLITE3_TEXT);
+    $stmt->bindValue(':nganh', $nganh, SQLITE3_TEXT);
     $stmt->execute();
     $stmt->close();
     $db->close();
@@ -402,6 +411,7 @@ function createUser(
         'rank'        => $rank,
         'studyLevel'  => $studyLevel,
         'dharmaName'  => $dharmaName,
+        'nganh'       => $nganh,
         'createdAt'   => $now,
     ];
 }
@@ -412,7 +422,7 @@ function createUser(
 function getUserByUsername(string $username): ?array {
     $db = getAuthDB();
     $stmt = $db->prepare('
-        SELECT id, username, password_hash, display_name, role, created_at, full_name, dob, position, rank, study_level, dharma_name, avatar_url
+        SELECT id, username, password_hash, display_name, role, created_at, full_name, dob, position, rank, study_level, dharma_name, avatar_url, nganh
         FROM users WHERE username = :u
     ');
     $stmt->bindValue(':u', $username, SQLITE3_TEXT);
@@ -430,7 +440,7 @@ function getUserByUsername(string $username): ?array {
 function listUsers(): array {
     $db = getAuthDB();
     $result = $db->query('
-        SELECT id, username, display_name, role, created_at, full_name, dob, position, rank, study_level, dharma_name, avatar_url 
+        SELECT id, username, display_name, role, created_at, full_name, dob, position, rank, study_level, dharma_name, avatar_url, nganh 
         FROM users 
         ORDER BY created_at DESC
     ');
@@ -538,13 +548,14 @@ function updateProfile(
     string $dharmaName,
     string $position = '',
     string $rank = '',
-    string $studyLevel = ''
+    string $studyLevel = '',
+    string $nganh = ''
 ): bool {
     $displayName = !empty($dharmaName) ? $dharmaName : $fullName;
     $db = getAuthDB();
     $stmt = $db->prepare('
         UPDATE users
-        SET full_name = :fn, dob = :dob, dharma_name = :dn, display_name = :disp, position = :pos, rank = :rk, study_level = :sl
+        SET full_name = :fn, dob = :dob, dharma_name = :dn, display_name = :disp, position = :pos, rank = :rk, study_level = :sl, nganh = :nganh
         WHERE id = :id
     ');
     $stmt->bindValue(':fn', $fullName, SQLITE3_TEXT);
@@ -554,6 +565,7 @@ function updateProfile(
     $stmt->bindValue(':pos', $position, SQLITE3_TEXT);
     $stmt->bindValue(':rk', $rank, SQLITE3_TEXT);
     $stmt->bindValue(':sl', $studyLevel, SQLITE3_TEXT);
+    $stmt->bindValue(':nganh', $nganh, SQLITE3_TEXT);
     $stmt->bindValue(':id', $userId, SQLITE3_TEXT);
     $stmt->execute();
     $stmt->close();
@@ -572,9 +584,10 @@ function updateUserProfileByAdmin(
     string $dharmaName,
     string $position = '',
     string $rank = '',
-    string $studyLevel = ''
+    string $studyLevel = '',
+    string $nganh = ''
 ): bool {
-    return updateProfile($userId, $fullName, $dob, $dharmaName, $position, $rank, $studyLevel);
+    return updateProfile($userId, $fullName, $dob, $dharmaName, $position, $rank, $studyLevel, $nganh);
 }
 
 // ============================================================

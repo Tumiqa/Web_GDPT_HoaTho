@@ -109,6 +109,7 @@ if (!empty($phone) && $phone[0] !== '0') {
 // 6. Study level & Position (Huynh trưởng detection — Rule 4)
 $position = '';
 $rank = '';
+$nganh = '';
 $huynhTruongLevels = ['kiên', 'trì', 'định', 'lực'];
 $studyLevelLower = mb_strtolower($studyLevel, 'UTF-8');
 foreach ($huynhTruongLevels as $htLevel) {
@@ -121,6 +122,18 @@ foreach ($huynhTruongLevels as $htLevel) {
 // Nếu không phải Huynh trưởng, gán position theo Đoàn
 if (empty($position) && !empty($groupName)) {
     $position = 'Đoàn sinh';
+}
+
+// Derive nganh from groupName (e.g. "Oanh vũ Nam", "Thiếu Nữ", "Thanh Nam"...)
+if (!empty($groupName)) {
+    $groupLower = mb_strtolower($groupName, 'UTF-8');
+    if (mb_strpos($groupLower, 'oanh') !== false) {
+        $nganh = mb_strpos($groupLower, 'nữ') !== false ? 'Oanh Vũ Nữ' : 'Oanh Vũ Nam';
+    } elseif (mb_strpos($groupLower, 'thiếu') !== false || mb_strpos($groupLower, 'thieu') !== false) {
+        $nganh = mb_strpos($groupLower, 'nữ') !== false ? 'Thiếu Nữ' : 'Thiếu Nam';
+    } elseif (mb_strpos($groupLower, 'thanh') !== false) {
+        $nganh = mb_strpos($groupLower, 'nữ') !== false ? 'Thanh Nữ' : 'Thanh Nam';
+    }
 }
 
 // Title-case study level
@@ -180,7 +193,8 @@ $newUser = createUser(
     $position,        // chức vụ (Huynh trưởng / Đoàn sinh / '')
     $rank,            // cấp (để trống)
     $studyLevel,      // bậc tu học
-    $dharmaName       // pháp danh
+    $dharmaName,      // pháp danh
+    $nganh            // ngành (Oanh Vũ Nam/Nữ, Thiếu Nam/Nữ, Thanh Nam/Nữ)
 );
 
 if (!$newUser) {
@@ -203,4 +217,5 @@ echo json_encode([
     'dharmaName'  => $dharmaName,
     'position'    => $position,
     'studyLevel'  => $studyLevel,
+    'nganh'       => $nganh,
 ]);

@@ -1142,3 +1142,227 @@ select.adm-input option { background: #0f1d16; color: #fff; }
 .profile-avatar-container:hover .profile-avatar-overlay {
   opacity: 1 !important;
 }
+
+/* ============================================================
+   BADGE SELECTOR — Diamond Visual Picker v3.0
+   ============================================================ */
+.badge-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 16px 8px;
+}
+.badge-selector__title {
+  width: 100%;
+  text-align: center;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 4px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* Each badge item button */
+.badge-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform 0.25s ease;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.badge-item:hover {
+  transform: translateY(-3px);
+}
+
+/* === 1. IMAGE BADGE FRAME (Unrotated image, double clip-path diamond border) === */
+.badge-diamond-frame {
+  width: 76px;
+  height: 76px;
+  position: relative;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+/* Diamond border layer */
+.badge-diamond-border {
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  background: rgba(212, 168, 67, 0.35);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+.badge-item:hover .badge-diamond-border {
+  background: rgba(212, 168, 67, 0.7);
+}
+.badge-item.active .badge-diamond-border {
+  background: linear-gradient(135deg, #ffd700, #d4a843);
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8));
+}
+
+/* Diamond inner image container (2px inset inside border) */
+.badge-diamond-inner {
+  position: absolute;
+  inset: 2px;
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  background: #ffffff;
+  overflow: hidden;
+}
+
+/* Image inside: UNROTATED 0° so image's natural diamond points up */
+.badge-diamond-inner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transform: none !important;
+}
+
+/* === 2. SQUARE BADGE FRAME (For Cấp Huynh Trưởng: Tập, Tín, Tấn, Dũng) === */
+.badge-item--square {
+  margin: 2px;
+}
+.badge-square-frame {
+  width: 72px;
+  height: 72px;
+  border-radius: 8px;
+  border: 2px solid rgba(212, 168, 67, 0.35);
+  background: #ffffff;
+  overflow: hidden;
+  position: relative;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+.badge-item:hover .badge-square-frame {
+  border-color: rgba(212, 168, 67, 0.7);
+  box-shadow: 0 0 12px rgba(212, 168, 67, 0.35);
+}
+.badge-item.active .badge-square-frame {
+  border-color: #ffd700;
+  box-shadow: 0 0 18px rgba(255, 215, 0, 0.7), 0 0 30px rgba(212, 168, 67, 0.3);
+}
+.badge-square-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transform: none !important;
+}
+
+/* === 3. TEXT-ONLY BADGE (45° rotated diamond box with level text inside, NO label below) === */
+.badge-item--text-only {
+  margin: 6px 6px;
+}
+.badge-diamond-text-box {
+  width: 68px;
+  height: 68px;
+  transform: rotate(45deg);
+  border: 2px solid rgba(212, 168, 67, 0.35);
+  border-radius: 6px;
+  background: linear-gradient(135deg, rgba(26, 45, 32, 0.95), rgba(12, 22, 16, 0.98));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+.badge-item:hover .badge-diamond-text-box {
+  border-color: rgba(212, 168, 67, 0.7);
+  box-shadow: 0 0 12px rgba(212, 168, 67, 0.35);
+}
+.badge-item.active .badge-diamond-text-box {
+  border-color: #ffd700;
+  background: linear-gradient(135deg, rgba(45, 75, 50, 0.95), rgba(20, 42, 26, 0.98));
+  box-shadow: 0 0 18px rgba(255, 215, 0, 0.6), 0 0 30px rgba(212, 168, 67, 0.25);
+}
+.badge-diamond-text-box span {
+  /* Counter-rotate text -45deg so it sits horizontal */
+  transform: rotate(-45deg);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-align: center;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.badge-item.active .badge-diamond-text-box span {
+  color: #ffd700;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+}
+
+/* Badge label below image badges */
+.badge-label {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  transition: color 0.2s ease;
+  max-width: 84px;
+  line-height: 1.2;
+}
+.badge-item.active .badge-label {
+  color: #ffd700;
+  font-weight: 600;
+}
+
+/* Badge selector section within modal */
+.badge-section {
+  grid-column: span 2;
+  background: rgba(0,0,0,0.18);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 4px;
+}
+.badge-section__header {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.85);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.badge-section__header::before {
+  content: '';
+  display: inline-block;
+  width: 3px;
+  height: 14px;
+  background: linear-gradient(180deg, #ffd700, #b8860b);
+  border-radius: 2px;
+}
+
+/* Responsive for smaller screens */
+@media (max-width: 480px) {
+  .badge-diamond-frame {
+    width: 62px;
+    height: 62px;
+  }
+  .badge-diamond-text-box {
+    width: 56px;
+    height: 56px;
+  }
+  .badge-diamond-text-box span {
+    font-size: 0.75rem;
+  }
+  .badge-selector {
+    gap: 12px;
+  }
+  .badge-label {
+    font-size: 0.68rem;
+  }
+}
+
+/* Nganh display badge in user list */
+.nganh-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: rgba(212,168,67,0.1);
+  color: #d4a843;
+  border: 1px solid rgba(212,168,67,0.2);
+}
