@@ -785,19 +785,35 @@ function initCompass() {
     container.appendChild(pointEl);
   });
 
+  // ===== JS COUNTER-ROTATION =====
+  // Đọc góc xoay thực tế của ring mỗi frame và xoay ngược các compass point
+  // Đảm bảo chữ luôn thẳng đứng, đồng bộ 100% với ring
+  const allPoints = container.querySelectorAll('.compass-point');
+
+  function syncCounterRotation() {
+    const style = getComputedStyle(ring);
+    const matrix = style.transform;
+    let angle = 0;
+    if (matrix && matrix !== 'none') {
+      const values = matrix.split('(')[1].split(')')[0].split(',');
+      const a = parseFloat(values[0]);
+      const b = parseFloat(values[1]);
+      angle = Math.atan2(b, a) * (180 / Math.PI);
+    }
+    allPoints.forEach(pt => {
+      pt.style.transform = `translate(-50%, -50%) rotate(${-angle}deg)`;
+    });
+    requestAnimationFrame(syncCounterRotation);
+  }
+  syncCounterRotation();
+
   // Tạm dừng xoay khi hover vào la bàn
   compass.addEventListener("mouseenter", () => {
     ring.style.animationPlayState = "paused";
-    document.querySelectorAll('.compass-point, .compass-center').forEach(el => {
-      el.style.animationPlayState = "paused";
-    });
   });
 
   compass.addEventListener("mouseleave", () => {
     ring.style.animationPlayState = "running";
-    document.querySelectorAll('.compass-point, .compass-center').forEach(el => {
-      el.style.animationPlayState = "running";
-    });
   });
 
   // Sự kiện click ra ngoài để đóng nội dung
@@ -831,9 +847,6 @@ function initCompass() {
 
     // Dừng la bàn và mờ đi
     ring.style.animationPlayState = "paused";
-    document.querySelectorAll('.compass-point, .compass-center').forEach(el => {
-      el.style.animationPlayState = "paused";
-    });
 
     compass.style.opacity = "0";
     compass.style.transform = "scale(0.8)";
@@ -858,9 +871,6 @@ function initCompass() {
     
     setTimeout(() => {
       ring.style.animationPlayState = "running";
-      document.querySelectorAll('.compass-point, .compass-center').forEach(el => {
-        el.style.animationPlayState = "running";
-      });
     }, 500); // Đợi animation CSS chạy xong
   }
 }

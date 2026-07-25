@@ -6,7 +6,8 @@
   height: 100%;
   z-index: 1;
   pointer-events: auto;
-  overflow: hidden;
+  overflow: clip;
+  touch-action: pan-y;  /* Cho phép cuộn dọc trên mobile xuyên qua canvas */
 }
 
 .hero-effect-canvas {
@@ -16,6 +17,7 @@
   opacity: 0;
   animation: canvasFadeIn 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
   will-change: opacity;
+  touch-action: pan-y;  /* Cho phép cuộn dọc trên mobile */
 }
 
 @keyframes canvasFadeIn {
@@ -32,7 +34,7 @@
 .kynang-hero,
 .lienhe-hero {
   position: relative;
-  overflow: hidden;
+  overflow: clip;
 }
 
 /* Master bottom fade mask: z-index 2 ensures canvas (z-index 1) smoothly fades into var(--bg-dark) with zero harsh line */

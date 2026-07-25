@@ -11,7 +11,7 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  overflow: hidden;
+  overflow: clip;
   background: linear-gradient(135deg, var(--bg-dark) 0%, #0d1a12 30%, #162a1e 60%, var(--bg-dark) 100%);
 }
 

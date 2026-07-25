@@ -11,7 +11,7 @@
   justify-content: center;
   text-align: center;
   background: radial-gradient(circle at 50% 30%, #163824 0%, #0d1e15 45%, var(--bg-dark) 90%);
-  overflow: hidden;
+  overflow: clip;
   padding: 8rem 2rem 5rem;
 }
 

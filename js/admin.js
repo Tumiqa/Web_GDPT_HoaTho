@@ -193,7 +193,13 @@
           <h2>Đăng nhập</h2>
           <p>Tính năng này chỉ dành riêng cho thành viên <span style="white-space: nowrap;">GĐPT Hòa Thọ</span>.</p>
           <input type="text" class="adm-input" id="adm-username" placeholder="Tên đăng nhập / Số điện thoại..." autocomplete="username" style="margin-bottom:12px;" />
-          <input type="password" class="adm-input" id="adm-pwd" placeholder="Mật khẩu..." autocomplete="current-password" />
+          <div class="adm-pwd-wrapper">
+            <input type="password" class="adm-input" id="adm-pwd" placeholder="Mật khẩu..." autocomplete="current-password" />
+            <button type="button" class="adm-pwd-toggle" id="adm-pwd-toggle" aria-label="Hiện/ẩn mật khẩu" tabindex="-1">
+              <svg class="adm-eye-show" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="adm-eye-hide" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
           <button class="adm-btn adm-btn--primary adm-btn--full" id="adm-login-btn" style="margin-top:16px;">Đăng nhập</button>
           <div class="adm-login__error" id="adm-login-err"></div>
         </div>
@@ -313,6 +319,17 @@
     if (usernameInput) usernameInput.addEventListener("keydown", e => { if (e.key === "Enter") document.getElementById("adm-pwd").focus(); });
     const loginClose = document.getElementById("adm-login-close");
     if (loginClose) loginClose.addEventListener("click", closeAdmin);
+
+    // Password eye toggle
+    const pwdToggle = document.getElementById("adm-pwd-toggle");
+    if (pwdToggle && pwdInput) {
+      pwdToggle.addEventListener("click", () => {
+        const isHidden = pwdInput.type === "password";
+        pwdInput.type = isHidden ? "text" : "password";
+        pwdToggle.querySelector(".adm-eye-show").style.display = isHidden ? "none" : "";
+        pwdToggle.querySelector(".adm-eye-hide").style.display = isHidden ? "" : "none";
+      });
+    }
 
     // Close admin
     document.getElementById("adm-close-mobile").addEventListener("click", closeAdmin);

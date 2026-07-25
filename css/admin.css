@@ -77,6 +77,31 @@
   margin-top: 0.75rem;
   min-height: 1.2em;
 }
+.adm-pwd-wrapper {
+  position: relative;
+}
+.adm-pwd-wrapper .adm-input {
+  padding-right: 2.8rem;
+}
+.adm-pwd-toggle {
+  position: absolute;
+  right: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.3);
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: color 0.2s ease;
+}
+.adm-pwd-toggle:hover {
+  color: var(--brand-primary, #8ab097);
+}
 
 /* ===== COMMON COMPONENTS ===== */
 .adm-input {

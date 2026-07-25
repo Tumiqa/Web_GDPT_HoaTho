@@ -39,20 +39,17 @@ html {
   scroll-behavior: smooth;
   scrollbar-width: thin;
   scrollbar-color: var(--brand-primary) var(--bg-dark);
-  overflow-x: hidden;
-  overscroll-behavior: none;
+  overflow-x: clip;  /* clip thay vì hidden — không tạo scroll container mới trên WebKit mobile */
 }
 
 body {
   font-family: "Inter", "Be Vietnam Pro", sans-serif;
   background-color: var(--bg-dark);
   color: var(--text-light);
-  overflow-x: hidden;
-  overscroll-behavior: none;
+  overflow-x: clip;  /* clip thay vì hidden — cho phép cuộn dọc trên mobile */
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  touch-action: manipulation;
 }
 
 body.loading {
@@ -489,7 +486,7 @@ section {
   justify-content: center;
   text-align: center;
   color: #fff;
-  overflow: hidden;
+  overflow: clip;  /* clip thay vì hidden — cho phép touch scroll xuyên qua hero trên mobile */
 }
 
 .hero-slideshow {
@@ -1689,9 +1686,9 @@ footer {
   justify-content: center;
   cursor: pointer;
   z-index: 20;
-  transition: all 0.3s ease;
-  /* Chống xoay + căn giữa bằng translate */
-  animation: counterRotateCompass 40s linear infinite;
+  transition: color 0.3s ease, filter 0.3s ease;
+  /* Căn giữa — xoay ngược được xử lý bằng JS để luôn đồng bộ với ring */
+  transform: translate(-50%, -50%);
 }
 
 .compass-point-icon {

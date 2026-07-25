@@ -12,7 +12,7 @@
   justify-content: center;
   text-align: center;
   background: linear-gradient(135deg, var(--bg-dark) 0%, #0d1a12 30%, #162a1e 60%, var(--bg-dark) 100%);
-  overflow: hidden;
+  overflow: clip;
   padding: 8rem 2rem 4rem;
 }
 
