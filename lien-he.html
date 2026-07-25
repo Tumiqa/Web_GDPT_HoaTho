@@ -195,11 +195,10 @@
           <div class="lh-form-container reveal" style="transition-delay: 0.2s;">
             <h2>Gửi Lời Nhắn</h2>
             <p>Điền thông tin bên dưới, chúng tôi sẽ phản hồi lại bạn qua email.</p>
-            <form class="lh-form" action="https://api.web3forms.com/submit" method="POST">
+            <form id="contact-form" class="lh-form" action="https://api.web3forms.com/submit" method="POST">
               <!-- Web3Forms Config -->
               <input type="hidden" name="access_key" value="42e336c8-0edf-44cb-bf0f-9445d4d6470b">
-              <input type="hidden" name="subject" value="Website GĐPT: Có lời nhắn mới từ biểu mẫu liên hệ">
-              <input type="hidden" name="redirect" value="http://localhost:8888/lien-he.html">
+              <input type="hidden" name="from_name" value="Website GĐPT Hòa Thọ">
 
               <div class="lh-group">
                 <label for="name">Họ và Tên</label>
@@ -217,9 +216,10 @@
                 <label for="message">Nội dung</label>
                 <textarea id="message" name="message" class="lh-input" placeholder="Viết lời nhắn..." required></textarea>
               </div>
-              <button type="submit" class="lh-submit">
+              <div id="lh-form-status" class="lh-status-msg" style="display: none;"></div>
+              <button type="submit" id="lh-submit-btn" class="lh-submit">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                Gửi Lời Nhắn
+                <span>Gửi Lời Nhắn</span>
               </button>
             </form>
           </div>

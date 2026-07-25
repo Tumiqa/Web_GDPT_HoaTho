@@ -205,14 +205,46 @@ textarea.lh-input {
   transition: all 0.3s;
 }
 
-.lh-submit:hover {
+.lh-submit:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 4px 15px rgba(138, 176, 151, 0.4);
+}
+
+.lh-submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .lh-submit svg {
   width: 20px;
   height: 20px;
+}
+
+/* Status Alert Message */
+.lh-status-msg {
+  padding: 0.85rem 1.15rem;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  transition: all 0.3s ease;
+}
+
+.lh-status-msg.success {
+  background: rgba(46, 204, 113, 0.15);
+  border: 1px solid rgba(46, 204, 113, 0.4);
+  color: #2ecc71;
+}
+
+.lh-status-msg.error {
+  background: rgba(231, 76, 60, 0.15);
+  border: 1px solid rgba(231, 76, 60, 0.4);
+  color: #e74c3c;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 /* RESPONSIVE */

@@ -392,9 +392,13 @@ switch ($action) {
         $currentUser = requireAuth();
 
         $body = json_decode(file_get_contents('php://input'), true);
+        $targetUserId = trim($body['userId'] ?? '');
         $fullName = trim($body['fullName'] ?? '');
         $dob = trim($body['dob'] ?? '');
         $dharmaName = trim($body['dharmaName'] ?? '');
+        $position = trim($body['position'] ?? '');
+        $rank = trim($body['rank'] ?? '');
+        $studyLevel = trim($body['studyLevel'] ?? '');
 
         if (!$fullName) {
             http_response_code(400);
@@ -402,15 +406,27 @@ switch ($action) {
             exit;
         }
 
-        // updateProfile returns true on success
-        $updated = updateProfile($currentUser['userId'], $fullName, $dob, $dharmaName);
-        if (!$updated) {
-            // Check if values are just the same
-            // (We will still return success if the values match, or a generic success message to keep UI happy)
-            echo json_encode(['success' => true, 'message' => 'Thông tin không thay đổi']);
+        // If updating another user's profile
+        if ($targetUserId && $targetUserId !== $currentUser['userId']) {
+            if ($currentUser['role'] !== 'admin') {
+                http_response_code(403);
+                echo json_encode(['error' => 'Bạn không có quyền chỉnh sửa thông tin người dùng khác']);
+                exit;
+            }
+
+            if ($currentUser['username'] !== '0903549528') {
+                http_response_code(403);
+                echo json_encode(['error' => 'Chỉ có tài khoản Admin tối cao (0903549528) mới có quyền chỉnh sửa thông tin cá nhân của đoàn sinh']);
+                exit;
+            }
+
+            updateUserProfileByAdmin($targetUserId, $fullName, $dob, $dharmaName, $position, $rank, $studyLevel);
+            echo json_encode(['success' => true]);
             exit;
         }
 
+        // Updating own profile
+        $updated = updateProfile($currentUser['userId'], $fullName, $dob, $dharmaName, $position, $rank, $studyLevel);
         echo json_encode(['success' => true]);
         break;
 

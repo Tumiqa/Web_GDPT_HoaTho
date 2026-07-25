@@ -531,23 +531,50 @@ function updateUserRole(string $userId, string $newRole): bool {
 /**
  * Update user profile
  */
-function updateProfile(string $userId, string $fullName, string $dob, string $dharmaName): bool {
+function updateProfile(
+    string $userId,
+    string $fullName,
+    string $dob,
+    string $dharmaName,
+    string $position = '',
+    string $rank = '',
+    string $studyLevel = ''
+): bool {
+    $displayName = !empty($dharmaName) ? $dharmaName : $fullName;
     $db = getAuthDB();
     $stmt = $db->prepare('
         UPDATE users
-        SET full_name = :fn, dob = :dob, dharma_name = :dn
+        SET full_name = :fn, dob = :dob, dharma_name = :dn, display_name = :disp, position = :pos, rank = :rk, study_level = :sl
         WHERE id = :id
     ');
     $stmt->bindValue(':fn', $fullName, SQLITE3_TEXT);
     $stmt->bindValue(':dob', $dob, SQLITE3_TEXT);
     $stmt->bindValue(':dn', $dharmaName, SQLITE3_TEXT);
+    $stmt->bindValue(':disp', $displayName, SQLITE3_TEXT);
+    $stmt->bindValue(':pos', $position, SQLITE3_TEXT);
+    $stmt->bindValue(':rk', $rank, SQLITE3_TEXT);
+    $stmt->bindValue(':sl', $studyLevel, SQLITE3_TEXT);
     $stmt->bindValue(':id', $userId, SQLITE3_TEXT);
     $stmt->execute();
-    $changes = $db->changes();
     $stmt->close();
     $db->close();
 
-    return $changes > 0;
+    return true;
+}
+
+/**
+ * Update full user profile by admin
+ */
+function updateUserProfileByAdmin(
+    string $userId,
+    string $fullName,
+    string $dob,
+    string $dharmaName,
+    string $position = '',
+    string $rank = '',
+    string $studyLevel = ''
+): bool {
+    return updateProfile($userId, $fullName, $dob, $dharmaName, $position, $rank, $studyLevel);
 }
 
 // ============================================================

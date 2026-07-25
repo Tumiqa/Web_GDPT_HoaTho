@@ -63,6 +63,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===== HERO SLIDESHOW =====
   initHeroSlideshow();
 
+  // ===== CONTACT FORM =====
+  if (document.getElementById("contact-form")) {
+    initContactForm();
+  }
+
   // ===== LUCIDE ICONS =====
   if (typeof lucide !== "undefined") {
     lucide.createIcons();
@@ -931,3 +936,66 @@ function initHeroSlideshow() {
     slides[currentSlide].classList.add("active");
   }, 6000);
 }
+
+/* =====================
+   CONTACT FORM SUBMISSION
+   ===================== */
+function initContactForm() {
+  const form = document.getElementById("contact-form");
+  if (!form) return;
+
+  const statusMsg = document.getElementById("lh-form-status");
+  const submitBtn = document.getElementById("lh-submit-btn");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    if (!submitBtn || !statusMsg) return;
+
+    // Save initial button HTML
+    const originalBtnHTML = submitBtn.innerHTML;
+
+    // Loading state
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite; width: 20px; height: 20px;">
+        <circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle>
+        <path d="M12 2 a 10 10 0 0 1 10 10" stroke-opacity="0.75"></path>
+      </svg>
+      <span>Đang gửi lời nhắn...</span>
+    `;
+
+    statusMsg.style.display = "none";
+    statusMsg.className = "lh-status-msg";
+    statusMsg.innerHTML = "";
+
+    try {
+      const formData = new FormData(form);
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        statusMsg.className = "lh-status-msg success";
+        statusMsg.innerHTML = "✅ <strong>Cảm ơn bạn!</strong> Lời nhắn đã được gửi thành công. GĐPT Hòa Thọ sẽ liên hệ lại với bạn qua email sớm nhất.";
+        statusMsg.style.display = "block";
+        form.reset();
+      } else {
+        throw new Error(data.message || "Không thể gửi lời nhắn.");
+      }
+    } catch (err) {
+      console.error("Contact Form Error:", err);
+      const safeMsg = (err.message || 'Đã có lỗi xảy ra').replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      statusMsg.className = "lh-status-msg error";
+      statusMsg.innerHTML = `❌ <strong>Không thể gửi lời nhắn:</strong> ${safeMsg}. Vui lòng thử lại sau hoặc gửi email trực tiếp tới <a href="mailto:gdpthoathodn@gmail.com" style="color: inherit; text-decoration: underline;">gdpthoathodn@gmail.com</a>.`;
+      statusMsg.style.display = "block";
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalBtnHTML;
+    }
+  });
+}
+

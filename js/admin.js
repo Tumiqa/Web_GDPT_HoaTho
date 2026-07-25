@@ -507,12 +507,19 @@
             ? `<img src="${u.avatar_url}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;" />`
             : (u.full_name || u.display_name || "?").charAt(0).toUpperCase();
           
-          // Super admin 0903549528 can change password & delete other users.
-          // Other admins can only change password for their own account, and CANNOT delete or change passwords of other users.
+          // Super admin 0903549528 can edit profile, change password & delete other users.
+          const canEditInfo = isSuperAdmin;
           const canChangePw = isSuperAdmin || (currentUser && u.id === currentUser.userId);
           const canDelete = isSuperAdmin && currentUser && (u.id !== currentUser.userId);
 
           const actionButtons = [];
+          if (canEditInfo) {
+            actionButtons.push(`
+              <button class="adm-btn adm-btn--sm" data-user-action="edit-info" data-user-id="${u.id}">
+                Sửa thông tin
+              </button>
+            `);
+          }
           if (canChangePw) {
             actionButtons.push(`
               <button class="adm-btn adm-btn--sm" data-user-action="password" data-user-id="${u.id}" data-username="${escAttr(u.username)}">
@@ -557,7 +564,6 @@
         }).join("");
 
         // Attach event listeners using delegation
-        // Remove old listener if any by cloning container (standard way without keeping ref)
         const newContainer = listContainer.cloneNode(true);
         listContainer.parentNode.replaceChild(newContainer, listContainer);
 
@@ -568,7 +574,10 @@
           const userId = btn.dataset.userId;
           const username = btn.dataset.username;
 
-          if (action === "password") {
+          if (action === "edit-info") {
+            const targetUser = users.find(x => x.id === userId);
+            if (targetUser) openAdminEditUserProfileModal(targetUser);
+          } else if (action === "password") {
             openAdminChangeUserPasswordModal(userId, username);
           } else if (action === "delete") {
             const confirmed = await showConfirm("Xác nhận xóa", `Bạn có chắc chắn muốn xóa tài khoản @${username}?`);
@@ -721,6 +730,111 @@
           await refreshUsersList();
         } else {
           errEl.textContent = data.error || "Tạo tài khoản thất bại";
+          errEl.style.display = "block";
+        }
+      } catch (err) {
+        errEl.textContent = "Lỗi kết nối máy chủ";
+        errEl.style.display = "block";
+      }
+    });
+  }
+
+  // ===== ADMIN EDIT USER PROFILE MODAL (Super Admin 0903549528) =====
+  function openAdminEditUserProfileModal(u) {
+    if (!u) return;
+
+    let overlay = document.getElementById("admin-edit-user-modal-overlay");
+    if (!overlay) {
+      overlay = document.createElement("div");
+      overlay.id = "admin-edit-user-modal-overlay";
+      overlay.className = "auth-modal-overlay";
+      document.body.appendChild(overlay);
+    }
+
+    overlay.innerHTML = `
+      <div class="auth-modal" style="width: min(540px, 94vw);">
+        <button class="adm-btn-icon auth-modal__close" id="edit-usr-close">${ICONS.close}</button>
+        <h3>Sửa Thông Tin Đoàn Sinh</h3>
+        <p class="auth-modal__desc">Chỉnh sửa thông tin cá nhân tài khoản <strong>@${esc(u.username)}</strong></p>
+        
+        <div class="auth-modal__grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <div class="adm-field">
+            <label>Họ và tên *</label>
+            <input type="text" class="adm-input" id="edit-usr-fullName" value="${escAttr(u.full_name || '')}" placeholder="Họ và tên..." required />
+          </div>
+          <div class="adm-field">
+            <label>Pháp danh</label>
+            <input type="text" class="adm-input" id="edit-usr-dharmaName" value="${escAttr(u.dharma_name || '')}" placeholder="Pháp danh..." />
+          </div>
+          <div class="adm-field">
+            <label>Ngày sinh</label>
+            <input type="text" class="adm-input" id="edit-usr-dob" value="${escAttr(u.dob || '')}" placeholder="DD/MM/YYYY" />
+          </div>
+          <div class="adm-field">
+            <label>Chức vụ</label>
+            <select class="adm-input" id="edit-usr-position" style="background:#1e3222; color:#fff;">
+              <option value="Đoàn sinh" ${(u.position || '') === 'Đoàn sinh' ? 'selected' : ''}>Đoàn sinh</option>
+              <option value="Huynh trưởng" ${(u.position || '') === 'Huynh trưởng' ? 'selected' : ''}>Huynh trưởng</option>
+            </select>
+          </div>
+          <div class="adm-field">
+            <label>Cấp</label>
+            <input type="text" class="adm-input" id="edit-usr-rank" value="${escAttr(u.rank || '')}" placeholder="Tập sự, Kiên..." />
+          </div>
+          <div class="adm-field">
+            <label>Bậc học</label>
+            <input type="text" class="adm-input" id="edit-usr-studyLevel" value="${escAttr(u.study_level || '')}" placeholder="Kiên, Trì, Hướng thiện..." />
+          </div>
+        </div>
+
+        <div class="auth-modal__error" id="edit-usr-error" style="color:#ff6b6b; font-size:0.85rem; margin-top:12px; display:none;"></div>
+
+        <div class="auth-modal__footer">
+          <button class="adm-btn" id="edit-usr-cancel">Hủy</button>
+          <button class="adm-btn adm-btn--primary" id="edit-usr-save">Lưu thay đổi</button>
+        </div>
+      </div>
+    `;
+
+    overlay.classList.add("visible");
+    document.body.style.overflow = "hidden";
+
+    const closeMod = () => {
+      overlay.classList.remove("visible");
+      document.body.style.overflow = "";
+    };
+    overlay.querySelector("#edit-usr-close").addEventListener("click", closeMod);
+    overlay.querySelector("#edit-usr-cancel").addEventListener("click", closeMod);
+
+    overlay.querySelector("#edit-usr-save").addEventListener("click", async () => {
+      const fullName = overlay.querySelector("#edit-usr-fullName").value.trim();
+      const dharmaName = overlay.querySelector("#edit-usr-dharmaName").value.trim();
+      const dob = overlay.querySelector("#edit-usr-dob").value.trim();
+      const position = overlay.querySelector("#edit-usr-position").value;
+      const rank = overlay.querySelector("#edit-usr-rank").value.trim();
+      const studyLevel = overlay.querySelector("#edit-usr-studyLevel").value.trim();
+      const errEl = overlay.querySelector("#edit-usr-error");
+
+      if (!fullName) {
+        errEl.textContent = "Họ và tên không được để trống";
+        errEl.style.display = "block";
+        return;
+      }
+
+      try {
+        const res = await fetch(`${AUTH_URL}?action=update-profile`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: 'same-origin',
+          body: JSON.stringify({ userId: u.id, fullName, dharmaName, dob, position, rank, studyLevel }),
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          closeMod();
+          showToast(`Đã cập nhật thông tin cho @${u.username}`);
+          await refreshUsersList();
+        } else {
+          errEl.textContent = data.error || "Cập nhật thông tin thất bại";
           errEl.style.display = "block";
         }
       } catch (err) {
@@ -1717,21 +1831,30 @@
           </div>
           <div class="adm-field">
             <label>Pháp danh</label>
-            <input type="text" class="adm-input" id="prof-dharmaName" value="${escAttr(currentUser.dharmaName || '')}" />
+            <input type="text" class="adm-input" id="prof-dharmaName" value="${escAttr(currentUser.dharmaName || '')}" placeholder="Ví dụ: Chúc Vương" />
           </div>
           <div class="adm-field">
-            <label>Họ và tên</label>
+            <label>Họ và tên *</label>
             <input type="text" class="adm-input" id="prof-fullName" value="${escAttr(currentUser.fullName || '')}" required />
           </div>
           <div class="adm-field">
             <label>Ngày sinh</label>
             <input type="text" class="adm-input" id="prof-dob" value="${escAttr(currentUser.dob || '')}" placeholder="DD/MM/YYYY" />
           </div>
-          
-          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
-            <div class="auth-modal__read-only-badge">Chức vụ: <strong>${esc(currentUser.position || 'Đoàn sinh')}</strong></div>
-            ${currentUser.rank ? `<div class="auth-modal__read-only-badge">Cấp: <strong>${esc(currentUser.rank)}</strong></div>` : ''}
-            <div class="auth-modal__read-only-badge">Bậc học: <strong>${esc(currentUser.studyLevel || 'Hướng thiện')}</strong></div>
+          <div class="adm-field">
+            <label>Chức vụ</label>
+            <select class="adm-input" id="prof-position" style="background:#1e3222; color:#fff;">
+              <option value="Đoàn sinh" ${(currentUser.position || '') === 'Đoàn sinh' ? 'selected' : ''}>Đoàn sinh</option>
+              <option value="Huynh trưởng" ${(currentUser.position || '') === 'Huynh trưởng' ? 'selected' : ''}>Huynh trưởng</option>
+            </select>
+          </div>
+          <div class="adm-field" id="prof-rank-group" style="${(currentUser.position || '') === 'Huynh trưởng' ? '' : 'display:none;'}">
+            <label>Cấp <span style="font-size:0.75rem; color:rgba(255,255,255,0.5);">(dành cho Huynh trưởng)</span></label>
+            <input type="text" class="adm-input" id="prof-rank" value="${escAttr(currentUser.rank || '')}" placeholder="Tập sự, Kiên..." />
+          </div>
+          <div class="adm-field" style="grid-column: span 2;">
+            <label>Bậc học</label>
+            <input type="text" class="adm-input" id="prof-studyLevel" value="${escAttr(currentUser.studyLevel || '')}" placeholder="Kiên, Trì, Hướng thiện..." />
           </div>
         </div>
 
@@ -1753,6 +1876,22 @@
     };
     overlay.querySelector("#profile-modal-close").addEventListener("click", closeProfile);
     overlay.querySelector("#prof-btn-cancel").addEventListener("click", closeProfile);
+
+    // Position & Rank dynamic toggle
+    const profPosSelect = overlay.querySelector("#prof-position");
+    const profRankGroup = overlay.querySelector("#prof-rank-group");
+    const profRankInput = overlay.querySelector("#prof-rank");
+
+    if (profPosSelect && profRankGroup) {
+      profPosSelect.addEventListener("change", () => {
+        if (profPosSelect.value === "Huynh trưởng") {
+          profRankGroup.style.display = "block";
+        } else {
+          profRankGroup.style.display = "none";
+          if (profRankInput) profRankInput.value = "";
+        }
+      });
+    }
 
     // Avatar upload handlers
     const profAvatarBtn = overlay.querySelector("#profile-avatar-btn");
@@ -1811,6 +1950,9 @@
       const fullName = overlay.querySelector("#prof-fullName").value.trim();
       const dob = overlay.querySelector("#prof-dob").value.trim();
       const dharmaName = overlay.querySelector("#prof-dharmaName").value.trim();
+      const position = overlay.querySelector("#prof-position").value;
+      const rank = overlay.querySelector("#prof-rank") ? overlay.querySelector("#prof-rank").value.trim() : "";
+      const studyLevel = overlay.querySelector("#prof-studyLevel").value.trim();
       const errEl = overlay.querySelector("#prof-error");
 
       if (!fullName) {
@@ -1824,13 +1966,17 @@
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "same-origin",
-          body: JSON.stringify({ fullName, dob, dharmaName }),
+          body: JSON.stringify({ fullName, dob, dharmaName, position, rank, studyLevel }),
         });
         const data = await res.json();
         if (res.ok && data.success) {
           currentUser.fullName = fullName;
           currentUser.dob = dob;
           currentUser.dharmaName = dharmaName;
+          currentUser.displayName = dharmaName || fullName;
+          currentUser.position = position;
+          currentUser.rank = rank;
+          currentUser.studyLevel = studyLevel;
           
           renderHeaderUser(currentUser);
           closeProfile();
