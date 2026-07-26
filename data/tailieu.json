@@ -19,7 +19,7 @@
     "bac": "Hướng Thiện",
     "access": "public",
     "attachmentType": "link",
-    "url": "https://drive.google.com/file/d/1RUCtmA8Tc25gLJW0mFJ4k40HSEJIDili/preview",
+    "url": "https://drive.google.com/file/d/1RUCtmA8Tc25gLJW0mFJ4k40HSEJIDili/view?usp=drive_link",
     "fileType": "pdf",
     "date": "2026"
   },
@@ -31,7 +31,19 @@
     "bac": "Sơ Thiện",
     "access": "public",
     "attachmentType": "link",
-    "url": "https://drive.google.com/file/d/1c_LPDXHvahvhz6x8egSJkvQ2LFbpH2-W/preview",
+    "url": "https://drive.google.com/file/d/1c_LPDXHvahvhz6x8egSJkvQ2LFbpH2-W/view?usp=drive_link",
+    "fileType": "pdf",
+    "date": "2026"
+  },
+  {
+    "id": "tl-004",
+    "title": "Tài Liệu Tu Học Bậc Trung Thiện — Ngành Thiếu",
+    "description": "Tài liệu tu học chính thức Bậc Trung Thiện cho đoàn sinh Ngành Thiếu GĐPT.",
+    "nganh": "Ngành Thiếu",
+    "bac": "Trung Thiện",
+    "access": "public",
+    "attachmentType": "link",
+    "url": "https://drive.google.com/file/d/1ohM0AJa8q5Idm5mSUaR07fXCn8SuQPFd/view?usp=drive_link",
     "fileType": "pdf",
     "date": "2026"
   }
