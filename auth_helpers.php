@@ -88,6 +88,46 @@ function initAuthDB(): void {
     $db->exec('CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id)');
     $db->exec('CREATE INDEX IF NOT EXISTS idx_sessions_expires_at ON sessions(expires_at)');
 
+    // ===== EXAM SYSTEM TABLES =====
+    $db->exec('
+        CREATE TABLE IF NOT EXISTS exams (
+            id TEXT PRIMARY KEY,
+            title TEXT NOT NULL,
+            description TEXT DEFAULT "",
+            nganh TEXT DEFAULT "",
+            bac TEXT DEFAULT "",
+            time_limit_minutes INTEGER DEFAULT 15,
+            pass_score INTEGER DEFAULT 70,
+            shuffle_questions INTEGER DEFAULT 1,
+            shuffle_options INTEGER DEFAULT 1,
+            max_tab_switches INTEGER DEFAULT 3,
+            questions_json TEXT DEFAULT "[]",
+            created_at INTEGER NOT NULL,
+            is_active INTEGER DEFAULT 1
+        )
+    ');
+
+    $db->exec('
+        CREATE TABLE IF NOT EXISTS exam_results (
+            id TEXT PRIMARY KEY,
+            exam_id TEXT NOT NULL,
+            user_id TEXT NOT NULL,
+            score REAL NOT NULL,
+            correct_count INTEGER NOT NULL,
+            total_questions INTEGER NOT NULL,
+            answers_json TEXT DEFAULT "[]",
+            time_spent_seconds INTEGER DEFAULT 0,
+            tab_switches INTEGER DEFAULT 0,
+            submitted_at INTEGER NOT NULL,
+            FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE CASCADE,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        )
+    ');
+
+    $db->exec('CREATE INDEX IF NOT EXISTS idx_exams_nganh_bac ON exams(nganh, bac)');
+    $db->exec('CREATE INDEX IF NOT EXISTS idx_exam_results_user ON exam_results(user_id)');
+    $db->exec('CREATE INDEX IF NOT EXISTS idx_exam_results_exam ON exam_results(exam_id)');
+
     $db->close();
 }
 
@@ -867,4 +907,315 @@ function validateCsrfToken(): bool {
     }
 
     return hash_equals($cookieToken, $headerToken);
+}
+
+// ============================================================
+// GĐPT ONLINE EXAM SYSTEM HELPER FUNCTIONS
+// ============================================================
+
+/**
+ * Smart String Normalization for Short Answer Matching
+ */
+function normalizeExamText(string $str): string {
+    $str = mb_strtolower(trim($str), 'UTF-8');
+    // Remove diacritics / accents for flexible matching option
+    $unicode = [
+        'a'=>'á|à|ả|ã|ạ|ă|ắ|ằ|ẳ|ẵ|ặ|â|ấ|ầ|ẩ|ẫ|ậ',
+        'd'=>'đ',
+        'e'=>'é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ',
+        'i'=>'í|ì|ỉ|ĩ|ị',
+        'o'=>'ó|ò|ỏ|õ|ọ|ô|ố|ồ|ổ|ỗ|ộ|ơ|ớ|ờ|ở|ỡ|ợ',
+        'u'=>'ú|ù|ủ|ũ|ụ|ư|ứ|ừ|ử|ữ|ự',
+        'y'=>'ý|ỳ|ỷ|ỹ|ỵ',
+    ];
+    foreach ($unicode as $nonInput => $input) {
+        $str = preg_replace("/($input)/i", $nonInput, $str);
+    }
+    $str = preg_replace('/\s+/', ' ', $str);
+    return trim($str);
+}
+
+/**
+ * Save or Update an Exam
+ */
+function saveExam(array $data): array {
+    $db = getAuthDB();
+    $id = trim($data['id'] ?? '');
+    if (!$id) {
+        $id = 'exam_' . generateSecureId(12);
+    }
+    
+    $title = trim($data['title'] ?? '');
+    $description = trim($data['description'] ?? '');
+    $nganh = trim($data['nganh'] ?? '');
+    $bac = trim($data['bac'] ?? '');
+    $timeLimit = max(1, intval($data['time_limit_minutes'] ?? 15));
+    $passScore = max(1, min(100, intval($data['pass_score'] ?? 70)));
+    $shuffleQ = isset($data['shuffle_questions']) ? intval($data['shuffle_questions']) : 1;
+    $shuffleO = isset($data['shuffle_options']) ? intval($data['shuffle_options']) : 1;
+    $maxTab = max(0, intval($data['max_tab_switches'] ?? 3));
+    
+    $rawQuestions = $data['questions'] ?? ($data['survey_json']['pages'][0]['elements'] ?? []);
+    $questionsJson = is_string($rawQuestions) ? $rawQuestions : json_encode($rawQuestions);
+
+    $isActive = isset($data['is_active']) ? intval($data['is_active']) : 1;
+    $now = time();
+
+    // Check if exists
+    $stmtCheck = $db->prepare('SELECT id FROM exams WHERE id = :id');
+    $stmtCheck->bindValue(':id', $id, SQLITE3_TEXT);
+    $res = $stmtCheck->execute();
+    $exists = $res->fetchArray(SQLITE3_ASSOC);
+
+    if ($exists) {
+        $stmt = $db->prepare('
+            UPDATE exams SET
+                title = :title,
+                description = :description,
+                nganh = :nganh,
+                bac = :bac,
+                time_limit_minutes = :timeLimit,
+                pass_score = :passScore,
+                shuffle_questions = :shuffleQ,
+                shuffle_options = :shuffleO,
+                max_tab_switches = :maxTab,
+                questions_json = :questionsJson,
+                is_active = :isActive
+            WHERE id = :id
+        ');
+    } else {
+        $stmt = $db->prepare('
+            INSERT INTO exams (id, title, description, nganh, bac, time_limit_minutes, pass_score, shuffle_questions, shuffle_options, max_tab_switches, questions_json, created_at, is_active)
+            VALUES (:id, :title, :description, :nganh, :bac, :timeLimit, :passScore, :shuffleQ, :shuffleO, :maxTab, :questionsJson, :now, :isActive)
+        ');
+        $stmt->bindValue(':now', $now, SQLITE3_INTEGER);
+    }
+
+    $stmt->bindValue(':id', $id, SQLITE3_TEXT);
+    $stmt->bindValue(':title', $title, SQLITE3_TEXT);
+    $stmt->bindValue(':description', $description, SQLITE3_TEXT);
+    $stmt->bindValue(':nganh', $nganh, SQLITE3_TEXT);
+    $stmt->bindValue(':bac', $bac, SQLITE3_TEXT);
+    $stmt->bindValue(':timeLimit', $timeLimit, SQLITE3_INTEGER);
+    $stmt->bindValue(':passScore', $passScore, SQLITE3_INTEGER);
+    $stmt->bindValue(':shuffleQ', $shuffleQ, SQLITE3_INTEGER);
+    $stmt->bindValue(':shuffleO', $shuffleO, SQLITE3_INTEGER);
+    $stmt->bindValue(':maxTab', $maxTab, SQLITE3_INTEGER);
+    $stmt->bindValue(':questionsJson', $questionsJson, SQLITE3_TEXT);
+    $stmt->bindValue(':isActive', $isActive, SQLITE3_INTEGER);
+
+    $stmt->execute();
+    $db->close();
+
+    return getExamById($id);
+}
+
+/**
+ * Get Exam by ID
+ */
+function getExamById(string $id): ?array {
+    $db = getAuthDB();
+    $stmt = $db->prepare('SELECT * FROM exams WHERE id = :id');
+    $stmt->bindValue(':id', $id, SQLITE3_TEXT);
+    $res = $stmt->execute();
+    $row = $res->fetchArray(SQLITE3_ASSOC);
+    $db->close();
+
+    if (!$row) return null;
+    $row['questions'] = json_decode($row['questions_json'], true) ?: [];
+    return $row;
+}
+
+/**
+ * List Exams
+ */
+function listExams(?string $nganh = null, ?string $bac = null, bool $adminOnly = false): array {
+    $db = getAuthDB();
+    $sql = 'SELECT * FROM exams WHERE 1=1';
+    if (!$adminOnly) {
+        $sql .= ' AND is_active = 1';
+    }
+    if ($nganh && $nganh !== 'all') {
+        $sql .= ' AND nganh = :nganh';
+    }
+    if ($bac && $bac !== 'all') {
+        $sql .= ' AND bac = :bac';
+    }
+    $sql .= ' ORDER BY created_at DESC';
+
+    $stmt = $db->prepare($sql);
+    if ($nganh && $nganh !== 'all') $stmt->bindValue(':nganh', $nganh, SQLITE3_TEXT);
+    if ($bac && $bac !== 'all') $stmt->bindValue(':bac', $bac, SQLITE3_TEXT);
+
+    $res = $stmt->execute();
+    $list = [];
+    while ($row = $res->fetchArray(SQLITE3_ASSOC)) {
+        $row['questions'] = json_decode($row['questions_json'], true) ?: [];
+        $row['question_count'] = count($row['questions']);
+        $list[] = $row;
+    }
+    $db->close();
+    return $list;
+}
+
+/**
+ * Delete Exam
+ */
+function deleteExam(string $id): bool {
+    $db = getAuthDB();
+    $stmt = $db->prepare('DELETE FROM exams WHERE id = :id');
+    $stmt->bindValue(':id', $id, SQLITE3_TEXT);
+    $res = $stmt->execute();
+    $db->close();
+    return true;
+}
+
+/**
+ * Smart Auto-Grading Engine
+ */
+function gradeExam(array $exam, array $userAnswers): array {
+    $questions = $exam['questions'] ?? [];
+    $totalQuestions = count($questions);
+    $correctCount = 0;
+    $breakdown = [];
+
+    foreach ($questions as $q) {
+        $qId = $q['id'] ?? '';
+        $type = $q['type'] ?? 'single';
+        $userAns = $userAnswers[$qId] ?? null;
+        $isCorrect = false;
+
+        if ($type === 'single' || $type === 'boolean') {
+            $correctAns = $q['correct_answer'] ?? 0;
+            if ($userAns !== null && intval($userAns) === intval($correctAns)) {
+                $isCorrect = true;
+            }
+        } else if ($type === 'multiple') {
+            $correctAnswers = array_map('intval', $q['correct_answers'] ?? []);
+            sort($correctAnswers);
+            $userAnswersArr = is_array($userAns) ? array_map('intval', $userAns) : [];
+            sort($userAnswersArr);
+            if ($userAnswersArr === $correctAnswers && count($correctAnswers) > 0) {
+                $isCorrect = true;
+            }
+        } else if ($type === 'short_answer') {
+            $acceptable = $q['acceptable_answers'] ?? [];
+            $userTextNorm = normalizeExamText(strval($userAns ?? ''));
+            $userTextRaw = mb_strtolower(trim(strval($userAns ?? '')), 'UTF-8');
+
+            foreach ($acceptable as $acc) {
+                $accNorm = normalizeExamText(strval($acc));
+                $accRaw = mb_strtolower(trim(strval($acc)), 'UTF-8');
+                if ($userTextRaw === $accRaw || $userTextNorm === $accNorm) {
+                    $isCorrect = true;
+                    break;
+                }
+            }
+        }
+
+        if ($isCorrect) {
+            $correctCount++;
+        }
+
+        $breakdown[] = [
+            'question_id' => $qId,
+            'user_answer' => $userAns,
+            'is_correct' => $isCorrect,
+            'correct_answer' => $q['correct_answer'] ?? ($q['correct_answers'] ?? ($q['acceptable_answers'] ?? null)),
+            'explanation' => $q['explanation'] ?? '',
+        ];
+    }
+
+    $score = $totalQuestions > 0 ? round(($correctCount / $totalQuestions) * 100, 1) : 0;
+    $passed = $score >= ($exam['pass_score'] ?? 70);
+
+    return [
+        'score' => $score,
+        'correct_count' => $correctCount,
+        'total_questions' => $totalQuestions,
+        'passed' => $passed,
+        'breakdown' => $breakdown,
+    ];
+}
+
+/**
+ * Submit Exam Result
+ */
+function submitExamResult(string $examId, string $userId, array $userAnswers, int $timeSpentSeconds, int $tabSwitches): array {
+    $exam = getExamById($examId);
+    if (!$exam) {
+        return ['error' => 'Đề thi không tồn tại'];
+    }
+
+    $grading = gradeExam($exam, $userAnswers);
+    $resultId = 'res_' . generateSecureId(14);
+    $now = time();
+
+    $db = getAuthDB();
+    $stmt = $db->prepare('
+        INSERT INTO exam_results (id, exam_id, user_id, score, correct_count, total_questions, answers_json, time_spent_seconds, tab_switches, submitted_at)
+        VALUES (:id, :examId, :userId, :score, :correctCount, :totalQuestions, :answersJson, :timeSpent, :tabSwitches, :now)
+    ');
+    $stmt->bindValue(':id', $resultId, SQLITE3_TEXT);
+    $stmt->bindValue(':examId', $examId, SQLITE3_TEXT);
+    $stmt->bindValue(':userId', $userId, SQLITE3_TEXT);
+    $stmt->bindValue(':score', $grading['score'], SQLITE3_FLOAT);
+    $stmt->bindValue(':correctCount', $grading['correct_count'], SQLITE3_INTEGER);
+    $stmt->bindValue(':totalQuestions', $grading['total_questions'], SQLITE3_INTEGER);
+    $stmt->bindValue(':answersJson', json_encode($userAnswers), SQLITE3_TEXT);
+    $stmt->bindValue(':timeSpent', $timeSpentSeconds, SQLITE3_INTEGER);
+    $stmt->bindValue(':tabSwitches', $tabSwitches, SQLITE3_INTEGER);
+    $stmt->bindValue(':now', $now, SQLITE3_INTEGER);
+
+    $stmt->execute();
+    $db->close();
+
+    return array_merge([
+        'id' => $resultId,
+        'exam_title' => $exam['title'],
+        'time_spent_seconds' => $timeSpentSeconds,
+        'tab_switches' => $tabSwitches
+    ], $grading);
+}
+
+/**
+ * Get User Exam History
+ */
+function getUserExamResults(string $userId): array {
+    $db = getAuthDB();
+    $stmt = $db->prepare('
+        SELECT r.*, e.title as exam_title, e.nganh, e.bac, e.pass_score
+        FROM exam_results r
+        JOIN exams e ON r.exam_id = e.id
+        WHERE r.user_id = :userId
+        ORDER BY r.submitted_at DESC
+    ');
+    $stmt->bindValue(':userId', $userId, SQLITE3_TEXT);
+    $res = $stmt->execute();
+    $results = [];
+    while ($row = $res->fetchArray(SQLITE3_ASSOC)) {
+        $results[] = $row;
+    }
+    $db->close();
+    return $results;
+}
+
+/**
+ * Get All Exam Results for Admin
+ */
+function getAllExamResults(): array {
+    $db = getAuthDB();
+    $res = $db->query('
+        SELECT r.*, e.title as exam_title, e.nganh, e.bac, u.full_name, u.display_name, u.username
+        FROM exam_results r
+        JOIN exams e ON r.exam_id = e.id
+        JOIN users u ON r.user_id = u.id
+        ORDER BY r.submitted_at DESC
+    ');
+    $results = [];
+    while ($row = $res->fetchArray(SQLITE3_ASSOC)) {
+        $results[] = $row;
+    }
+    $db->close();
+    return $results;
 }

@@ -70,6 +70,8 @@
     <link rel="stylesheet" href="css/hero-effects.css?v=2.0.0" />
     <link rel="stylesheet" href="css/tai-lieu.css?v=2.0.2" />
     <link rel="stylesheet" href="css/admin.css?v=1.0.1" />
+    <link rel="stylesheet" href="css/exam.css?v=1.0.0" />
+    <script defer src="js/exam.js?v=1.0.0"></script>
   </head>
 
   <body class="loading">
@@ -175,6 +177,9 @@
         </div>
 
         <div class="container">
+          <!-- Online Exams List Grid -->
+          <div class="exam-list-grid" id="exam-list-grid" style="display:none;"></div>
+
           <div class="tl-grid" id="tl-grid">
             <!-- Rendered by JS -->
           </div>
@@ -350,6 +355,11 @@
 
         // ===== RENDER =====
         function render() {
+          // Load Exams for current Nganh & Bac
+          if (window.GDPTExamEngine) {
+            window.GDPTExamEngine.loadExamsForBac(currentNganh, currentBac, 'exam-list-grid');
+          }
+
           // Filter documents
           let filtered = docs.filter(d => {
             // Access filter: hide internal docs for non-logged-in users

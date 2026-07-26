@@ -10,6 +10,17 @@
   // ===== CONFIG =====
   const API_URL = "api.php";
   const AUTH_URL = "auth.php";
+
+  function createModalOverlay(id) {
+    let overlay = document.getElementById(id);
+    if (!overlay) {
+      overlay = document.createElement("div");
+      overlay.id = id;
+      overlay.className = "auth-modal-overlay";
+      document.body.appendChild(overlay);
+    }
+    return overlay;
+  }
   const MODULES = {
     sinhhoat: {
       label: "Sinh Hoạt",
@@ -40,6 +51,13 @@
       icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>`,
       createLabel: "Thêm tài khoản mới",
       createHint: "Tạo tài khoản thành viên, phân quyền...",
+      adminOnly: true,
+    },
+    exams: {
+      label: "Đề Thi & Kiểm Tra",
+      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`,
+      createLabel: "Tạo đề thi mới",
+      createHint: "Soạn đề thi trắc nghiệm, điền từ, thời gian...",
       adminOnly: true,
     },
   };
@@ -654,6 +672,10 @@
     // Load data
     if (module === "users") {
       await loadAndRenderUsers();
+      return;
+    }
+    if (module === "exams") {
+      await loadAndRenderExams();
       return;
     }
 
@@ -2493,6 +2515,525 @@
         errEl.style.display = "block";
       }
     });
+  }
+
+  // ============================================================
+  // ADMIN EXAM MANAGEMENT MODULE
+  // ============================================================
+  async function loadAndRenderExams() {
+    const content = document.getElementById("adm-content");
+    content.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+        <div>
+          <h3 style="font-size:1.25rem; font-weight:700; color:#fff;">Quản Lý Đề Thi & Kiểm Tra</h3>
+          <p style="font-size:0.8rem; color:rgba(255,255,255,0.5);">Soạn đề thi trắc nghiệm, điền từ ngắn, đính kèm hình ảnh và theo dõi điểm số</p>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button class="adm-btn adm-btn--secondary" id="btn-view-all-results" style="display:flex; align-items:center; gap:8px;">
+            📊 Bảng Điểm Đoàn Sinh
+          </button>
+          <button class="adm-btn adm-btn--primary" id="btn-add-exam" style="display:flex; align-items:center; gap:8px;">
+            ${ICONS.plus} <span>Tạo đề thi mới</span>
+          </button>
+        </div>
+      </div>
+      <div class="adm-item-list" id="exams-list-container">
+        <!-- Rendered exams will go here -->
+      </div>
+    `;
+
+    document.getElementById("btn-add-exam").addEventListener("click", () => openExamEditModal(null));
+    document.getElementById("btn-view-all-results").addEventListener("click", openAllResultsModal);
+    await refreshExamsList();
+  }
+
+  async function refreshExamsList() {
+    const container = document.getElementById("exams-list-container");
+    if (!container) return;
+
+    container.innerHTML = `<div class="adm-loading">Đang tải danh sách đề thi...</div>`;
+
+    try {
+      const res = await fetch(`${AUTH_URL}?action=list-exams`);
+      if (!res.ok) throw new Error('Không thể tải danh sách đề thi');
+      const data = await res.json();
+      const exams = data.exams || [];
+
+      if (exams.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding:3rem; color:rgba(255,255,255,0.5);">
+            <p>Chưa có đề thi nào trong hệ thống.</p>
+            <button class="adm-btn adm-btn--primary" id="btn-add-exam-empty" style="margin-top:1rem;">Tạo đề thi đầu tiên</button>
+          </div>
+        `;
+        const btnEmpty = document.getElementById("btn-add-exam-empty");
+        if (btnEmpty) btnEmpty.addEventListener("click", () => openExamEditModal(null));
+        return;
+      }
+
+      container.innerHTML = exams.map(e => `
+        <div class="adm-user-card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; padding:16px; background:rgba(255,255,255,0.03); border:1px solid rgba(138,176,151,0.2); border-radius:12px; margin-bottom:12px;">
+          <div>
+            <div style="font-weight:700; font-size:1.05rem; color:#fff;">📝 ${esc(e.title)}</div>
+            <div style="font-size:0.8rem; color:#8ab097; margin-top:4px;">
+              <span>${esc(e.nganh || 'Tất cả Ngành')}</span> · 
+              <span>${esc(e.bac || 'Tất cả Bậc')}</span> · 
+              <span>⏱️ ${e.time_limit_minutes} phút</span> · 
+              <span>❓ ${e.question_count} câu hỏi</span> · 
+              <span>🎯 Đạt: ${e.pass_score}%</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="adm-btn adm-btn--secondary btn-edit-exam" data-id="${e.id}">Sửa đề</button>
+            <button class="adm-btn adm-btn--danger btn-del-exam" data-id="${e.id}" style="background:rgba(239,68,68,0.2); color:#f87171; border:1px solid rgba(239,68,68,0.3);">Xóa</button>
+          </div>
+        </div>
+      `).join('');
+
+      container.querySelectorAll('.btn-edit-exam').forEach(btn => {
+        btn.addEventListener('click', () => openExamEditModal(btn.dataset.id));
+      });
+
+      container.querySelectorAll('.btn-del-exam').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          if (confirm('Bạn có chắc chắn muốn xóa đề thi này? Tất cả dữ liệu điểm thi liên quan cũng sẽ bị xóa.')) {
+            await fetch(`${AUTH_URL}?action=admin-delete-exam`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'same-origin',
+              body: JSON.stringify({ id: btn.dataset.id })
+            });
+            await refreshExamsList();
+          }
+        });
+      });
+    } catch (err) {
+      container.innerHTML = `<div style="color:#f87171; padding:1rem;">Lỗi tải đề thi: ${err.message}</div>`;
+    }
+  }
+
+  // ===== OPEN EXAM EDIT MODAL (100% VIETNAMESE GOOGLE FORMS STYLE) =====
+  async function openExamEditModal(examId) {
+    let examData = {
+      id: '',
+      title: '',
+      description: '',
+      nganh: 'Ngành Thiếu',
+      bac: 'Hướng Thiện',
+      time_limit_minutes: 15,
+      pass_score: 70,
+      max_tab_switches: 3,
+      questions: []
+    };
+
+    if (examId) {
+      try {
+        const res = await fetch(`${AUTH_URL}?action=get-exam&id=${encodeURIComponent(examId)}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.exam) examData = data.exam;
+        }
+      } catch (e) {}
+    }
+
+    const overlay = createModalOverlay('adm-exam-modal-overlay');
+    overlay.innerHTML = `
+      <div class="auth-modal" style="width:min(880px, 95vw); max-height:92vh; display:flex; flex-direction:column; padding:1.25rem;">
+        <button class="auth-modal__close" id="exam-modal-close">✕</button>
+        <h3 class="auth-modal__title">${examId ? 'Chỉnh Sửa Đề Thi' : 'Tạo Đề Thi Mới'}</h3>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:10px; margin-bottom:12px;">
+          <div class="adm-field" style="grid-column: span 2;">
+            <label style="font-size:0.8rem;">Tên / Tiêu đề bài thi *</label>
+            <input type="text" class="adm-input" id="ex-title" value="${escAttr(examData.title)}" placeholder="Ví dụ: Kiểm Tra Kiến Thức Bậc Hướng Thiện - Bài 1" style="font-size:0.88rem; padding:6px 10px;" required />
+          </div>
+          <div class="adm-field" style="grid-column: span 2;">
+            <label style="font-size:0.8rem;">Mô tả / Hướng dẫn</label>
+            <input type="text" class="adm-input" id="ex-desc" value="${escAttr(examData.description)}" placeholder="Hướng dẫn ngắn cho học viên..." style="font-size:0.88rem; padding:6px 10px;" />
+          </div>
+          <div class="adm-field">
+            <label style="font-size:0.8rem;">Ngành</label>
+            <select class="adm-input" id="ex-nganh" style="background:#1e3222; color:#fff; font-size:0.85rem; padding:6px;">
+              <option value="Ngành Oanh" ${examData.nganh === 'Ngành Oanh' ? 'selected' : ''}>Ngành Oanh</option>
+              <option value="Ngành Thiếu" ${examData.nganh === 'Ngành Thiếu' ? 'selected' : ''}>Ngành Thiếu</option>
+              <option value="Ngành Thanh" ${examData.nganh === 'Ngành Thanh' ? 'selected' : ''}>Ngành Thanh</option>
+              <option value="Huynh Trưởng" ${examData.nganh === 'Huynh Trưởng' ? 'selected' : ''}>Huynh Trưởng</option>
+            </select>
+          </div>
+          <div class="adm-field">
+            <label style="font-size:0.8rem;">Bậc Học</label>
+            <input type="text" class="adm-input" id="ex-bac" value="${escAttr(examData.bac)}" placeholder="Ví dụ: Hướng Thiện..." style="font-size:0.85rem; padding:6px 10px;" />
+          </div>
+          <div class="adm-field">
+            <label style="font-size:0.8rem;">Thời gian (Phút)</label>
+            <input type="number" class="adm-input" id="ex-time" value="${examData.time_limit_minutes}" min="1" max="180" style="font-size:0.85rem; padding:6px 10px;" />
+          </div>
+          <div class="adm-field">
+            <label style="font-size:0.8rem;">Điểm đạt (%)</label>
+            <input type="number" class="adm-input" id="ex-pass" value="${examData.pass_score}" min="10" max="100" style="font-size:0.85rem; padding:6px 10px;" />
+          </div>
+        </div>
+
+        <div style="border-top:1px solid rgba(255,255,255,0.1); padding-top:10px; flex:1; display:flex; flex-direction:column; overflow:hidden;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h4 style="color:#8ab097; font-size:0.95rem; font-weight:700;">📋 DANH SÁCH CÂU HỎI (<span id="ex-q-count">0</span>)</h4>
+            <button type="button" class="adm-btn adm-btn--secondary" id="ex-btn-add-q" style="font-size:0.82rem; padding:6px 14px; background:rgba(212,168,67,0.2); border-color:#d4a843; color:#f6d365;">
+              ➕ Thêm câu hỏi mới
+            </button>
+          </div>
+          <div id="ex-questions-list" style="flex:1; overflow-y:auto; padding-right:6px; display:flex; flex-direction:column; gap:12px;">
+            <!-- Questions list rendered dynamically -->
+          </div>
+        </div>
+
+        <div class="auth-modal__error" id="ex-error" style="color:#ff6b6b; font-size:0.85rem; margin-top:12px; display:none;"></div>
+
+        <div class="auth-modal__footer" style="margin-top:12px;">
+          <button class="adm-btn" id="ex-btn-cancel">Hủy bỏ</button>
+          <button class="adm-btn adm-btn--primary" id="ex-btn-save">💾 Lưu đề thi</button>
+        </div>
+      </div>
+    `;
+
+    overlay.classList.add("visible");
+    document.body.style.overflow = "hidden";
+
+    let questionsState = JSON.parse(JSON.stringify(examData.questions || []));
+
+    function renderQuestionsBuilder() {
+      const qListEl = overlay.querySelector("#ex-questions-list");
+      const qCountEl = overlay.querySelector("#ex-q-count");
+      if (qCountEl) qCountEl.textContent = questionsState.length;
+      if (!qListEl) return;
+
+      if (questionsState.length === 0) {
+        qListEl.innerHTML = `
+          <div style="color:rgba(255,255,255,0.4); text-align:center; padding:2rem; background:rgba(255,255,255,0.02); border:1px dashed rgba(255,255,255,0.1); border-radius:10px;">
+            <p style="font-size:0.95rem; margin-bottom:8px;">Bài thi này chưa có câu hỏi nào.</p>
+            <button type="button" class="adm-btn adm-btn--primary" onclick="document.getElementById('ex-btn-add-q').click()">+ Tạo câu hỏi đầu tiên</button>
+          </div>
+        `;
+        return;
+      }
+
+      qListEl.innerHTML = questionsState.map((q, qIdx) => `
+        <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(138,176,151,0.25); border-radius:10px; padding:14px; position:relative;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+            <span style="font-weight:700; color:#d4a843; font-size:0.9rem;">CÂU HỎI ${qIdx + 1}</span>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <select class="adm-input q-type-select" data-qidx="${qIdx}" style="padding:4px 10px; font-size:0.8rem; background:#1e3222; color:#fff; border-color:rgba(138,176,151,0.4);">
+                <option value="single" ${q.type === 'single' ? 'selected' : ''}>🔘 Trắc nghiệm 1 đáp án</option>
+                <option value="multiple" ${q.type === 'multiple' ? 'selected' : ''}>☑️ Trắc nghiệm nhiều đáp án</option>
+                <option value="boolean" ${q.type === 'boolean' ? 'selected' : ''}>⚖️ Đúng / Sai</option>
+                <option value="short_answer" ${q.type === 'short_answer' ? 'selected' : ''}>✍️ Trả lời ngắn / Điền từ</option>
+              </select>
+              <button type="button" class="btn-del-q" data-qidx="${qIdx}" style="background:rgba(239,68,68,0.2); border:1px solid rgba(239,68,68,0.4); color:#f87171; padding:4px 8px; border-radius:6px; font-size:0.8rem; cursor:pointer;">🗑️ Xóa</button>
+            </div>
+          </div>
+
+          <div style="margin-bottom:10px;">
+            <input type="text" class="adm-input q-text-input" data-qidx="${qIdx}" value="${escAttr(q.text || '')}" placeholder="Nội dung câu hỏi..." style="font-size:0.95rem; font-weight:600;" />
+          </div>
+
+          <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px;">
+            <input type="text" class="adm-input q-img-input" data-qidx="${qIdx}" value="${escAttr(q.image_url || '')}" placeholder="Đường dẫn ảnh minh họa (nếu có)..." style="font-size:0.82rem; flex:1;" />
+            <label class="adm-btn adm-btn--secondary" style="padding:4px 10px; font-size:0.78rem; cursor:pointer;">
+              📷 <span>Up ảnh</span>
+              <input type="file" class="q-img-file" data-qidx="${qIdx}" accept="image/*" style="display:none;" />
+            </label>
+          </div>
+          ${q.image_url ? `<img src="${q.image_url}" style="max-height:120px; border-radius:6px; margin-bottom:10px; display:block;" />` : ''}
+
+          <!-- OPTIONS BUILDER -->
+          ${renderOptionsInputHTML(q, qIdx)}
+
+          <div style="margin-top:10px; border-top:1px dashed rgba(255,255,255,0.1); padding-top:8px;">
+            <input type="text" class="adm-input q-exp-input" data-qidx="${qIdx}" value="${escAttr(q.explanation || '')}" placeholder="💡 Lời giải thích chi tiết khi xem lại bài làm..." style="font-size:0.82rem; color:#cbd5e1;" />
+          </div>
+        </div>
+      `).join('');
+
+      // Event Listeners for Question Field Updates
+      qListEl.querySelectorAll('.q-type-select').forEach(el => {
+        el.addEventListener('change', (e) => {
+          const idx = parseInt(e.target.dataset.qidx, 10);
+          questionsState[idx].type = e.target.value;
+          renderQuestionsBuilder();
+        });
+      });
+
+      qListEl.querySelectorAll('.q-text-input').forEach(el => {
+        el.addEventListener('input', (e) => {
+          const idx = parseInt(e.target.dataset.qidx, 10);
+          questionsState[idx].text = e.target.value;
+        });
+      });
+
+      qListEl.querySelectorAll('.q-img-input').forEach(el => {
+        el.addEventListener('input', (e) => {
+          const idx = parseInt(e.target.dataset.qidx, 10);
+          questionsState[idx].image_url = e.target.value;
+        });
+      });
+
+      qListEl.querySelectorAll('.q-exp-input').forEach(el => {
+        el.addEventListener('input', (e) => {
+          const idx = parseInt(e.target.dataset.qidx, 10);
+          questionsState[idx].explanation = e.target.value;
+        });
+      });
+
+      qListEl.querySelectorAll('.q-img-file').forEach(el => {
+        el.addEventListener('change', async (e) => {
+          const idx = parseInt(e.target.dataset.qidx, 10);
+          const file = e.target.files[0];
+          if (!file) return;
+
+          const formData = new FormData();
+          formData.append('image', file);
+
+          try {
+            const uploadRes = await fetch(`${AUTH_URL}?action=upload-exam-image`, {
+              method: 'POST',
+              credentials: 'same-origin',
+              body: formData
+            });
+            const data = await uploadRes.json();
+            if (data.success && data.imageUrl) {
+              questionsState[idx].image_url = data.imageUrl;
+              renderQuestionsBuilder();
+            } else {
+              alert(data.error || 'Lỗi up ảnh');
+            }
+          } catch (err) {
+            alert('Không thể tải ảnh lên máy chủ');
+          }
+        });
+      });
+
+      qListEl.querySelectorAll('.btn-del-q').forEach(el => {
+        el.addEventListener('click', (e) => {
+          const idx = parseInt(e.target.dataset.qidx, 10);
+          questionsState.splice(idx, 1);
+          renderQuestionsBuilder();
+        });
+      });
+    }
+
+    function renderOptionsInputHTML(q, qIdx) {
+      if (q.type === 'single' || q.type === 'multiple') {
+        const options = q.options || ['Lựa chọn A', 'Lựa chọn B', 'Lựa chọn C', 'Lựa chọn D'];
+        q.options = options;
+
+        return `
+          <div style="font-size:0.8rem; color:#8ab097; margin-bottom:6px; font-weight:600;">Lựa chọn phương án (Tích chọn phương án ĐÚNG):</div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            ${options.map((opt, oIdx) => {
+              const isChecked = q.type === 'single' ? (q.correct_answer === oIdx) : ((q.correct_answers || []).includes(oIdx));
+              const inputType = q.type === 'single' ? 'radio' : 'checkbox';
+              return `
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <input type="${inputType}" name="correct_${qIdx}" ${isChecked ? 'checked' : ''} onchange="window.GDPTAdminExamHelper.setCorrect(${qIdx}, ${oIdx}, '${q.type}', this.checked)" title="Tích chọn nếu đây là đáp án đúng" />
+                  <input type="text" class="adm-input" value="${escAttr(opt)}" oninput="window.GDPTAdminExamHelper.setOptionText(${qIdx}, ${oIdx}, this.value)" style="font-size:0.85rem; padding:4px 8px; flex:1;" />
+                  ${options.length > 2 ? `<button type="button" onclick="window.GDPTAdminExamHelper.deleteOption(${qIdx}, ${oIdx})" style="background:none; border:none; color:#f87171; cursor:pointer; font-size:0.8rem;">✕</button>` : ''}
+                </div>
+              `;
+            }).join('')}
+          </div>
+          <button type="button" class="adm-btn adm-btn--secondary" onclick="window.GDPTAdminExamHelper.addOption(${qIdx})" style="margin-top:6px; font-size:0.75rem; padding:3px 10px;">+ Thêm phương án</button>
+        `;
+      } else if (q.type === 'boolean') {
+        q.correct_answer = q.correct_answer !== undefined ? q.correct_answer : 1;
+        return `
+          <div style="font-size:0.8rem; color:#8ab097; margin-bottom:6px; font-weight:600;">Đáp án đúng:</div>
+          <div style="display:flex; gap:20px;">
+            <label style="color:#fff; font-size:0.9rem; cursor:pointer;"><input type="radio" name="bool_${qIdx}" value="1" ${q.correct_answer === 1 ? 'checked' : ''} onchange="window.GDPTAdminExamHelper.setBool(${qIdx}, 1)" /> ✅ Đúng</label>
+            <label style="color:#fff; font-size:0.9rem; cursor:pointer;"><input type="radio" name="bool_${qIdx}" value="0" ${q.correct_answer === 0 ? 'checked' : ''} onchange="window.GDPTAdminExamHelper.setBool(${qIdx}, 0)" /> ❌ Sai</label>
+          </div>
+        `;
+      } else if (q.type === 'short_answer') {
+        const acc = (q.acceptable_answers || []).join(', ');
+        return `
+          <div style="font-size:0.8rem; color:#8ab097; margin-bottom:6px; font-weight:600;">Các từ/cụm từ chấp nhận được (Ngăn cách bởi dấu phẩy):</div>
+          <input type="text" class="adm-input" value="${escAttr(acc)}" oninput="window.GDPTAdminExamHelper.setShortAnswers(${qIdx}, this.value)" placeholder="Ví dụ: Tất Đạt Đa, Thái Tử Tất Đạt Đa, Siddhartha" style="font-size:0.85rem;" />
+        `;
+      }
+      return '';
+    }
+
+    // Helper functions for inline question editing
+    window.GDPTAdminExamHelper = {
+      setOptionText(qIdx, oIdx, text) {
+        if (questionsState[qIdx] && questionsState[qIdx].options) {
+          questionsState[qIdx].options[oIdx] = text;
+        }
+      },
+      addOption(qIdx) {
+        if (questionsState[qIdx]) {
+          if (!questionsState[qIdx].options) questionsState[qIdx].options = [];
+          const nextLetter = String.fromCharCode(65 + questionsState[qIdx].options.length);
+          questionsState[qIdx].options.push(`Lựa chọn ${nextLetter}`);
+          renderQuestionsBuilder();
+        }
+      },
+      deleteOption(qIdx, oIdx) {
+        if (questionsState[qIdx] && questionsState[qIdx].options) {
+          questionsState[qIdx].options.splice(oIdx, 1);
+          renderQuestionsBuilder();
+        }
+      },
+      setCorrect(qIdx, oIdx, type, checked) {
+        if (!questionsState[qIdx]) return;
+        if (type === 'single') {
+          questionsState[qIdx].correct_answer = oIdx;
+        } else if (type === 'multiple') {
+          if (!questionsState[qIdx].correct_answers) questionsState[qIdx].correct_answers = [];
+          if (checked) {
+            if (!questionsState[qIdx].correct_answers.includes(oIdx)) questionsState[qIdx].correct_answers.push(oIdx);
+          } else {
+            questionsState[qIdx].correct_answers = questionsState[qIdx].correct_answers.filter(x => x !== oIdx);
+          }
+        }
+      },
+      setBool(qIdx, val) {
+        if (questionsState[qIdx]) questionsState[qIdx].correct_answer = val;
+      },
+      setShortAnswers(qIdx, valStr) {
+        if (questionsState[qIdx]) {
+          questionsState[qIdx].acceptable_answers = valStr.split(',').map(s => s.trim()).filter(Boolean);
+        }
+      }
+    };
+
+    overlay.querySelector("#ex-btn-add-q").addEventListener("click", () => {
+      questionsState.push({
+        id: 'q_' + Date.now() + '_' + Math.floor(Math.random()*1000),
+        type: 'single',
+        text: '',
+        image_url: '',
+        options: ['Lựa chọn A', 'Lựa chọn B', 'Lựa chọn C', 'Lựa chọn D'],
+        correct_answer: 0,
+        explanation: ''
+      });
+      renderQuestionsBuilder();
+    });
+
+    renderQuestionsBuilder();
+
+    const closeModal = () => {
+      overlay.classList.remove("visible");
+      document.body.style.overflow = "";
+    };
+
+    overlay.querySelector("#exam-modal-close").addEventListener("click", closeModal);
+    overlay.querySelector("#ex-btn-cancel").addEventListener("click", closeModal);
+
+    overlay.querySelector("#ex-btn-save").addEventListener("click", async () => {
+      const title = overlay.querySelector("#ex-title").value.trim();
+      const errEl = overlay.querySelector("#ex-error");
+      errEl.style.display = "none";
+
+      if (!title) {
+        errEl.textContent = "Vui lòng nhập tên/tiêu đề đề thi";
+        errEl.style.display = "block";
+        return;
+      }
+
+      const payload = {
+        id: examData.id || '',
+        title: title,
+        description: overlay.querySelector("#ex-desc").value.trim(),
+        nganh: overlay.querySelector("#ex-nganh").value,
+        bac: overlay.querySelector("#ex-bac").value.trim(),
+        time_limit_minutes: parseInt(overlay.querySelector("#ex-time").value, 10) || 15,
+        pass_score: parseInt(overlay.querySelector("#ex-pass").value, 10) || 70,
+        questions: questionsState
+      };
+
+      try {
+        const saveRes = await fetch(`${AUTH_URL}?action=admin-save-exam`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify(payload)
+        });
+        const resData = await saveRes.json();
+        if (resData.success) {
+          closeModal();
+          await refreshExamsList();
+        } else {
+          errEl.textContent = resData.error || "Không thể lưu đề thi";
+          errEl.style.display = "block";
+        }
+      } catch (err) {
+        errEl.textContent = "Lỗi kết nối máy chủ";
+        errEl.style.display = "block";
+      }
+    });
+  }
+
+  // ===== OPEN ALL RESULTS MODAL (ADMIN) =====
+  async function openAllResultsModal() {
+    const overlay = createModalOverlay('adm-results-modal-overlay');
+    overlay.innerHTML = `
+      <div class="auth-modal" style="width:min(800px, 94vw); max-height:90vh;">
+        <button class="auth-modal__close" id="res-modal-close">✕</button>
+        <h3 class="auth-modal__title">📊 Bảng Điểm Thi Đoàn Sinh</h3>
+        <div id="all-results-container" style="max-height:65vh; overflow-y:auto; margin-top:1rem;">
+          <div class="adm-loading">Đang tải bảng điểm...</div>
+        </div>
+      </div>
+    `;
+
+    overlay.classList.add("visible");
+    document.body.style.overflow = "hidden";
+
+    overlay.querySelector("#res-modal-close").addEventListener("click", () => {
+      overlay.classList.remove("visible");
+      document.body.style.overflow = "";
+    });
+
+    try {
+      const res = await fetch(`${AUTH_URL}?action=admin-list-exam-results`, { credentials: 'same-origin' });
+      if (!res.ok) throw new Error('Không thể tải bảng điểm');
+      const data = await res.json();
+      const results = data.results || [];
+
+      const container = overlay.querySelector("#all-results-container");
+      if (results.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:rgba(255,255,255,0.4); padding:2rem;">Chưa có lượt làm bài thi nào.</div>`;
+        return;
+      }
+
+      container.innerHTML = `
+        <table style="width:100%; border-collapse:collapse; color:#fff; font-size:0.85rem;">
+          <thead>
+            <tr style="border-bottom:1px solid rgba(255,255,255,0.1); text-align:left; color:#8ab097;">
+              <th style="padding:8px;">Họ tên / User</th>
+              <th style="padding:8px;">Đề thi</th>
+              <th style="padding:8px;">Bậc</th>
+              <th style="padding:8px;">Điểm số</th>
+              <th style="padding:8px;">Thời gian</th>
+              <th style="padding:8px;">Ngày thi</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${results.map(r => `
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                <td style="padding:8px;"><strong>${esc(r.full_name || r.display_name)}</strong><br><span style="color:#64748b;">@${esc(r.username)}</span></td>
+                <td style="padding:8px;">${esc(r.exam_title)}</td>
+                <td style="padding:8px;"><span class="adm-role-badge">${esc(r.bac || '—')}</span></td>
+                <td style="padding:8px;"><strong style="color:${r.score >= 70 ? '#34d399' : '#f87171'};">${r.score}%</strong> (${r.correct_count}/${r.total_questions})</td>
+                <td style="padding:8px;">${Math.floor(r.time_spent_seconds/60)}p ${r.time_spent_seconds%60}s</td>
+                <td style="padding:8px; color:#64748b;">${new Date(r.submitted_at * 1000).toLocaleDateString('vi-VN')}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    } catch (err) {
+      overlay.querySelector("#all-results-container").innerHTML = `<div style="color:#f87171;">Lỗi: ${err.message}</div>`;
+    }
   }
 
   // ===== ENTRY POINTS =====

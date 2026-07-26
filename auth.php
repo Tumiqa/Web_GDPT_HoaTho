@@ -518,8 +518,203 @@ switch ($action) {
         }
         break;
 
+    // ===== LIST EXAMS =====
+    case 'list-exams':
+        $currentUser = getCurrentUser();
+        if (!$currentUser) {
+            http_response_code(401);
+            echo json_encode(['error' => 'Vui lòng đăng nhập để xem đề thi', 'exams' => []]);
+            exit;
+        }
+        $nganh = isset($_GET['nganh']) ? trim($_GET['nganh']) : null;
+        $bac = isset($_GET['bac']) ? trim($_GET['bac']) : null;
+        $isAdmin = ($currentUser['role'] === 'admin');
+        
+        $exams = listExams($nganh, $bac, $isAdmin);
+        echo json_encode(['exams' => $exams]);
+        break;
+
+    // ===== GET EXAM =====
+    case 'get-exam':
+        $currentUser = getCurrentUser();
+        if (!$currentUser) {
+            http_response_code(401);
+            echo json_encode(['error' => 'Vui lòng đăng nhập để vào làm đề thi']);
+            exit;
+        }
+        $id = isset($_GET['id']) ? trim($_GET['id']) : '';
+        if (!$id) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Thiếu mã đề thi']);
+            exit;
+        }
+        $exam = getExamById($id);
+        if (!$exam) {
+            http_response_code(404);
+            echo json_encode(['error' => 'Không tìm thấy đề thi']);
+            exit;
+        }
+        echo json_encode(['exam' => $exam]);
+        break;
+
+    // ===== SUBMIT EXAM =====
+    case 'submit-exam':
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['error' => 'Method not allowed']);
+            exit;
+        }
+        $currentUser = getCurrentUser();
+        if (!$currentUser) {
+            http_response_code(401);
+            echo json_encode(['error' => 'Vui lòng đăng nhập để làm bài thi']);
+            exit;
+        }
+
+        $body = json_decode(file_get_contents('php://input'), true);
+        $examId = trim($body['examId'] ?? '');
+        $userAnswers = $body['answers'] ?? [];
+        $timeSpent = max(0, intval($body['timeSpentSeconds'] ?? 0));
+        $tabSwitches = max(0, intval($body['tabSwitches'] ?? 0));
+
+        if (!$examId) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Thiếu mã đề thi']);
+            exit;
+        }
+
+        $result = submitExamResult($examId, $currentUser['userId'], $userAnswers, $timeSpent, $tabSwitches);
+        if (isset($result['error'])) {
+            http_response_code(400);
+            echo json_encode($result);
+            exit;
+        }
+
+        echo json_encode(['success' => true, 'result' => $result]);
+        break;
+
+    // ===== USER EXAM RESULTS =====
+    case 'user-exam-results':
+        $currentUser = getCurrentUser();
+        if (!$currentUser) {
+            http_response_code(401);
+            echo json_encode(['error' => 'Chưa đăng nhập']);
+            exit;
+        }
+        $results = getUserExamResults($currentUser['userId']);
+        echo json_encode(['results' => $results]);
+        break;
+
+    // ===== ADMIN SAVE EXAM (Admin only) =====
+    case 'admin-save-exam':
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['error' => 'Method not allowed']);
+            exit;
+        }
+        $currentUser = getCurrentUser();
+        if (!$currentUser || $currentUser['role'] !== 'admin') {
+            http_response_code(403);
+            echo json_encode(['error' => 'Quyền hạn bị từ chối']);
+            exit;
+        }
+
+        $body = json_decode(file_get_contents('php://input'), true);
+        if (!is_array($body)) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Dữ liệu không hợp lệ']);
+            exit;
+        }
+
+        $saved = saveExam($body);
+        echo json_encode(['success' => true, 'exam' => $saved]);
+        break;
+
+    // ===== ADMIN DELETE EXAM (Admin only) =====
+    case 'admin-delete-exam':
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['error' => 'Method not allowed']);
+            exit;
+        }
+        $currentUser = getCurrentUser();
+        if (!$currentUser || $currentUser['role'] !== 'admin') {
+            http_response_code(403);
+            echo json_encode(['error' => 'Quyền hạn bị từ chối']);
+            exit;
+        }
+
+        $body = json_decode(file_get_contents('php://input'), true);
+        $id = trim($body['id'] ?? '');
+        if (!$id) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Thiếu ID đề thi']);
+            exit;
+        }
+
+        deleteExam($id);
+        echo json_encode(['success' => true]);
+        break;
+
+    // ===== ADMIN LIST ALL EXAM RESULTS (Admin only) =====
+    case 'admin-list-exam-results':
+        $currentUser = getCurrentUser();
+        if (!$currentUser || $currentUser['role'] !== 'admin') {
+            http_response_code(403);
+            echo json_encode(['error' => 'Quyền hạn bị từ chối']);
+            exit;
+        }
+        $results = getAllExamResults();
+        echo json_encode(['results' => $results]);
+        break;
+
+    // ===== UPLOAD EXAM IMAGE (Admin only) =====
+    case 'upload-exam-image':
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['error' => 'Method not allowed']);
+            exit;
+        }
+        $currentUser = getCurrentUser();
+        if (!$currentUser || $currentUser['role'] !== 'admin') {
+            http_response_code(403);
+            echo json_encode(['error' => 'Quyền hạn bị từ chối']);
+            exit;
+        }
+
+        if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Vui lòng chọn tệp hình ảnh hợp lệ']);
+            exit;
+        }
+
+        $file = $_FILES['image'];
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        if (!in_array($ext, $allowed)) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Chỉ chấp nhận các tệp ảnh JPG, PNG, GIF, WEBP']);
+            exit;
+        }
+
+        $uploadDir = __DIR__ . '/uploads/exam';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
+        }
+
+        $fileName = 'q_' . time() . '_' . generateSecureId(6) . '.' . $ext;
+        $destPath = $uploadDir . '/' . $fileName;
+
+        if (move_uploaded_file($file['tmp_name'], $destPath)) {
+            echo json_encode(['success' => true, 'imageUrl' => 'uploads/exam/' . $fileName]);
+        } else {
+            http_response_code(500);
+            echo json_encode(['error' => 'Không thể lưu tệp ảnh']);
+        }
+        break;
+
     default:
         http_response_code(400);
-        echo json_encode(['error' => 'Invalid action. Available: login, logout, me, create-user, list-users, delete-user, change-password, update-role, update-profile, upload-avatar']);
+        echo json_encode(['error' => 'Invalid action']);
         break;
 }
