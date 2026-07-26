@@ -14,24 +14,24 @@
   {
     "id": "tl-002",
     "title": "Tài Liệu Tu Học Bậc Hướng Thiện — Ngành Thiếu",
-    "description": "Tài liệu tu học chính thức Bậc Hướng Thiện cho đoàn sinh Ngành Thiếu GĐPT, bao gồm Phật pháp, tinh thần và kỹ năng.",
+    "description": "Tài liệu tu học chính thức Bậc Hướng Thiện cho đoàn sinh Ngành Thiếu GĐPT (bản xếp thứ tự trang chuẩn).",
     "nganh": "Ngành Thiếu",
     "bac": "Hướng Thiện",
     "access": "public",
     "attachmentType": "link",
-    "url": "https://github.com/Tumiqa/Web_GDPT_HoaTho/releases/download/v1.0/bac-huong-thien.pdf",
+    "url": "https://drive.google.com/file/d/1RUCtmA8Tc25gLJW0mFJ4k40HSEJIDili/preview",
     "fileType": "pdf",
     "date": "2026"
   },
   {
     "id": "tl-003",
     "title": "Tài Liệu Tu Học Bậc Sơ Thiện — Ngành Thiếu",
-    "description": "Tài liệu tu học chính thức Bậc Sơ Thiện cho đoàn sinh Ngành Thiếu GĐPT, chuẩn mực kiến thức và huấn luyện.",
+    "description": "Tài liệu tu học chính thức Bậc Sơ Thiện cho đoàn sinh Ngành Thiếu GĐPT (bản xếp thứ tự trang chuẩn).",
     "nganh": "Ngành Thiếu",
     "bac": "Sơ Thiện",
     "access": "public",
     "attachmentType": "link",
-    "url": "https://github.com/Tumiqa/Web_GDPT_HoaTho/releases/download/v1.0/bac-so-thien.pdf",
+    "url": "https://drive.google.com/file/d/1c_LPDXHvahvhz6x8egSJkvQ2LFbpH2-W/preview",
     "fileType": "pdf",
     "date": "2026"
   }

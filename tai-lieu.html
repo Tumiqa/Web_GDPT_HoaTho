@@ -426,9 +426,11 @@
             // Smart action button based on file type
             let actionBtn = '';
             if (type === 'pdf') {
-              // PDF: open directly in browser viewer (wrap with Google Docs Viewer for GitHub Releases/external links to prevent forced download)
+              // PDF: open directly in browser viewer (use Google Drive native preview or Google Docs Viewer for raw external links)
               let viewUrl = d.url;
-              if (viewUrl && viewUrl !== '#' && (viewUrl.startsWith('http://') || viewUrl.startsWith('https://'))) {
+              if (viewUrl && viewUrl.includes('drive.google.com')) {
+                viewUrl = viewUrl.replace('/view', '/preview');
+              } else if (viewUrl && viewUrl !== '#' && (viewUrl.startsWith('http://') || viewUrl.startsWith('https://'))) {
                 viewUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(d.url)}`;
               }
               actionBtn = `<a href="${viewUrl}" target="_blank" rel="noopener noreferrer" class="tl-btn tl-btn--view">
