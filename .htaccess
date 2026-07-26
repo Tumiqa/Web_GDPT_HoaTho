@@ -143,16 +143,15 @@ form-action 'self';"
 # 7. CACHE CONTROL — Tối ưu hiệu suất tải trang
 # ============================================================
 <IfModule mod_headers.c>
-    # HTML: Không cache — luôn kiểm tra phiên bản mới nhất
-    <FilesMatch "\.(html|htm)$">
+    # HTML, CSS, JS: Không lưu cache cứng — luôn kiểm tra revalidate phiên bản mới nhất từ server khi deploy
+    <FilesMatch "\.(html|htm|css|js)$">
         Header set Cache-Control "no-cache, no-store, must-revalidate"
         Header set Pragma "no-cache"
         Header set Expires 0
     </FilesMatch>
 
-    # Tài nguyên tĩnh (CSS, JS, Fonts, Ảnh, Media): Cache dài hạn 1 năm
-    # Đã có cơ chế cache-busting qua query string ?v=x.x.x
-    <FilesMatch "\.(css|js|png|jpg|jpeg|gif|webp|svg|woff|woff2|ttf|eot|mp3|mp4|pdf|doc|docx|xls|xlsx)$">
+    # Tài nguyên đa phương tiện (Fonts, Ảnh, Audio/Video, PDF/Docs): Cache dài hạn
+    <FilesMatch "\.(png|jpg|jpeg|gif|webp|svg|woff|woff2|ttf|eot|mp3|mp4|pdf|doc|docx|xls|xlsx)$">
         Header set Cache-Control "max-age=31536000, public"
     </FilesMatch>
 </IfModule>

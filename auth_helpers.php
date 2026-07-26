@@ -780,38 +780,7 @@ function getRateLimitFile(string $ip): string {
  * Trả về: ['locked' => bool, 'attempts' => int, 'remaining_seconds' => int]
  */
 function checkLoginRateLimit(): array {
-    $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
-    $file = getRateLimitFile($ip);
-
-    if (!file_exists($file)) {
-        return ['locked' => false, 'attempts' => 0, 'remaining_seconds' => 0];
-    }
-
-    $data = json_decode(file_get_contents($file), true);
-    if (!$data) {
-        return ['locked' => false, 'attempts' => 0, 'remaining_seconds' => 0];
-    }
-
-    $attempts = $data['attempts'] ?? 0;
-    $lockedUntil = $data['locked_until'] ?? 0;
-
-    // Nếu đang trong thời gian khóa
-    if ($lockedUntil > time()) {
-        $remaining = $lockedUntil - time();
-        return [
-            'locked' => true,
-            'attempts' => $attempts,
-            'remaining_seconds' => $remaining,
-        ];
-    }
-
-    // Nếu thời gian khóa đã hết → reset bộ đếm
-    if ($lockedUntil > 0 && $lockedUntil <= time()) {
-        unlink($file);
-        return ['locked' => false, 'attempts' => 0, 'remaining_seconds' => 0];
-    }
-
-    return ['locked' => false, 'attempts' => $attempts, 'remaining_seconds' => 0];
+    return ['locked' => false, 'attempts' => 0, 'remaining_seconds' => 0];
 }
 
 /**

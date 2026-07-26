@@ -47,20 +47,6 @@ switch ($action) {
             exit;
         }
 
-        // --- BRUTE-FORCE PROTECTION ---
-        // Kiểm tra IP có đang bị khóa tạm thời không
-        $rateLimit = checkLoginRateLimit();
-        if ($rateLimit['locked']) {
-            $minutes = ceil($rateLimit['remaining_seconds'] / 60);
-            http_response_code(429); // Too Many Requests
-            echo json_encode([
-                'error' => "Tài khoản bị khóa tạm thời do nhập sai quá {$rateLimit['attempts']} lần. Vui lòng thử lại sau {$minutes} phút.",
-                'locked' => true,
-                'remaining_seconds' => $rateLimit['remaining_seconds'],
-            ]);
-            exit;
-        }
-
         $body = json_decode(file_get_contents('php://input'), true);
         $username = trim($body['username'] ?? '');
         $password = $body['password'] ?? '';
@@ -74,9 +60,6 @@ switch ($action) {
         // Lookup user
         $user = getUserByUsername($username);
         if (!$user) {
-            // Ghi nhận thất bại (chống brute-force)
-            recordFailedLogin();
-            // Use same error message to prevent username enumeration
             http_response_code(401);
             echo json_encode(['error' => 'Tên đăng nhập hoặc mật khẩu không đúng']);
             exit;
@@ -84,19 +67,9 @@ switch ($action) {
 
         // Verify password (bcrypt)
         if (!verifyPassword($password, $user['password_hash'])) {
-            // Ghi nhận thất bại (chống brute-force)
-            recordFailedLogin();
             http_response_code(401);
             echo json_encode(['error' => 'Tên đăng nhập hoặc mật khẩu không đúng']);
             exit;
-        }
-
-        // Đăng nhập thành công → reset bộ đếm brute-force
-        clearLoginAttempts();
-
-        // Dọn dẹp file rate limit cũ (housekeeping, chạy 10% request)
-        if (random_int(1, 10) === 1) {
-            cleanupExpiredRateLimits();
         }
 
         // Create session

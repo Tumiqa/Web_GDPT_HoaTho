@@ -7,6 +7,44 @@
 (function () {
   "use strict";
 
+  // ===== AUTOMATIC CACHE-BUSTING & REVALIDATION ENGINE =====
+  // Khi deploy code mới, tăng version này để ÉP TẤT CẢ TRÌNH DUYỆT XÓA CACHE CŨ & RENDER CODE MỚI 100%
+  var APP_BUILD_VERSION = "3.0.0_20260726_v3";
+
+  function autoPurgeStaleCache() {
+    try {
+      var savedVersion = localStorage.getItem("gdpt_app_version");
+
+      // Hủy bỏ Service Worker cũ nếu có
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function (registrations) {
+          for (var i = 0; i < registrations.length; i++) {
+            registrations[i].unregister();
+          }
+        });
+      }
+
+      if (savedVersion !== APP_BUILD_VERSION) {
+        localStorage.setItem("gdpt_app_version", APP_BUILD_VERSION);
+
+        // Xóa toàn bộ CacheStorage cũ của trình duyệt
+        if ("caches" in window) {
+          caches.keys().then(function (names) {
+            for (var k = 0; k < names.length; k++) {
+              caches.delete(names[k]);
+            }
+          });
+        }
+
+        // Nếu là phiên bản cũ nâng cấp lên -> Tải lại trang với bypass cache
+        if (savedVersion) {
+          window.location.reload(true);
+        }
+      }
+    } catch (e) {}
+  }
+  autoPurgeStaleCache();
+
   // ===== CẤU HÌNH =====
   // Danh sách domain được phép chạy trang web
   // Thêm domain của bạn vào đây nếu cần
