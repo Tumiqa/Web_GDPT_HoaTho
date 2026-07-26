@@ -1,17 +1,5 @@
 [
   {
-    "id": "tl-001",
-    "title": "Giáo Án Sinh Hoạt Ngành Thiếu",
-    "description": "Bộ giáo án sinh hoạt hàng tuần dành cho ngành Thiếu, bao gồm Phật pháp, hoạt động nhóm và kỹ năng.",
-    "nganh": "Ngành Thiếu",
-    "bac": "",
-    "access": "public",
-    "attachmentType": "link",
-    "url": "#",
-    "fileType": "pdf",
-    "date": "2025"
-  },
-  {
     "id": "tl-002",
     "title": "Tài Liệu Tu Học Bậc Hướng Thiện — Ngành Thiếu",
     "description": "Tài liệu tu học chính thức Bậc Hướng Thiện cho đoàn sinh Ngành Thiếu GĐPT, bao gồm Phật pháp, tinh thần và kỹ năng.",
