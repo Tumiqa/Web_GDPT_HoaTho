@@ -334,6 +334,18 @@
 }
 
 /* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  #sema-modal, #morse-modal, #cipher-modal {
+    width: 95vw !important;
+    height: auto !important;
+    max-height: 88vh !important;
+    padding: 1.25rem 0.75rem !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    border-radius: 14px !important;
+  }
+}
+
 @media (max-width: 480px) {
   #sema-keyboard { gap: 0.35rem; }
   #sema-keyboard a {
@@ -343,12 +355,12 @@
     border-radius: 8px;
   }
   .sema-tab {
-    padding: 6px 16px;
-    font-size: 0.85rem;
+    padding: 6px 14px;
+    font-size: 0.8rem;
   }
   #flagger::before {
-    width: 260px;
-    height: 260px;
+    width: 220px;
+    height: 220px;
   }
   .sema-prac-controls {
     flex-direction: column;

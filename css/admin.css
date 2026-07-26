@@ -958,6 +958,7 @@ select.adm-input option { background: #0f1d16; color: #fff; }
   box-shadow: 0 10px 40px rgba(0,0,0,0.6);
   border-radius: 12px;
   min-width: 240px;
+  max-width: 90vw;
   padding: 8px 0;
   z-index: 99999;
   display: none;
@@ -967,6 +968,17 @@ select.adm-input option { background: #0f1d16; color: #fff; }
   opacity: 0;
   transform: translateY(-8px) scale(0.96);
 }
+@media (max-width: 768px) {
+  .header-dropdown {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%) translateY(-8px) scale(0.96);
+    transform-origin: top center;
+    min-width: 230px;
+    max-width: calc(100vw - 32px);
+    animation: dropdownFadeMobile 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+}
 .header-dropdown.visible {
   display: flex;
 }
@@ -974,6 +986,12 @@ select.adm-input option { background: #0f1d16; color: #fff; }
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+@keyframes dropdownFadeMobile {
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
   }
 }
 .header-dropdown__user {
@@ -1057,11 +1075,21 @@ select.adm-input option { background: #0f1d16; color: #fff; }
   border-radius: 1.25rem;
   padding: 2rem;
   width: min(480px, 92vw);
+  max-height: 90vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   position: relative;
   transform: translateY(20px) scale(0.96);
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   color: #fff;
+}
+.auth-modal::-webkit-scrollbar {
+  width: 6px;
+}
+.auth-modal::-webkit-scrollbar-thumb {
+  background: rgba(138, 176, 151, 0.3);
+  border-radius: 4px;
 }
 .auth-modal-overlay.visible .auth-modal {
   transform: translateY(0) scale(1);
@@ -1174,6 +1202,8 @@ select.adm-input option { background: #0f1d16; color: #fff; }
   transition: transform 0.25s ease;
   -webkit-user-select: none;
   user-select: none;
+  flex-shrink: 0;
+  max-width: 84px;
 }
 .badge-item:hover {
   transform: translateY(-3px);
@@ -1183,6 +1213,11 @@ select.adm-input option { background: #0f1d16; color: #fff; }
 .badge-diamond-frame {
   width: 76px;
   height: 76px;
+  min-width: 76px;
+  max-width: 76px;
+  min-height: 76px;
+  max-height: 76px;
+  flex-shrink: 0;
   position: relative;
   transition: transform 0.3s ease, filter 0.3s ease;
 }
@@ -1214,8 +1249,10 @@ select.adm-input option { background: #0f1d16; color: #fff; }
 
 /* Image inside: UNROTATED 0° so image's natural diamond points up */
 .badge-diamond-inner img {
-  width: 100%;
-  height: 100%;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
   object-fit: cover;
   display: block;
   transform: none !important;
@@ -1228,6 +1265,11 @@ select.adm-input option { background: #0f1d16; color: #fff; }
 .badge-square-frame {
   width: 72px;
   height: 72px;
+  min-width: 72px;
+  max-width: 72px;
+  min-height: 72px;
+  max-height: 72px;
+  flex-shrink: 0;
   border-radius: 8px;
   border: 2px solid rgba(212, 168, 67, 0.35);
   background: #ffffff;
@@ -1244,8 +1286,10 @@ select.adm-input option { background: #0f1d16; color: #fff; }
   box-shadow: 0 0 18px rgba(255, 215, 0, 0.7), 0 0 30px rgba(212, 168, 67, 0.3);
 }
 .badge-square-frame img {
-  width: 100%;
-  height: 100%;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
   object-fit: cover;
   display: block;
   transform: none !important;
@@ -1258,6 +1302,11 @@ select.adm-input option { background: #0f1d16; color: #fff; }
 .badge-diamond-text-box {
   width: 68px;
   height: 68px;
+  min-width: 68px;
+  max-width: 68px;
+  min-height: 68px;
+  max-height: 68px;
+  flex-shrink: 0;
   transform: rotate(45deg);
   border: 2px solid rgba(212, 168, 67, 0.35);
   border-radius: 6px;
@@ -1334,22 +1383,59 @@ select.adm-input option { background: #0f1d16; color: #fff; }
 
 /* Responsive for smaller screens */
 @media (max-width: 480px) {
+  .auth-modal {
+    padding: 1.25rem 1rem;
+    width: 95vw;
+    border-radius: 1rem;
+  }
+  .auth-modal .adm-input {
+    font-size: 16px !important;
+  }
+  .auth-modal__grid[style] {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+  .badge-section {
+    grid-column: span 1 !important;
+    padding: 10px 6px !important;
+  }
   .badge-diamond-frame {
-    width: 62px;
-    height: 62px;
+    width: 58px;
+    height: 58px;
+    min-width: 58px;
+    max-width: 58px;
+    min-height: 58px;
+    max-height: 58px;
+  }
+  .badge-square-frame {
+    width: 54px;
+    height: 54px;
+    min-width: 54px;
+    max-width: 54px;
+    min-height: 54px;
+    max-height: 54px;
   }
   .badge-diamond-text-box {
-    width: 56px;
-    height: 56px;
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+    max-width: 52px;
+    min-height: 52px;
+    max-height: 52px;
   }
   .badge-diamond-text-box span {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
   }
   .badge-selector {
-    gap: 12px;
+    gap: 10px;
+    padding: 10px 4px;
+  }
+  .badge-item {
+    max-width: 68px;
   }
   .badge-label {
-    font-size: 0.68rem;
+    font-size: 0.65rem;
+    max-width: 68px;
   }
 }
 
