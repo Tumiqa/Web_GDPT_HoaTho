@@ -2526,9 +2526,13 @@
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
         <div>
           <h3 style="font-size:1.25rem; font-weight:700; color:#fff;">Quản Lý Đề Thi & Kiểm Tra</h3>
-          <p style="font-size:0.8rem; color:rgba(255,255,255,0.5);">Soạn đề thi trắc nghiệm, điền từ ngắn, đính kèm hình ảnh và theo dõi điểm số</p>
+          <p style="font-size:0.8rem; color:rgba(255,255,255,0.5);">Soạn đề thi trắc nghiệm, điền từ ngắn, đính kèm hình ảnh, nhập/xuất file JSON và theo dõi điểm số</p>
         </div>
-        <div style="display:flex; gap:10px;">
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="adm-btn adm-btn--secondary" id="btn-import-exam-json" style="display:flex; align-items:center; gap:8px; background:rgba(138,176,151,0.15); border-color:#8ab097; color:#8ab097;" title="Tải file JSON đề thi từ máy tính lên Server">
+            📥 Nhập đề (JSON)
+          </button>
+          <input type="file" id="input-import-exam-json" accept=".json" style="display:none;" />
           <button class="adm-btn adm-btn--secondary" id="btn-view-all-results" style="display:flex; align-items:center; gap:8px;">
             📊 Bảng Điểm Đoàn Sinh
           </button>
@@ -2544,6 +2548,14 @@
 
     document.getElementById("btn-add-exam").addEventListener("click", () => openExamEditModal(null));
     document.getElementById("btn-view-all-results").addEventListener("click", openAllResultsModal);
+
+    const btnImport = document.getElementById("btn-import-exam-json");
+    const inputImport = document.getElementById("input-import-exam-json");
+    if (btnImport && inputImport) {
+      btnImport.addEventListener("click", () => inputImport.click());
+      inputImport.addEventListener("change", handleImportExamJSON);
+    }
+
     await refreshExamsList();
   }
 
@@ -2583,12 +2595,17 @@
               <span>🎯 Đạt: ${e.pass_score}%</span>
             </div>
           </div>
-          <div style="display:flex; gap:8px;">
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="adm-btn adm-btn--secondary btn-export-exam-json" data-id="${e.id}" style="font-size:0.8rem; padding:4px 10px; background:rgba(212,168,67,0.15); border-color:#d4a843; color:#f6d365;" title="Xuất đề thi thành file JSON để lưu trữ hoặc upload lên server khác">📤 Xuất JSON</button>
             <button class="adm-btn adm-btn--secondary btn-edit-exam" data-id="${e.id}">Sửa đề</button>
             <button class="adm-btn adm-btn--danger btn-del-exam" data-id="${e.id}" style="background:rgba(239,68,68,0.2); color:#f87171; border:1px solid rgba(239,68,68,0.3);">Xóa</button>
           </div>
         </div>
       `).join('');
+
+      container.querySelectorAll('.btn-export-exam-json').forEach(btn => {
+        btn.addEventListener('click', () => exportExamToJSON(btn.dataset.id));
+      });
 
       container.querySelectorAll('.btn-edit-exam').forEach(btn => {
         btn.addEventListener('click', () => openExamEditModal(btn.dataset.id));
@@ -2610,6 +2627,88 @@
     } catch (err) {
       container.innerHTML = `<div style="color:#f87171; padding:1rem;">Lỗi tải đề thi: ${err.message}</div>`;
     }
+  }
+
+  // ===== EXPORT EXAM TO JSON FILE =====
+  async function exportExamToJSON(examId) {
+    try {
+      const res = await fetch(`${AUTH_URL}?action=get-exam&id=${encodeURIComponent(examId)}`);
+      if (!res.ok) throw new Error('Không thể tải dữ liệu đề thi');
+      const data = await res.json();
+      if (!data.exam) throw new Error('Đề thi không tồn tại');
+
+      const examData = data.exam;
+      const jsonStr = JSON.stringify(examData, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      const filename = (examData.id || 'de_thi') + '.json';
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      alert('Lỗi xuất file JSON: ' + err.message);
+    }
+  }
+
+  // ===== IMPORT EXAM FROM JSON FILE =====
+  async function handleImportExamJSON(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async function(evt) {
+      try {
+        const jsonText = evt.target.result;
+        const parsed = JSON.parse(jsonText);
+        const examList = Array.isArray(parsed) ? parsed : [parsed];
+
+        if (examList.length === 0 || !examList[0].title) {
+          throw new Error('Cấu trúc file JSON không đúng định dạng đề thi (thiếu tên đề thi hoặc câu hỏi).');
+        }
+
+        const confirmMsg = `Bạn có chắc chắn muốn nhập ${examList.length} đề thi từ file "${file.name}" vào cơ sở dữ liệu hệ thống?`;
+        if (!confirm('XÁC NHẬN NHẬP ĐỀ THI VÀO CƠ SỞ DỮ LIỆU:\n\n' + confirmMsg)) {
+          e.target.value = '';
+          return;
+        }
+
+        let successCount = 0;
+        let failCount = 0;
+
+        for (const examObj of examList) {
+          try {
+            const saveRes = await fetch(`${AUTH_URL}?action=admin-save-exam`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'same-origin',
+              body: JSON.stringify(examObj)
+            });
+            const resData = await saveRes.json();
+            if (saveRes.ok && resData.success) {
+              successCount++;
+            } else {
+              failCount++;
+            }
+          } catch (err) {
+            failCount++;
+          }
+        }
+
+        alert(`✅ Đã nhập thành công ${successCount} đề thi vào cơ sở dữ liệu!` + (failCount > 0 ? `\n⚠️ Có ${failCount} đề thi bị lỗi.` : ''));
+        await refreshExamsList();
+      } catch (err) {
+        alert('❌ Lỗi đọc file JSON: ' + err.message);
+      } finally {
+        e.target.value = '';
+      }
+    };
+
+    reader.readAsText(file, 'UTF-8');
   }
 
   // ===== OPEN EXAM EDIT MODAL (100% VIETNAMESE GOOGLE FORMS STYLE) =====
