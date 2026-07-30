@@ -17,6 +17,15 @@
   let isExamActive = false;
   let currentUserInfo = null;
 
+  function esc(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   // ===== HTML MODAL TEMPLATE =====
   function injectExamModalHTML() {
     if (document.getElementById('exam-modal-overlay')) return;
@@ -60,7 +69,13 @@
     });
 
     document.getElementById('exam-submit-btn').addEventListener('click', () => {
-      if (isExamActive) {
+      const btn = document.getElementById('exam-submit-btn');
+      const retakeId = btn ? btn.dataset.retakeExamId : null;
+      if (retakeId) {
+        // Đang ở màn hình review → Làm lại bài thi
+        delete btn.dataset.retakeExamId;
+        openExamModal(retakeId);
+      } else if (isExamActive) {
         if (confirm('Bạn có chắc chắn muốn nộp bài thi ngay bây giờ?')) {
           submitExam(false);
         }
@@ -224,6 +239,9 @@
     if (submitBtn) {
       submitBtn.disabled = false;
       submitBtn.textContent = 'Nộp bài thi';
+      submitBtn.className = 'exam-btn exam-btn--submit'; // Restore class gốc
+      submitBtn.onclick = null; // Xóa onclick cũ nếu còn sót
+      delete submitBtn.dataset.retakeExamId; // Xóa flag làm lại
     }
 
     const cancelBtn = document.getElementById('exam-cancel-btn');
@@ -237,6 +255,7 @@
     document.getElementById('exam-footer').style.display = 'flex';
     document.getElementById('exam-modal-overlay').classList.add('visible');
 
+    disableAntiCheat(); // Cleanup listeners cũ trước khi add mới (tránh chồng chất khi làm lại)
     enableAntiCheat(currentUserInfo);
     renderQuestionsForm();
     startTimer();
@@ -259,7 +278,7 @@
           opts.map(opt => `
             <label class="exam-option" data-qid="${q.id}">
               <input type="radio" name="q_${q.id}" value="${opt.originalIndex}" onchange="window.GDPTExamEngine.recordAnswer('${q.id}', ${opt.originalIndex}, 'single', this)" />
-              <span class="exam-option-text">${opt.text}</span>
+              <span class="exam-option-text">${esc(opt.text)}</span>
             </label>
           `).join('') +
           `</div>`;
@@ -269,7 +288,7 @@
           opts.map(opt => `
             <label class="exam-option" data-qid="${q.id}">
               <input type="checkbox" name="q_${q.id}" value="${opt.originalIndex}" onchange="window.GDPTExamEngine.recordAnswer('${q.id}', ${opt.originalIndex}, 'multiple', this)" />
-              <span class="exam-option-text">${opt.text}</span>
+              <span class="exam-option-text">${esc(opt.text)}</span>
             </label>
           `).join('') +
           `</div>`;
@@ -282,7 +301,7 @@
       return `
         <div class="exam-q-card" id="q-card-${q.id}">
           <div class="exam-q-num">Câu hỏi ${qNum} / ${currentQuestions.length}</div>
-          <div class="exam-q-text">${q.text}</div>
+          <div class="exam-q-text">${esc(q.text)}</div>
           ${imgHTML}
           ${optionsHTML}
         </div>
@@ -385,6 +404,10 @@
       renderReviewScreen(data.result);
     } catch (e) {
       alert('Lỗi nộp bài thi: ' + e.message);
+      // Restore exam state để user có thể thử nộp lại
+      isExamActive = true;
+      enableAntiCheat(currentUserInfo);
+      startTimer();
       if (submitBtn) {
         submitBtn.disabled = false;
         submitBtn.textContent = 'Nộp bài thi';
@@ -408,9 +431,9 @@
       submitBtn.disabled = false;
       submitBtn.textContent = 'Làm lại bài thi';
       submitBtn.className = 'exam-btn exam-btn--primary';
-      submitBtn.onclick = () => {
-        openExamModal(currentExam.id);
-      };
+      // Dùng dataset flag để addEventListener gốc biết cần gọi openExamModal
+      // thay vì gán onclick trực tiếp (tránh xung đột với addEventListener gốc)
+      submitBtn.dataset.retakeExamId = currentExam.id;
     }
 
     const passed = result.passed;
@@ -466,7 +489,7 @@
             return `
               <div class="exam-option" ${styleClass}>
                 <span>${isCorrectChoice ? '✓' : (isUserChoice ? '✕' : '•')}</span>
-                <span class="exam-option-text">${opt.text}</span>
+                <span class="exam-option-text">${esc(opt.text)}</span>
               </div>
             `;
           }).join('') +
@@ -488,7 +511,7 @@
             return `
               <div class="exam-option" ${styleClass}>
                 <span>${isCorrectChoice ? '✓' : (isUserChoice ? '✕' : '•')}</span>
-                <span class="exam-option-text">${opt.text}</span>
+                <span class="exam-option-text">${esc(opt.text)}</span>
               </div>
             `;
           }).join('') +
@@ -499,10 +522,10 @@
 
         optionsReviewHTML = `
           <p style="margin-bottom:0.4rem; color:${isCorrect ? '#8ab097' : '#ef4444'}; font-size:0.9rem;">
-            <strong>Câu trả lời của bạn:</strong> ${userText}
+            <strong>Câu trả lời của bạn:</strong> ${esc(userText)}
           </p>
           <p style="color:#8ab097; font-size:0.9rem;">
-            <strong>Đáp án chuẩn:</strong> ${accList}
+            <strong>Đáp án chuẩn:</strong> ${esc(accList)}
           </p>
         `;
       }
@@ -510,7 +533,7 @@
       const imgHTML = q.image_url ? `<img src="${q.image_url}" class="exam-q-img" alt="Hình minh họa" />` : '';
       const expHTML = b.explanation ? `
         <div class="exam-explanation">
-          <strong>Lời giải thích:</strong> ${b.explanation}
+          <strong>Lời giải thích:</strong> ${esc(b.explanation)}
         </div>
       ` : '';
 
@@ -520,7 +543,7 @@
             <span class="exam-q-num">Câu ${qNum} / ${currentQuestions.length}</span>
             <span style="font-size:0.82rem; font-weight:600; color:${isCorrect ? '#8ab097' : '#ef4444'};">${badgeText}</span>
           </div>
-          <div class="exam-q-text">${q.text}</div>
+          <div class="exam-q-text">${esc(q.text)}</div>
           ${imgHTML}
           ${optionsReviewHTML}
           ${expHTML}

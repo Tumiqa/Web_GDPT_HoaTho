@@ -57,9 +57,19 @@ switch ($action) {
             exit;
         }
 
+        // Brute-force protection: kiểm tra IP có bị khóa tạm thời không
+        $rateLimit = checkLoginRateLimit();
+        if ($rateLimit['locked']) {
+            http_response_code(429);
+            $mins = ceil($rateLimit['remaining_seconds'] / 60);
+            echo json_encode(['error' => "Tài khoản bị khóa tạm thời do nhập sai mật khẩu nhiều lần. Vui lòng thử lại sau {$mins} phút."]);
+            exit;
+        }
+
         // Lookup user
         $user = getUserByUsername($username);
         if (!$user) {
+            recordFailedLogin();
             http_response_code(401);
             echo json_encode(['error' => 'Tên đăng nhập hoặc mật khẩu không đúng']);
             exit;
@@ -67,10 +77,14 @@ switch ($action) {
 
         // Verify password (bcrypt)
         if (!verifyPassword($password, $user['password_hash'])) {
+            recordFailedLogin();
             http_response_code(401);
             echo json_encode(['error' => 'Tên đăng nhập hoặc mật khẩu không đúng']);
             exit;
         }
+
+        // Đăng nhập thành công — xóa bộ đếm brute-force
+        clearLoginAttempts();
 
         // Create session
         $token = createSession($user['id']);
@@ -504,6 +518,10 @@ switch ($action) {
         $isAdmin = ($currentUser['role'] === 'admin');
         
         $exams = listExams($nganh, $bac, $isAdmin);
+        // Strip đáp án cho user thường — Admin cần full data để quản lý đề thi
+        if (!$isAdmin) {
+            $exams = array_map('stripExamAnswers', $exams);
+        }
         echo json_encode(['exams' => $exams]);
         break;
 
@@ -526,6 +544,10 @@ switch ($action) {
             http_response_code(404);
             echo json_encode(['error' => 'Không tìm thấy đề thi']);
             exit;
+        }
+        // Strip đáp án cho user thường — Admin cần full data để quản lý đề thi
+        if ($currentUser['role'] !== 'admin') {
+            $exam = stripExamAnswers($exam);
         }
         echo json_encode(['exam' => $exam]);
         break;

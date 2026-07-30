@@ -623,6 +623,9 @@
         // Render authenticated user menu in site header
         renderHeaderUser(currentUser);
         
+        // Thông báo cho các component khác trên trang cập nhật trạng thái auth
+        window.dispatchEvent(new CustomEvent('gdpt-auth-change', { detail: { user: currentUser } }));
+        
         showToast("Đăng nhập thành công!");
       } else {
         err.textContent = data.error || "Đăng nhập thất bại";
@@ -649,6 +652,9 @@
     
     // Restore login button in site header
     renderHeaderGuest();
+    
+    // Thông báo cho các component khác trên trang cập nhật trạng thái auth
+    window.dispatchEvent(new CustomEvent('gdpt-auth-change', { detail: { user: null } }));
     
     showToast("Đã đăng xuất thành công");
   }
@@ -2138,9 +2144,14 @@
       dropdownMenu.classList.toggle("visible");
     });
 
-    document.addEventListener("click", () => {
+    // Named function để có thể remove trước khi add (tránh chồng chất listeners)
+    if (window._gdptCloseDropdown) {
+      document.removeEventListener("click", window._gdptCloseDropdown);
+    }
+    window._gdptCloseDropdown = () => {
       dropdownMenu.classList.remove("visible");
-    });
+    };
+    document.addEventListener("click", window._gdptCloseDropdown);
 
     dropdownMenu.addEventListener("click", e => e.stopPropagation());
 

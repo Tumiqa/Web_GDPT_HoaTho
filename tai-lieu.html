@@ -483,6 +483,12 @@
           }
         }
 
+        // Lắng nghe sự kiện đăng nhập/đăng xuất để tự cập nhật trang
+        window.addEventListener('gdpt-auth-change', (e) => {
+          isLoggedIn = !!(e.detail && e.detail.user);
+          render();
+        });
+
         // Init
         render();
       });

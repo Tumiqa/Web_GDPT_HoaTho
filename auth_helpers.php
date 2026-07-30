@@ -14,7 +14,7 @@ define('BCRYPT_COST', 12);
 // ===== BRUTE-FORCE PROTECTION CONFIG =====
 // Khóa tạm thời sau khi nhập sai mật khẩu liên tục
 define('MAX_LOGIN_ATTEMPTS', 5);        // Số lần thử tối đa
-define('LOCKOUT_DURATION', 15 * 60);    // Khóa 15 phút (tính bằng giây)
+define('LOCKOUT_DURATION', 2 * 60);      // Khóa 2 phút (tính bằng giây)
 define('CSRF_TOKEN_NAME', 'gdpt_csrf'); // Tên cookie chứa CSRF token
 
 // ===== DATABASE =====
@@ -780,7 +780,36 @@ function getRateLimitFile(string $ip): string {
  * Trả về: ['locked' => bool, 'attempts' => int, 'remaining_seconds' => int]
  */
 function checkLoginRateLimit(): array {
-    return ['locked' => false, 'attempts' => 0, 'remaining_seconds' => 0];
+    $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+    $file = getRateLimitFile($ip);
+
+    if (!file_exists($file)) {
+        return ['locked' => false, 'attempts' => 0, 'remaining_seconds' => 0];
+    }
+
+    $data = json_decode(file_get_contents($file), true);
+    if (!$data) {
+        return ['locked' => false, 'attempts' => 0, 'remaining_seconds' => 0];
+    }
+
+    $lockedUntil = $data['locked_until'] ?? 0;
+    $attempts = $data['attempts'] ?? 0;
+
+    if ($lockedUntil > 0 && time() < $lockedUntil) {
+        return [
+            'locked' => true,
+            'attempts' => $attempts,
+            'remaining_seconds' => $lockedUntil - time(),
+        ];
+    }
+
+    // Nếu đã hết thời gian khóa → reset bộ đếm
+    if ($lockedUntil > 0 && time() >= $lockedUntil) {
+        @unlink($file);
+        return ['locked' => false, 'attempts' => 0, 'remaining_seconds' => 0];
+    }
+
+    return ['locked' => false, 'attempts' => $attempts, 'remaining_seconds' => 0];
 }
 
 /**
@@ -993,6 +1022,26 @@ function getExamById(string $id): ?array {
     if (!$row) return null;
     $row['questions'] = json_decode($row['questions_json'], true) ?: [];
     return $row;
+}
+
+/**
+ * Strip answer keys from exam data before sending to client
+ * Removes: correct_answer, correct_answers, acceptable_answers, explanation
+ * Keeps: id, text, type, options, image_url (only what the student needs to answer)
+ */
+function stripExamAnswers(array $exam): array {
+    if (isset($exam['questions']) && is_array($exam['questions'])) {
+        $exam['questions'] = array_map(function($q) {
+            unset($q['correct_answer']);
+            unset($q['correct_answers']);
+            unset($q['acceptable_answers']);
+            unset($q['explanation']);
+            return $q;
+        }, $exam['questions']);
+    }
+    // Also remove raw JSON to prevent leaking via that field
+    unset($exam['questions_json']);
+    return $exam;
 }
 
 /**
