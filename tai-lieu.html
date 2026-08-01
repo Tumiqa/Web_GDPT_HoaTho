@@ -159,7 +159,7 @@
             <span class="subhero-tag-pill">📚 Giáo Án Tu Học</span>
             <span class="subhero-tag-pill">📜 Tài Liệu Huynh Trưởng</span>
             <span class="subhero-tag-pill">🐣 Ngành Oanh Vũ</span>
-            <span class="subhero-tag-pill">🦅 Ngành Thanh & Đang</span>
+            <span class="subhero-tag-pill">🦅 Ngành Thanh</span>
           </div>
         </div>
       </section>
@@ -286,41 +286,40 @@
           }
         });
 
-        let currentNganh = 'all';
+        let currentNganh = 'Tài liệu chung';
         let currentBac = 'all';
 
         // ===== BUILD PRIMARY FILTERS =====
-        const nganhList = ['Tất cả', 'Tài liệu chung', ...Object.keys(NGANH_BAC)];
+        const nganhList = ['Tài liệu chung', ...Object.keys(NGANH_BAC)];
         primaryFilters.innerHTML = nganhList.map((n, i) => {
-          const filter = i === 0 ? 'all' : n;
-          return `<button class="tl-filter-btn${i === 0 ? ' active' : ''}" data-filter="${filter}">${n}</button>`;
+          return `<button class="tl-filter-btn${i === 0 ? ' active' : ''}" data-filter="${n}">${n}</button>`;
         }).join('');
 
         // ===== RENDER SECONDARY FILTERS =====
         function renderSecondaryFilters(nganh) {
-          if (nganh === 'all' || nganh === 'Tài liệu chung' || !NGANH_BAC[nganh]) {
+          if (nganh === 'Tài liệu chung' || !NGANH_BAC[nganh]) {
             secondaryFilters.classList.remove('visible');
             secondaryFilters.innerHTML = '';
             return;
           }
 
           const bacs = NGANH_BAC[nganh];
-          secondaryFilters.innerHTML = `<button class="tl-filter-btn active" data-bac="all">Tất cả bậc</button>` +
-            bacs.map(b => `<button class="tl-filter-btn" data-bac="${b}">${b}</button>`).join('');
+          currentBac = bacs[0];
+          secondaryFilters.innerHTML = bacs.map((b, i) => `<button class="tl-filter-btn${i === 0 ? ' active' : ''}" data-bac="${b}">${b}</button>`).join('');
           
           secondaryFilters.setAttribute('data-nganh', nganh);
           secondaryFilters.classList.add('visible');
-
-          // Bậc click events
-          secondaryFilters.querySelectorAll('.tl-filter-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-              secondaryFilters.querySelectorAll('.tl-filter-btn').forEach(b => b.classList.remove('active'));
-              btn.classList.add('active');
-              currentBac = btn.dataset.bac;
-              render();
-            });
-          });
         }
+
+        // Bậc click events (event delegation — gắn 1 lần, luôn hoạt động)
+        secondaryFilters.addEventListener('click', e => {
+          const btn = e.target.closest('.tl-filter-btn');
+          if (!btn) return;
+          secondaryFilters.querySelectorAll('.tl-filter-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentBac = btn.dataset.bac;
+          render();
+        });
 
         // ===== PRIMARY FILTER EVENTS =====
         primaryFilters.addEventListener('click', e => {
@@ -328,7 +327,7 @@
           primaryFilters.querySelectorAll('.tl-filter-btn').forEach(b => b.classList.remove('active'));
           e.target.classList.add('active');
           currentNganh = e.target.dataset.filter;
-          currentBac = 'all';
+          currentBac = NGANH_BAC[currentNganh] ? NGANH_BAC[currentNganh][0] : 'all';
           renderSecondaryFilters(currentNganh);
           render();
         });
@@ -366,7 +365,6 @@
             if (d.access === 'internal' && !isLoggedIn) return false;
 
             // Ngành filter
-            if (currentNganh === 'all') return true;
             if (currentNganh === 'Tài liệu chung') return !d.nganh || d.nganh === 'Tài liệu chung';
             if (d.nganh !== currentNganh) return false;
 
@@ -378,7 +376,6 @@
           // Count internal docs hidden (for login prompt)
           const hiddenInternalCount = docs.filter(d => {
             if (d.access !== 'internal' || isLoggedIn) return false;
-            if (currentNganh === 'all') return true;
             if (currentNganh === 'Tài liệu chung') return !d.nganh || d.nganh === 'Tài liệu chung';
             if (d.nganh !== currentNganh) return false;
             if (currentBac !== 'all' && d.bac !== currentBac) return false;

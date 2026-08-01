@@ -14,6 +14,7 @@
   let timeRemaining = 0;
   let timeSpentSeconds = 0;
   let tabSwitches = 0;
+  let hasLeftTab = false;
   let isExamActive = false;
   let currentUserInfo = null;
 
@@ -102,7 +103,7 @@
     document.addEventListener('cut', blockEvent);
     document.addEventListener('selectstart', blockEvent);
     document.addEventListener('keydown', handleKeyLock);
-    window.addEventListener('blur', handleTabSwitch);
+    window.addEventListener('blur', handleWindowBlur);
     document.addEventListener('visibilitychange', handleVisibilityChange);
   }
 
@@ -112,7 +113,7 @@
     document.removeEventListener('cut', blockEvent);
     document.removeEventListener('selectstart', blockEvent);
     document.removeEventListener('keydown', handleKeyLock);
-    window.removeEventListener('blur', handleTabSwitch);
+    window.removeEventListener('blur', handleWindowBlur);
     document.removeEventListener('visibilitychange', handleVisibilityChange);
   }
 
@@ -138,14 +139,24 @@
     }
   }
 
-  function handleTabSwitch() {
+  // Đánh dấu khi mất focus cửa sổ (dùng blur để bắt cả trường hợp Alt+Tab)
+  function handleWindowBlur() {
     if (!isExamActive) return;
-    registerTabSwitchViolation();
+    hasLeftTab = true;
   }
 
   function handleVisibilityChange() {
     if (!isExamActive) return;
-    if (document.hidden) registerTabSwitchViolation();
+    if (document.hidden) {
+      // Rời khỏi tab → đánh dấu
+      hasLeftTab = true;
+    } else {
+      // Quay lại tab → nếu đã rời đi thì mới tính 1 lần
+      if (hasLeftTab) {
+        hasLeftTab = false;
+        registerTabSwitchViolation();
+      }
+    }
   }
 
   function registerTabSwitchViolation() {
@@ -231,6 +242,7 @@
     userAnswers = {};
     timeSpentSeconds = 0;
     tabSwitches = 0;
+    hasLeftTab = false;
     isExamActive = true;
     timeRemaining = (currentExam.time_limit_minutes || 15) * 60;
 
