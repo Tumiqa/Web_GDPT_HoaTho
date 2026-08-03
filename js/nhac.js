@@ -238,6 +238,9 @@
     playerContainer?.classList.add("playing");
     startVisualizer();
     updatePlaylistUI();
+
+    // Show Dance Floor GIF memes
+    if (window.MemeDanceFloor) window.MemeDanceFloor.show();
   }
 
   function pauseTrack() {
@@ -247,6 +250,9 @@
     playerContainer?.classList.remove("playing");
     stopVisualizer();
     updatePlaylistUI();
+
+    // Hide Dance Floor GIF memes
+    if (window.MemeDanceFloor) window.MemeDanceFloor.hide();
   }
 
   function togglePlayPause() {

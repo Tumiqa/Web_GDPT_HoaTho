@@ -873,3 +873,299 @@
   .playlist-item-duration { font-size: 0.78rem; }
   .playlist-header h2 { font-size: 1.2rem; }
 }
+
+
+/* ============================================================
+   DANCE FLOOR — GIF Meme Stage
+   ============================================================ */
+
+/* Container */
+.dance-floor {
+  margin-top: 1.5rem;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  background: linear-gradient(145deg, rgba(26, 43, 34, 0.85), rgba(12, 20, 16, 0.95));
+  border: 1px solid rgba(138, 176, 151, 0.12);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.35),
+    0 0 80px rgba(138, 176, 151, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+
+  /* Hidden by default — slide up animation */
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.5s ease,
+    transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.dance-floor.active {
+  max-height: 500px;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Stage Lights Glow */
+.dance-floor::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: 10%;
+  right: 10%;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(138, 176, 151, 0.4),
+    rgba(200, 230, 210, 0.6),
+    rgba(138, 176, 151, 0.4),
+    transparent
+  );
+  border-radius: 0 0 4px 4px;
+  filter: blur(2px);
+  z-index: 1;
+  animation: stageLightPulse 3s ease-in-out infinite;
+}
+
+@keyframes stageLightPulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* Header */
+.dance-floor-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 1.5rem 0.5rem;
+  position: relative;
+}
+
+.dance-floor-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: "Inter", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--brand-primary);
+}
+
+.dance-floor-icon {
+  font-size: 1.1rem;
+  animation: danceIconBounce 1s ease-in-out infinite alternate;
+}
+
+.dance-floor-icon:last-child {
+  animation-delay: 0.5s;
+}
+
+@keyframes danceIconBounce {
+  0% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-4px) rotate(-5deg); }
+  100% { transform: translateY(-2px) rotate(5deg); }
+}
+
+/* Toggle Button */
+.dance-floor-toggle {
+  position: absolute;
+  right: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(138, 176, 151, 0.1);
+  border: 1px solid rgba(138, 176, 151, 0.2);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--brand-primary);
+  transition: all 0.3s ease;
+}
+
+.dance-floor-toggle:hover {
+  background: rgba(138, 176, 151, 0.2);
+  transform: scale(1.1);
+}
+
+.dance-floor-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* GIF Grid */
+.dance-floor-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+}
+
+/* GIF Slot */
+.dance-floor-slot {
+  position: relative;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(138, 176, 151, 0.08);
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s ease;
+  animation: slotEntrance 0.5s ease-out backwards;
+}
+
+.dance-floor-slot:nth-child(1) { animation-delay: 0.1s; }
+.dance-floor-slot:nth-child(2) { animation-delay: 0.2s; }
+.dance-floor-slot:nth-child(3) { animation-delay: 0.3s; }
+.dance-floor-slot:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes slotEntrance {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Bounce animation for slots */
+.dance-floor.active .dance-floor-slot {
+  animation: slotEntrance 0.5s ease-out backwards, slotBounce 2s ease-in-out infinite;
+}
+
+.dance-floor.active .dance-floor-slot:nth-child(1) { animation-delay: 0.1s, 0s; }
+.dance-floor.active .dance-floor-slot:nth-child(2) { animation-delay: 0.2s, 0.5s; }
+.dance-floor.active .dance-floor-slot:nth-child(3) { animation-delay: 0.3s, 1s; }
+.dance-floor.active .dance-floor-slot:nth-child(4) { animation-delay: 0.4s, 1.5s; }
+
+@keyframes slotBounce {
+  0%, 100% { transform: translateY(0); }
+  25% { transform: translateY(-6px); }
+  75% { transform: translateY(3px); }
+}
+
+/* Hover glow */
+.dance-floor-slot:hover {
+  border-color: rgba(138, 176, 151, 0.3);
+  box-shadow: 0 0 20px rgba(138, 176, 151, 0.15);
+  transform: translateY(-4px) scale(1.03);
+}
+
+/* GIF Image */
+.dance-floor-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.dance-floor-slot:hover img {
+  transform: scale(1.08);
+}
+
+/* Fade transition when swapping GIF */
+.dance-floor-slot.fading img {
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+/* Label */
+.dance-floor-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0.5rem;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: all 0.3s ease;
+}
+
+.dance-floor-slot:hover .dance-floor-label {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Footer */
+.dance-floor-footer {
+  padding: 0.25rem 1.5rem 0.75rem;
+  text-align: center;
+  font-size: 0.7rem;
+  color: rgba(207, 204, 192, 0.3);
+  letter-spacing: 0.5px;
+}
+
+/* ===== DANCE FLOOR RESPONSIVE ===== */
+@media (max-width: 991px) {
+  .dance-floor-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .dance-floor {
+    margin-top: 1rem;
+    border-radius: 1rem;
+  }
+
+  .dance-floor-header {
+    padding: 0.75rem 1rem 0.4rem;
+  }
+
+  .dance-floor-title {
+    font-size: 0.75rem;
+    letter-spacing: 1.5px;
+  }
+
+  .dance-floor-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+  }
+
+  .dance-floor-footer {
+    padding: 0.2rem 1rem 0.5rem;
+    font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .dance-floor-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .dance-floor-title {
+    font-size: 0.7rem;
+  }
+
+  .dance-floor-toggle {
+    width: 32px;
+    height: 32px;
+  }
+
+  .dance-floor-toggle svg {
+    width: 14px;
+    height: 14px;
+  }
+}
