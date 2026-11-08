@@ -15,6 +15,7 @@ desktop.ini
 *.swp
 *.zip
 temp_music/
+temp_music_batch2/
 
 # Auth database (sensitive — never commit)
 data/auth.db

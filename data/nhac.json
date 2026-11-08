@@ -1,10 +1,38 @@
 [
     {
+        "id": 89,
+        "title": "15 Phút Đồng Hồ",
+        "artist": "Nhạc GĐPT",
+        "src": "https://archive.org/download/list_nhac_web_3/15%20Ph%C3%BAt%20%C4%90%E1%BB%93ng%20H%E1%BB%93%20-%20Nh%E1%BA%A1c%20G%C4%90PT.mp3",
+        "duration": "0:54"
+    },
+    {
+        "id": 120,
+        "title": "18 Thôn Vườn Trầu",
+        "artist": "Minh Đặng",
+        "src": "https://archive.org/download/list_nhac_web_3/18%20Th%C3%B4n%20V%C6%B0%E1%BB%9Dn%20Tr%E1%BA%A7u%20-%20Minh%20%C4%90%E1%BA%B7ng.mp3",
+        "duration": "5:13"
+    },
+    {
         "id": 9,
         "title": "Anh Em Ta Về",
         "artist": "Giuse Tiến Lộc",
         "src": "https://archive.org/download/list_nhac_web_1/ANH%20EM%20TA%20V%E1%BB%80%20-%20TI%E1%BA%BEN%20L%E1%BB%98C%281%29.mp3",
         "duration": "2:46"
+    },
+    {
+        "id": 114,
+        "title": "Anôma",
+        "artist": "Quốc Nghĩa",
+        "src": "https://archive.org/download/list_nhac_web_3/An%C3%B4ma%20-%20Qu%E1%BB%91c%20Ngh%C4%A9a.mp3",
+        "duration": "3:34"
+    },
+    {
+        "id": 81,
+        "title": "Anôma - Ni Liên",
+        "artist": "Nhạc GĐPT",
+        "src": "https://archive.org/download/list_nhac_web_3/An%C3%B4ma%20-%20Ni%20Li%C3%AAn%20-%20Nh%E1%BA%A1c%20G%C4%90PT.mp3",
+        "duration": "1:03"
     },
     {
         "id": 39,
@@ -14,6 +42,13 @@
         "duration": "3:40"
     },
     {
+        "id": 76,
+        "title": "Bài Ca Lửa Dũng",
+        "artist": "Nhạc GĐPT",
+        "src": "https://archive.org/download/list_nhac_web_3/B%C3%A0i%20Ca%20L%E1%BB%ADa%20D%C5%A9ng%20-%20Nh%E1%BA%A1c%20G%C4%90PT.mp3",
+        "duration": "3:57"
+    },
+    {
         "id": 14,
         "title": "Bài Ca Tạm Biệt",
         "artist": "Viết Chung",
@@ -21,11 +56,74 @@
         "duration": "4:17"
     },
     {
+        "id": 143,
+        "title": "Bàn Tay Yêu Thương",
+        "artist": "Mỹ Dung",
+        "src": "https://archive.org/download/list_nhac_web_3/B%C3%A0n%20Tay%20Y%C3%AAu%20Th%C6%B0%C6%A1ng%20-%20M%E1%BB%B9%20Dung.mp3",
+        "duration": "1:24"
+    },
+    {
+        "id": 135,
+        "title": "Bác Gia Trưởng",
+        "artist": "Mai Thảo",
+        "src": "https://archive.org/download/list_nhac_web_3/B%C3%A1c%20Gia%20Tr%C6%B0%E1%BB%9Fng%20-%20Mai%20Th%E1%BA%A3o.mp3",
+        "duration": "1:29"
+    },
+    {
+        "id": 157,
+        "title": "Báo Ơn Cha Mẹ",
+        "artist": "Như Hương",
+        "src": "https://archive.org/download/list_nhac_web_3/B%C3%A1o%20%C6%A0n%20Cha%20M%E1%BA%B9%20-%20Nh%C6%B0%20H%C6%B0%C6%A1ng.mp3",
+        "duration": "3:55"
+    },
+    {
+        "id": 144,
+        "title": "Bây Giờ - Ở Ðây",
+        "artist": "Mỹ Dung",
+        "src": "https://archive.org/download/list_nhac_web_3/B%C3%A2y%20Gi%E1%BB%9D%20-%20%E1%BB%9E%20%C3%90%C3%A2y%20-%20M%E1%BB%B9%20Dung.mp3",
+        "duration": "1:54"
+    },
+    {
+        "id": 116,
+        "title": "Bên Dòng Anoma",
+        "artist": "Thùy Dương",
+        "src": "https://archive.org/download/list_nhac_web_3/B%C3%AAn%20D%C3%B2ng%20Anoma%20-%20Th%C3%B9y%20D%C6%B0%C6%A1ng.mp3",
+        "duration": "4:53"
+    },
+    {
         "id": 40,
         "title": "Bên Đời Gian Khó Có Nhau",
         "artist": "Nguyên Định - Bửu Ấn",
         "src": "https://archive.org/download/list_nhac_web_3/B%C3%AAn%20%C4%90%E1%BB%9Di%20Gian%20Kh%C3%B3%20C%C3%B3%20Nhau%20-%20Nguy%C3%AAn%20%C4%90%E1%BB%8Bnh%20-%20B%E1%BB%ADu%20%E1%BA%A4n.mp3",
         "duration": "3:37"
+    },
+    {
+        "id": 158,
+        "title": "Bông Hồng Cài Áo",
+        "artist": "Ngọc Trang",
+        "src": "https://archive.org/download/list_nhac_web_3/B%C3%B4ng%20H%E1%BB%93ng%20C%C3%A0i%20%C3%81o%20-%20Ng%E1%BB%8Dc%20Trang.mp3",
+        "duration": "6:00"
+    },
+    {
+        "id": 166,
+        "title": "Búp Sen Non",
+        "artist": "Khánh Ngọc",
+        "src": "https://archive.org/download/list_nhac_web_3/B%C3%BAp%20Sen%20Non%20-%20Kh%C3%A1nh%20Ng%E1%BB%8Dc.mp3",
+        "duration": "2:51"
+    },
+    {
+        "id": 145,
+        "title": "Bước Xây Ðời",
+        "artist": "Tuấn Huy",
+        "src": "https://archive.org/download/list_nhac_web_3/B%C6%B0%E1%BB%9Bc%20X%C3%A2y%20%C3%90%E1%BB%9Di%20-%20Tu%E1%BA%A5n%20Huy.mp3",
+        "duration": "2:27"
+    },
+    {
+        "id": 90,
+        "title": "Bạn Ơi Có Nhớ",
+        "artist": "Nhạc GĐPT",
+        "src": "https://archive.org/download/list_nhac_web_3/B%E1%BA%A1n%20%C6%A0i%20C%C3%B3%20Nh%E1%BB%9B%20-%20Nh%E1%BA%A1c%20G%C4%90PT.mp3",
+        "duration": "3:19"
     },
     {
         "id": 41,
@@ -49,6 +147,13 @@
         "duration": "2:10"
     },
     {
+        "id": 156,
+        "title": "Ca Ngợi Đấng Thế Tôn",
+        "artist": "Chánh Đức",
+        "src": "https://archive.org/download/list_nhac_web_3/Ca%20Ng%E1%BB%A3i%20%C4%90%E1%BA%A5ng%20Th%E1%BA%BF%20T%C3%B4n%20-%20Ch%C3%A1nh%20%C4%90%E1%BB%A9c.mp3",
+        "duration": "3:52"
+    },
+    {
         "id": 29,
         "title": "Chim Bốn Phương",
         "artist": "Hoàng Cang",
@@ -56,11 +161,25 @@
         "duration": "1:34"
     },
     {
+        "id": 130,
+        "title": "Cho",
+        "artist": "GĐPT Đức Tâm",
+        "src": "https://archive.org/download/list_nhac_web_3/Cho%20-%20G%C4%90PT%20%C4%90%E1%BB%A9c%20T%C3%A2m.mp3",
+        "duration": "3:35"
+    },
+    {
         "id": 27,
         "title": "Cho Con Đến Với Gia Đình",
         "artist": "Minh Sơn",
         "src": "https://archive.org/download/list_nhac_web_1/CHO%20CON%20%C4%90%E1%BA%BEN%20V%E1%BB%9AI%20GIA%20%C4%90%C3%8CNH%20-%20MINH%20S%C6%A0N.mp3",
         "duration": "1:50"
+    },
+    {
+        "id": 117,
+        "title": "Cho Em Một Lối Về",
+        "artist": "Phương Trinh",
+        "src": "https://archive.org/download/list_nhac_web_3/Cho%20Em%20M%E1%BB%99t%20L%E1%BB%91i%20V%E1%BB%81%20-%20Ph%C6%B0%C6%A1ng%20Trinh.mp3",
+        "duration": "6:01"
     },
     {
         "id": 43,
@@ -84,6 +203,62 @@
         "duration": "1:05"
     },
     {
+        "id": 146,
+        "title": "Chùa Em",
+        "artist": "Hạnh Nguyên",
+        "src": "https://archive.org/download/list_nhac_web_3/Ch%C3%B9a%20Em%20-%20H%E1%BA%A1nh%20Nguy%C3%AAn.mp3",
+        "duration": "2:50"
+    },
+    {
+        "id": 96,
+        "title": "Chị đoàn em",
+        "artist": "Chánh Đức",
+        "src": "https://archive.org/download/list_nhac_web_3/Ch%E1%BB%8B%20%C4%91o%C3%A0n%20em%20-%20Ch%C3%A1nh%20%C4%90%E1%BB%A9c.mp3",
+        "duration": "1:36"
+    },
+    {
+        "id": 92,
+        "title": "Càng Đông Càng Vui",
+        "artist": "Nhạc GĐPT",
+        "src": "https://archive.org/download/list_nhac_web_3/C%C3%A0ng%20%C4%90%C3%B4ng%20C%C3%A0ng%20Vui%20-%20Nh%E1%BA%A1c%20G%C4%90PT.mp3",
+        "duration": "0:42"
+    },
+    {
+        "id": 91,
+        "title": "Cái Nhà Của Ta",
+        "artist": "Nhạc GĐPT",
+        "src": "https://archive.org/download/list_nhac_web_3/C%C3%A1i%20Nh%C3%A0%20C%E1%BB%A7a%20Ta%20-%20Nh%E1%BA%A1c%20G%C4%90PT.mp3",
+        "duration": "0:36"
+    },
+    {
+        "id": 93,
+        "title": "Còi Họp Đoàn",
+        "artist": "Nhạc GĐPT",
+        "src": "https://archive.org/download/list_nhac_web_3/C%C3%B2i%20H%E1%BB%8Dp%20%C4%90o%C3%A0n%20-%20Nh%E1%BA%A1c%20G%C4%90PT.mp3",
+        "duration": "0:35"
+    },
+    {
+        "id": 128,
+        "title": "Cùng hát nhé",
+        "artist": "GĐPT Đức Tâm",
+        "src": "https://archive.org/download/list_nhac_web_3/C%C3%B9ng%20h%C3%A1t%20nh%C3%A9%20-%20G%C4%90PT%20%C4%90%E1%BB%A9c%20T%C3%A2m.mp3",
+        "duration": "3:29"
+    },
+    {
+        "id": 136,
+        "title": "Cảm Ơn Cha",
+        "artist": "Nhạc GĐPT",
+        "src": "https://archive.org/download/list_nhac_web_3/C%E1%BA%A3m%20%C6%A0n%20Cha%20-%20Nh%E1%BA%A1c%20G%C4%90PT.mp3",
+        "duration": "1:58"
+    },
+    {
+        "id": 148,
+        "title": "Dâng Hoa",
+        "artist": "Chánh Đức",
+        "src": "https://archive.org/download/list_nhac_web_3/D%C3%A2ng%20Hoa%20-%20Ch%C3%A1nh%20%C4%90%E1%BB%A9c.mp3",
+        "duration": "2:52"
+    },
+    {
         "id": 44,
         "title": "Dây Thân Ái",
         "artist": "Nhạc GĐPT",
@@ -96,6 +271,20 @@
         "artist": "Hoàng Cang",
         "src": "https://archive.org/download/01-hon-lua-thieng/06_DongANoMa_ThanhCaTyLa.mp3",
         "duration": "2:55"
+    },
+    {
+        "id": 113,
+        "title": "Dòng A Nô Ma &amp, Thành Ca Tỳ La",
+        "artist": "Nhạc GĐPT",
+        "src": "https://archive.org/download/list_nhac_web_3/D%C3%B2ng%20A%20N%C3%B4%20Ma%20%26amp%2C%20Th%C3%A0nh%20Ca%20T%E1%BB%B3%20La%20-%20Nh%E1%BA%A1c%20G%C4%90PT.mp3",
+        "duration": "2:11"
+    },
+    {
+        "id": 99,
+        "title": "Em Đến Chùa",
+        "artist": "Nhạc GĐPT",
+        "src": "https://archive.org/download/list_nhac_web_3/Em%20%C4%90%E1%BA%BFn%20Ch%C3%B9a%20-%20Nh%E1%BA%A1c%20G%C4%90PT.mp3",
+        "duration": "2:25"
     },
     {
         "id": 10,
@@ -126,11 +315,46 @@
         "duration": "4:16"
     },
     {
+        "id": 75,
+        "title": "Gọi Lửa",
+        "artist": "Nhạc GĐPT",
+        "src": "https://archive.org/download/list_nhac_web_3/G%E1%BB%8Di%20L%E1%BB%ADa%20-%20Nh%E1%BA%A1c%20G%C4%90PT.mp3",
+        "duration": "0:53"
+    },
+    {
         "id": 46,
         "title": "Gởi Người Áo Lam",
         "artist": "Bửu Ấn - Anh Cả Nguyên Tín",
         "src": "https://archive.org/download/list_nhac_web_3/G%E1%BB%9Fi%20Ng%C6%B0%E1%BB%9Di%20%C3%81o%20Lam%20-%20B%E1%BB%ADu%20%E1%BA%A4n%20-%20Anh%20C%E1%BA%A3%20Nguy%C3%AAn%20T%C3%ADn.mp3",
         "duration": "3:05"
+    },
+    {
+        "id": 104,
+        "title": "Hai Con Thằn Lằn Con",
+        "artist": "Xuân Mai",
+        "src": "https://archive.org/download/list_nhac_web_3/Hai%20Con%20Th%E1%BA%B1n%20L%E1%BA%B1n%20Con%20-%20Xu%C3%A2n%20Mai.mp3",
+        "duration": "3:05"
+    },
+    {
+        "id": 105,
+        "title": "Hay Quá Là Hay",
+        "artist": "Nhạc GĐPT",
+        "src": "https://archive.org/download/list_nhac_web_3/Hay%20Qu%C3%A1%20L%C3%A0%20Hay%20-%20Nh%E1%BA%A1c%20G%C4%90PT.mp3",
+        "duration": "0:26"
+    },
+    {
+        "id": 165,
+        "title": "Hoa Đăng Mừng Lễ Phật",
+        "artist": "Nhật Huy - Hiếu Ngọc",
+        "src": "https://archive.org/download/list_nhac_web_3/Hoa%20%C4%90%C4%83ng%20M%E1%BB%ABng%20L%E1%BB%85%20Ph%E1%BA%ADt%20-%20Nh%E1%BA%ADt%20Huy%20-%20Hi%E1%BA%BFu%20Ng%E1%BB%8Dc.mp3",
+        "duration": "5:08"
+    },
+    {
+        "id": 162,
+        "title": "Hoa Đăng Mừng Phật Đản",
+        "artist": "Hoàng Thơ - Nhật Túy",
+        "src": "https://archive.org/download/list_nhac_web_3/Hoa%20%C4%90%C4%83ng%20M%E1%BB%ABng%20Ph%E1%BA%ADt%20%C4%90%E1%BA%A3n%20-%20Ho%C3%A0ng%20Th%C6%A1%20-%20Nh%E1%BA%ADt%20T%C3%BAy.mp3",
+        "duration": "3:23"
     },
     {
         "id": 47,
@@ -145,6 +369,13 @@
         "artist": "Nhạc sưu tầm",
         "src": "https://archive.org/download/list_nhac_web_2/%5BNh%E1%BA%A1cG%C4%90PT4.0%5D%20H%C3%81T%20TO%20H%C3%81T%20NH%E1%BB%8E%20-%20L%C3%8A%20QU%E1%BB%90C%20TH%E1%BA%AENG.mp3",
         "duration": "1:23"
+    },
+    {
+        "id": 100,
+        "title": "Hôm Nay Họp Đoàn",
+        "artist": "Nhạc GĐPT",
+        "src": "https://archive.org/download/list_nhac_web_3/H%C3%B4m%20Nay%20H%E1%BB%8Dp%20%C4%90o%C3%A0n%20-%20Nh%E1%BA%A1c%20G%C4%90PT.mp3",
+        "duration": "1:56"
     },
     {
         "id": 48,
@@ -189,6 +420,20 @@
         "duration": "2:25"
     },
     {
+        "id": 159,
+        "title": "Khúc Ca Dâng Mẹ",
+        "artist": "Như Hương",
+        "src": "https://archive.org/download/list_nhac_web_3/Kh%C3%BAc%20Ca%20D%C3%A2ng%20M%E1%BA%B9%20-%20Nh%C6%B0%20H%C6%B0%C6%A1ng.mp3",
+        "duration": "5:47"
+    },
+    {
+        "id": 121,
+        "title": "Khúc Ca Mùa Thu",
+        "artist": "Phương Trinh",
+        "src": "https://archive.org/download/list_nhac_web_3/Kh%C3%BAc%20Ca%20M%C3%B9a%20Thu%20-%20Ph%C6%B0%C6%A1ng%20Trinh.mp3",
+        "duration": "6:06"
+    },
+    {
         "id": 51,
         "title": "Khúc Hát Chu Niên",
         "artist": "Tịnh Minh",
@@ -210,11 +455,53 @@
         "duration": "1:52"
     },
     {
+        "id": 129,
+        "title": "Lam chiều",
+        "artist": "GĐPT Đức Tâm",
+        "src": "https://archive.org/download/list_nhac_web_3/Lam%20chi%E1%BB%81u%20-%20G%C4%90PT%20%C4%90%E1%BB%A9c%20T%C3%A2m.mp3",
+        "duration": "4:20"
+    },
+    {
+        "id": 98,
+        "title": "Liên khúc",
+        "artist": "Chánh Đức",
+        "src": "https://archive.org/download/list_nhac_web_3/Li%C3%AAn%20kh%C3%BAc%20-%20Ch%C3%A1nh%20%C4%90%E1%BB%A9c.mp3",
+        "duration": "2:44"
+    },
+    {
         "id": 53,
         "title": "Liên Khúc Vu Lan",
         "artist": "Gđpt",
         "src": "https://archive.org/download/list_nhac_web_3/Li%C3%AAn%20Kh%C3%BAc%20Vu%20Lan%20-%20G%C4%91pt.mp3",
         "duration": "3:39"
+    },
+    {
+        "id": 147,
+        "title": "Lòng Hiếu Chim Oanh Vũ",
+        "artist": "Chánh Đức",
+        "src": "https://archive.org/download/list_nhac_web_3/L%C3%B2ng%20Hi%E1%BA%BFu%20Chim%20Oanh%20V%C5%A9%20-%20Ch%C3%A1nh%20%C4%90%E1%BB%A9c.mp3",
+        "duration": "2:21"
+    },
+    {
+        "id": 149,
+        "title": "Lòng Mẹ",
+        "artist": "Chánh Đức",
+        "src": "https://archive.org/download/list_nhac_web_3/L%C3%B2ng%20M%E1%BA%B9%20-%20Ch%C3%A1nh%20%C4%90%E1%BB%A9c.mp3",
+        "duration": "4:02"
+    },
+    {
+        "id": 84,
+        "title": "Lời Giới Thiệu",
+        "artist": "Thy Mai - Lê Minh",
+        "src": "https://archive.org/download/list_nhac_web_3/L%E1%BB%9Di%20Gi%E1%BB%9Bi%20Thi%E1%BB%87u%20-%20Thy%20Mai%20-%20L%C3%AA%20Minh.mp3",
+        "duration": "5:13"
+    },
+    {
+        "id": 127,
+        "title": "Lời mở đầu",
+        "artist": "GĐPT Đức Tâm",
+        "src": "https://archive.org/download/list_nhac_web_3/L%E1%BB%9Di%20m%E1%BB%9F%20%C4%91%E1%BA%A7u%20-%20G%C4%90PT%20%C4%90%E1%BB%A9c%20T%C3%A2m.mp3",
+        "duration": "2:36"
     },
     {
         "id": 54,
@@ -224,11 +511,60 @@
         "duration": "2:57"
     },
     {
+        "id": 150,
+        "title": "Lời Nguyện Báo Ân",
+        "artist": "Chánh Đức",
+        "src": "https://archive.org/download/list_nhac_web_3/L%E1%BB%9Di%20Nguy%E1%BB%87n%20B%C3%A1o%20%C3%82n%20-%20Ch%C3%A1nh%20%C4%90%E1%BB%A9c.mp3",
+        "duration": "2:23"
+    },
+    {
+        "id": 110,
+        "title": "Lửa Dũng",
+        "artist": "Lưu Ly",
+        "src": "https://archive.org/download/list_nhac_web_3/L%E1%BB%ADa%20D%C5%A9ng%20-%20L%C6%B0u%20Ly.mp3",
+        "duration": "4:03"
+    },
+    {
+        "id": 85,
+        "title": "Lửa Từ Bi",
+        "artist": "Thúy Vinh",
+        "src": "https://archive.org/download/list_nhac_web_3/L%E1%BB%ADa%20T%E1%BB%AB%20Bi%20-%20Th%C3%BAy%20Vinh.mp3",
+        "duration": "11:00"
+    },
+    {
+        "id": 137,
+        "title": "Lửa Đêm Gần Tàn",
+        "artist": "Tuấn Huy",
+        "src": "https://archive.org/download/list_nhac_web_3/L%E1%BB%ADa%20%C4%90%C3%AAm%20G%E1%BA%A7n%20T%C3%A0n%20-%20Tu%E1%BA%A5n%20Huy.mp3",
+        "duration": "2:52"
+    },
+    {
+        "id": 74,
+        "title": "Mang Lửa Về Tim",
+        "artist": "Hồng Thắm - Tuấn Dương",
+        "src": "https://archive.org/download/list_nhac_web_3/Mang%20L%E1%BB%ADa%20V%E1%BB%81%20Tim%20-%20H%E1%BB%93ng%20Th%E1%BA%AFm%20-%20Tu%E1%BA%A5n%20D%C6%B0%C6%A1ng.mp3",
+        "duration": "2:00"
+    },
+    {
         "id": 55,
         "title": "Màu Lam Và Sen Trắng",
         "artist": "Nhạc Sưu Tầm",
         "src": "https://archive.org/download/list_nhac_web_3/M%C3%A0u%20Lam%20V%C3%A0%20Sen%20Tr%E1%BA%AFng%20-%20Nh%E1%BA%A1c%20S%C6%B0u%20T%E1%BA%A7m.mp3",
         "duration": "2:37"
+    },
+    {
+        "id": 138,
+        "title": "Mái Nhà Lam",
+        "artist": "Tuấn Huy",
+        "src": "https://archive.org/download/list_nhac_web_3/M%C3%A1i%20Nh%C3%A0%20Lam%20-%20Tu%E1%BA%A5n%20Huy.mp3",
+        "duration": "2:09"
+    },
+    {
+        "id": 163,
+        "title": "Mùa Hoa Ưu Đàm Nở",
+        "artist": "Thu Cúc",
+        "src": "https://archive.org/download/list_nhac_web_3/M%C3%B9a%20Hoa%20%C6%AFu%20%C4%90%C3%A0m%20N%E1%BB%9F%20-%20Thu%20C%C3%BAc.mp3",
+        "duration": "4:33"
     },
     {
         "id": 56,
@@ -238,11 +574,46 @@
         "duration": "3:13"
     },
     {
+        "id": 160,
+        "title": "Mẹ",
+        "artist": "Mike Wyne",
+        "src": "https://archive.org/download/list_nhac_web_3/M%E1%BA%B9%20-%20Mike%20Wyne.mp3",
+        "duration": "5:08"
+    },
+    {
+        "id": 161,
+        "title": "Mẹ Trong Lòng Người Đi",
+        "artist": "Tốp Ca",
+        "src": "https://archive.org/download/list_nhac_web_3/M%E1%BA%B9%20Trong%20L%C3%B2ng%20Ng%C6%B0%E1%BB%9Di%20%C4%90i%20-%20T%E1%BB%91p%20Ca.mp3",
+        "duration": "4:46"
+    },
+    {
+        "id": 139,
+        "title": "Mẹ Yêu",
+        "artist": "Bảo Yến",
+        "src": "https://archive.org/download/list_nhac_web_3/M%E1%BA%B9%20Y%C3%AAu%20-%20B%E1%BA%A3o%20Y%E1%BA%BFn.mp3",
+        "duration": "2:20"
+    },
+    {
         "id": 38,
         "title": "Một Áo Lam Trăm Áo Lam",
         "artist": "Nhạc sưu tầm",
         "src": "https://archive.org/download/list_nhac_web_1/M%E1%BB%98T%20%C3%81O%20LAM%20TR%C4%82M%20%C3%81O%20LAM%20-%20NH%E1%BA%A0C%20S%C6%AFU%20T%E1%BA%A6M.mp3",
         "duration": "2:13"
+    },
+    {
+        "id": 106,
+        "title": "Mừng Anh Mới Đến",
+        "artist": "Nhạc GĐPT",
+        "src": "https://archive.org/download/list_nhac_web_3/M%E1%BB%ABng%20Anh%20M%E1%BB%9Bi%20%C4%90%E1%BA%BFn%20-%20Nh%E1%BA%A1c%20G%C4%90PT.mp3",
+        "duration": "0:48"
+    },
+    {
+        "id": 95,
+        "title": "Mừng anh đến",
+        "artist": "Chánh Đức",
+        "src": "https://archive.org/download/list_nhac_web_3/M%E1%BB%ABng%20anh%20%C4%91%E1%BA%BFn%20-%20Ch%C3%A1nh%20%C4%90%E1%BB%A9c.mp3",
+        "duration": "1:36"
     },
     {
         "id": 33,
@@ -252,11 +623,46 @@
         "duration": "2:20"
     },
     {
+        "id": 153,
+        "title": "Mừng Khánh Đản",
+        "artist": "Chánh Đức",
+        "src": "https://archive.org/download/list_nhac_web_3/M%E1%BB%ABng%20Kh%C3%A1nh%20%C4%90%E1%BA%A3n%20-%20Ch%C3%A1nh%20%C4%90%E1%BB%A9c.mp3",
+        "duration": "1:14"
+    },
+    {
+        "id": 155,
+        "title": "Mừng Ngày Phật Đản",
+        "artist": "Chánh Đức",
+        "src": "https://archive.org/download/list_nhac_web_3/M%E1%BB%ABng%20Ng%C3%A0y%20Ph%E1%BA%ADt%20%C4%90%E1%BA%A3n%20-%20Ch%C3%A1nh%20%C4%90%E1%BB%A9c.mp3",
+        "duration": "2:54"
+    },
+    {
+        "id": 94,
+        "title": "Mừng thầy đến",
+        "artist": "Chánh Đức",
+        "src": "https://archive.org/download/list_nhac_web_3/M%E1%BB%ABng%20th%E1%BA%A7y%20%C4%91%E1%BA%BFn%20-%20Ch%C3%A1nh%20%C4%90%E1%BB%A9c.mp3",
+        "duration": "1:40"
+    },
+    {
         "id": 57,
         "title": "Mừng Vu Lan Về",
         "artist": "Trần Nhật Thành",
         "src": "https://archive.org/download/list_nhac_web_3/M%E1%BB%ABng%20Vu%20Lan%20V%E1%BB%81%20-%20Tr%E1%BA%A7n%20Nh%E1%BA%ADt%20Th%C3%A0nh.mp3",
         "duration": "2:47"
+    },
+    {
+        "id": 141,
+        "title": "Nghe Còi",
+        "artist": "Quốc Dũng",
+        "src": "https://archive.org/download/list_nhac_web_3/Nghe%20C%C3%B2i%20-%20Qu%E1%BB%91c%20D%C5%A9ng.mp3",
+        "duration": "0:53"
+    },
+    {
+        "id": 119,
+        "title": "Nghĩ Về 30 Năm",
+        "artist": "Tấn Danh",
+        "src": "https://archive.org/download/list_nhac_web_3/Ngh%C4%A9%20V%E1%BB%81%2030%20N%C4%83m%20-%20T%E1%BA%A5n%20Danh.mp3",
+        "duration": "5:01"
     },
     {
         "id": 58,
@@ -287,11 +693,25 @@
         "duration": "4:11"
     },
     {
+        "id": 154,
+        "title": "Ngày Đẹp Trần Gian",
+        "artist": "Chánh Đức",
+        "src": "https://archive.org/download/list_nhac_web_3/Ng%C3%A0y%20%C4%90%E1%BA%B9p%20Tr%E1%BA%A7n%20Gian%20-%20Ch%C3%A1nh%20%C4%90%E1%BB%A9c.mp3",
+        "duration": "4:43"
+    },
+    {
         "id": 60,
         "title": "Ngọn Đuốc Tâm Minh",
         "artist": "Đồng Trí",
         "src": "https://archive.org/download/list_nhac_web_3/Ng%E1%BB%8Dn%20%C4%90u%E1%BB%91c%20T%C3%A2m%20Minh%20-%20%C4%90%E1%BB%93ng%20Tr%C3%AD.mp3",
         "duration": "4:38"
+    },
+    {
+        "id": 77,
+        "title": "Ngồi Quanh Lửa",
+        "artist": "Nhạc GĐPT",
+        "src": "https://archive.org/download/list_nhac_web_3/Ng%E1%BB%93i%20Quanh%20L%E1%BB%ADa%20-%20Nh%E1%BA%A1c%20G%C4%90PT.mp3",
+        "duration": "3:48"
     },
     {
         "id": 3,
@@ -315,6 +735,13 @@
         "duration": "1:23"
     },
     {
+        "id": 140,
+        "title": "Này Em",
+        "artist": "Tấn Đạt",
+        "src": "https://archive.org/download/list_nhac_web_3/N%C3%A0y%20Em%20-%20T%E1%BA%A5n%20%C4%90%E1%BA%A1t.mp3",
+        "duration": "1:38"
+    },
+    {
         "id": 12,
         "title": "Phật Giáo Việt Nam",
         "artist": "Lê Cao Phan",
@@ -322,11 +749,67 @@
         "duration": "2:55"
     },
     {
+        "id": 126,
+        "title": "Phật Giáo Việt Nam - Không Lời",
+        "artist": "Ban Văn Hóa THPG Tp.HCM",
+        "src": "https://archive.org/download/list_nhac_web_3/Ph%E1%BA%ADt%20Gi%C3%A1o%20Vi%E1%BB%87t%20Nam%20-%20Kh%C3%B4ng%20L%E1%BB%9Di%20-%20Ban%20V%C4%83n%20H%C3%B3a%20THPG%20Tp.HCM.mp3",
+        "duration": "2:27"
+    },
+    {
+        "id": 122,
+        "title": "Phật Giáo Việt Nam - Đạo Ca",
+        "artist": "Hoà âm: Đặng Ngọc Phú Hòa - Trương Ngọc Chiến",
+        "src": "https://archive.org/download/list_nhac_web_3/Ph%E1%BA%ADt%20Gi%C3%A1o%20Vi%E1%BB%87t%20Nam%20-%20%C4%90%E1%BA%A1o%20Ca%20-%20Ho%C3%A0%20%C3%A2m_%20%C4%90%E1%BA%B7ng%20Ng%E1%BB%8Dc%20Ph%C3%BA%20H%C3%B2a%20-%20Tr%C6%B0%C6%A1ng%20Ng%E1%BB%8Dc%20Chi%E1%BA%BFn.mp3",
+        "duration": "1:39"
+    },
+    {
+        "id": 123,
+        "title": "Phật Giáo Việt Nam - Đạo Thiều",
+        "artist": "Hoà âm: Đặng Ngọc Phú Hòa - Trương Ngọc Chiến",
+        "src": "https://archive.org/download/list_nhac_web_3/Ph%E1%BA%ADt%20Gi%C3%A1o%20Vi%E1%BB%87t%20Nam%20-%20%C4%90%E1%BA%A1o%20Thi%E1%BB%81u%20-%20Ho%C3%A0%20%C3%A2m_%20%C4%90%E1%BA%B7ng%20Ng%E1%BB%8Dc%20Ph%C3%BA%20H%C3%B2a%20-%20Tr%C6%B0%C6%A1ng%20Ng%E1%BB%8Dc%20Chi%E1%BA%BFn.mp3",
+        "duration": "1:38"
+    },
+    {
+        "id": 132,
+        "title": "Phật Giáo Việt Nam Hành Khúc",
+        "artist": "Hợp Ca",
+        "src": "https://archive.org/download/list_nhac_web_3/Ph%E1%BA%ADt%20Gi%C3%A1o%20Vi%E1%BB%87t%20Nam%20H%C3%A0nh%20Kh%C3%BAc%20-%20H%E1%BB%A3p%20Ca.mp3",
+        "duration": "2:44"
+    },
+    {
+        "id": 133,
+        "title": "Phật Tử Việt Nam",
+        "artist": "Hợp Ca",
+        "src": "https://archive.org/download/list_nhac_web_3/Ph%E1%BA%ADt%20T%E1%BB%AD%20Vi%E1%BB%87t%20Nam%20-%20H%E1%BB%A3p%20Ca.mp3",
+        "duration": "2:38"
+    },
+    {
+        "id": 78,
+        "title": "Quanh Lửa Hồng",
+        "artist": "Nhạc GĐPT",
+        "src": "https://archive.org/download/list_nhac_web_3/Quanh%20L%E1%BB%ADa%20H%E1%BB%93ng%20-%20Nh%E1%BA%A1c%20G%C4%90PT.mp3",
+        "duration": "2:37"
+    },
+    {
+        "id": 87,
+        "title": "Quả Tim Bất Diệt",
+        "artist": "Phương Dung",
+        "src": "https://archive.org/download/list_nhac_web_3/Qu%E1%BA%A3%20Tim%20B%E1%BA%A5t%20Di%E1%BB%87t%20-%20Ph%C6%B0%C6%A1ng%20Dung.mp3",
+        "duration": "5:41"
+    },
+    {
         "id": 61,
         "title": "Sen Trắng",
         "artist": "Hằng Phương Thiền Chiếu - Ưng Hội",
         "src": "https://archive.org/download/list_nhac_web_3/Sen%20Tr%E1%BA%AFng%20-%20H%E1%BA%B1ng%20Ph%C6%B0%C6%A1ng%20Thi%E1%BB%81n%20Chi%E1%BA%BFu%20-%20%C6%AFng%20H%E1%BB%99i.mp3",
         "duration": "1:21"
+    },
+    {
+        "id": 124,
+        "title": "Sen Trắng - Không lời",
+        "artist": "Hoà âm: Đặng Ngọc Phú Hòa - Nguyễn Viết Cường",
+        "src": "https://archive.org/download/list_nhac_web_3/Sen%20Tr%E1%BA%AFng%20-%20Kh%C3%B4ng%20l%E1%BB%9Di%20-%20Ho%C3%A0%20%C3%A2m_%20%C4%90%E1%BA%B7ng%20Ng%E1%BB%8Dc%20Ph%C3%BA%20H%C3%B2a%20-%20Nguy%E1%BB%85n%20Vi%E1%BA%BFt%20C%C6%B0%E1%BB%9Dng.mp3",
+        "duration": "1:14"
     },
     {
         "id": 62,
@@ -350,11 +833,25 @@
         "duration": "2:03"
     },
     {
+        "id": 111,
+        "title": "Thành Đạo",
+        "artist": "Giao Linh",
+        "src": "https://archive.org/download/list_nhac_web_3/Th%C3%A0nh%20%C4%90%E1%BA%A1o%20-%20Giao%20Linh.mp3",
+        "duration": "4:41"
+    },
+    {
         "id": 24,
         "title": "Tim Ghen Ghét",
         "artist": "Nhạc sưu tầm",
         "src": "https://archive.org/download/list_nhac_web_1/TIM%20GHEN%20GH%C3%89T%20-%20NH%E1%BA%A0C%20S%C6%AFU%20T%E1%BA%A6M.mp3",
         "duration": "1:57"
+    },
+    {
+        "id": 101,
+        "title": "Tiếng Chim Ca",
+        "artist": "Khánh Kim",
+        "src": "https://archive.org/download/list_nhac_web_3/Ti%E1%BA%BFng%20Chim%20Ca%20-%20Kh%C3%A1nh%20Kim.mp3",
+        "duration": "4:01"
     },
     {
         "id": 8,
@@ -364,6 +861,27 @@
         "duration": "2:36"
     },
     {
+        "id": 86,
+        "title": "Trái Tim Bồ Tát",
+        "artist": "Bảo Yến",
+        "src": "https://archive.org/download/list_nhac_web_3/Tr%C3%A1i%20Tim%20B%E1%BB%93%20T%C3%A1t%20-%20B%E1%BA%A3o%20Y%E1%BA%BFn.mp3",
+        "duration": "6:10"
+    },
+    {
+        "id": 108,
+        "title": "Trăng Thành Đạo",
+        "artist": "Diệu Trúc - Viên Nguyệt",
+        "src": "https://archive.org/download/list_nhac_web_3/Tr%C4%83ng%20Th%C3%A0nh%20%C4%90%E1%BA%A1o%20-%20Di%E1%BB%87u%20Tr%C3%BAc%20-%20Vi%C3%AAn%20Nguy%E1%BB%87t.mp3",
+        "duration": "4:12"
+    },
+    {
+        "id": 80,
+        "title": "Trại Ca Tuyết Sơn",
+        "artist": "Nhạc GĐPT",
+        "src": "https://archive.org/download/list_nhac_web_3/Tr%E1%BA%A1i%20Ca%20Tuy%E1%BA%BFt%20S%C6%A1n%20-%20Nh%E1%BA%A1c%20G%C4%90PT.mp3",
+        "duration": "1:12"
+    },
+    {
         "id": 63,
         "title": "Trầm Hương Đốt",
         "artist": "Bửu Bác",
@@ -371,11 +889,46 @@
         "duration": "2:31"
     },
     {
+        "id": 131,
+        "title": "Trọn một niềm tin",
+        "artist": "GĐPT Đức Tâm",
+        "src": "https://archive.org/download/list_nhac_web_3/Tr%E1%BB%8Dn%20m%E1%BB%99t%20ni%E1%BB%81m%20tin%20-%20G%C4%90PT%20%C4%90%E1%BB%A9c%20T%C3%A2m.mp3",
+        "duration": "5:04"
+    },
+    {
+        "id": 79,
+        "title": "Tuyết Sơn",
+        "artist": "Nhạc GĐPT",
+        "src": "https://archive.org/download/list_nhac_web_3/Tuy%E1%BA%BFt%20S%C6%A1n%20-%20Nh%E1%BA%A1c%20G%C4%90PT.mp3",
+        "duration": "1:11"
+    },
+    {
+        "id": 112,
+        "title": "Tìm Chân Lý",
+        "artist": "Nhạc GĐPT",
+        "src": "https://archive.org/download/list_nhac_web_3/T%C3%ACm%20Ch%C3%A2n%20L%C3%BD%20-%20Nh%E1%BA%A1c%20G%C4%90PT.mp3",
+        "duration": "3:45"
+    },
+    {
+        "id": 102,
+        "title": "Tôi Yêu Màu Lam",
+        "artist": "Nhạc GĐPT",
+        "src": "https://archive.org/download/list_nhac_web_3/T%C3%B4i%20Y%C3%AAu%20M%C3%A0u%20Lam%20-%20Nh%E1%BA%A1c%20G%C4%90PT.mp3",
+        "duration": "3:45"
+    },
+    {
         "id": 64,
         "title": "Tươi",
         "artist": "Võ Thiện Hải - Bài Hát Chào Cờ Đoàn Oanh Vũ Nữ",
         "src": "https://archive.org/download/list_nhac_web_3/T%C6%B0%C6%A1i%20-%20V%C3%B5%20Thi%E1%BB%87n%20H%E1%BA%A3i%20-%20B%C3%A0i%20H%C3%A1t%20Ch%C3%A0o%20C%E1%BB%9D%20%C4%90o%C3%A0n%20Oanh%20V%C5%A9%20N%E1%BB%AF.mp3",
         "duration": "2:16"
+    },
+    {
+        "id": 88,
+        "title": "Tượng Đài Từ Bi",
+        "artist": "Quang Linh",
+        "src": "https://archive.org/download/list_nhac_web_3/T%C6%B0%E1%BB%A3ng%20%C4%90%C3%A0i%20T%E1%BB%AB%20Bi%20-%20Quang%20Linh.mp3",
+        "duration": "5:44"
     },
     {
         "id": 65,
@@ -399,6 +952,20 @@
         "duration": "1:24"
     },
     {
+        "id": 103,
+        "title": "Vui Cảnh Gia Đình",
+        "artist": "Nhạc GĐPT",
+        "src": "https://archive.org/download/list_nhac_web_3/Vui%20C%E1%BA%A3nh%20Gia%20%C4%90%C3%ACnh%20-%20Nh%E1%BA%A1c%20G%C4%90PT.mp3",
+        "duration": "2:51"
+    },
+    {
+        "id": 97,
+        "title": "Vui Dựng Gia Đình",
+        "artist": "Chánh Đức",
+        "src": "https://archive.org/download/list_nhac_web_3/Vui%20D%E1%BB%B1ng%20Gia%20%C4%90%C3%ACnh%20-%20Ch%C3%A1nh%20%C4%90%E1%BB%A9c.mp3",
+        "duration": "2:24"
+    },
+    {
         "id": 2,
         "title": "Vui Ánh Lửa Trại",
         "artist": "Nhạc Lửa Trại GĐPT",
@@ -420,11 +987,32 @@
         "duration": "1:13"
     },
     {
+        "id": 83,
+        "title": "Vạn Hạnh Ca",
+        "artist": "Nhạc GĐPT",
+        "src": "https://archive.org/download/list_nhac_web_3/V%E1%BA%A1n%20H%E1%BA%A1nh%20Ca%20-%20Nh%E1%BA%A1c%20G%C4%90PT.mp3",
+        "duration": "2:58"
+    },
+    {
         "id": 67,
         "title": "Về Dự Chu Niên",
         "artist": "Trần Ngọc Dần",
         "src": "https://archive.org/download/list_nhac_web_3/V%E1%BB%81%20D%E1%BB%B1%20Chu%20Ni%C3%AAn%20-%20Tr%E1%BA%A7n%20Ng%E1%BB%8Dc%20D%E1%BA%A7n.mp3",
         "duration": "2:55"
+    },
+    {
+        "id": 151,
+        "title": "Về Với Thầy",
+        "artist": "Chánh Đức",
+        "src": "https://archive.org/download/list_nhac_web_3/V%E1%BB%81%20V%E1%BB%9Bi%20Th%E1%BA%A7y%20-%20Ch%C3%A1nh%20%C4%90%E1%BB%A9c.mp3",
+        "duration": "2:31"
+    },
+    {
+        "id": 152,
+        "title": "Ánh Đạo Vàng",
+        "artist": "Chánh Đức",
+        "src": "https://archive.org/download/list_nhac_web_3/%C3%81nh%20%C4%90%E1%BA%A1o%20V%C3%A0ng%20-%20Ch%C3%A1nh%20%C4%90%E1%BB%A9c.mp3",
+        "duration": "4:07"
     },
     {
         "id": 16,
@@ -439,6 +1027,20 @@
         "artist": "Phương Hà",
         "src": "https://archive.org/download/list_nhac_web_3/%C3%81o%20Lam%20Ng%C6%B0%E1%BB%9Di%20B%E1%BA%A1n%20B%C3%AAn%20T%C3%B4i%20-%20Ph%C6%B0%C6%A1ng%20H%C3%A0.mp3",
         "duration": "3:38"
+    },
+    {
+        "id": 134,
+        "title": "Ăn Cơm",
+        "artist": "Mỹ Dung - Hạnh Nguyên",
+        "src": "https://archive.org/download/list_nhac_web_3/%C4%82n%20C%C6%A1m%20-%20M%E1%BB%B9%20Dung%20-%20H%E1%BA%A1nh%20Nguy%C3%AAn.mp3",
+        "duration": "1:26"
+    },
+    {
+        "id": 142,
+        "title": "Ăn Trong Chánh Niệm",
+        "artist": "Hạnh Nguyên",
+        "src": "https://archive.org/download/list_nhac_web_3/%C4%82n%20Trong%20Ch%C3%A1nh%20Ni%E1%BB%87m%20-%20H%E1%BA%A1nh%20Nguy%C3%AAn.mp3",
+        "duration": "1:11"
     },
     {
         "id": 30,
@@ -469,6 +1071,13 @@
         "duration": "1:32"
     },
     {
+        "id": 118,
+        "title": "Đây An Phú Đông",
+        "artist": "Tấn Danh",
+        "src": "https://archive.org/download/list_nhac_web_3/%C4%90%C3%A2y%20An%20Ph%C3%BA%20%C4%90%C3%B4ng%20-%20T%E1%BA%A5n%20Danh.mp3",
+        "duration": "5:08"
+    },
+    {
         "id": 23,
         "title": "Đây Mái Chùa Em",
         "artist": "Nhạc sưu tầm",
@@ -483,6 +1092,27 @@
         "duration": "3:30"
     },
     {
+        "id": 125,
+        "title": "Đêm Khánh Đản",
+        "artist": "Hoà âm: Đặng Ngọc Phú Hòa - Nguyễn Viết Cường",
+        "src": "https://archive.org/download/list_nhac_web_3/%C4%90%C3%AAm%20Kh%C3%A1nh%20%C4%90%E1%BA%A3n%20-%20Ho%C3%A0%20%C3%A2m_%20%C4%90%E1%BA%B7ng%20Ng%E1%BB%8Dc%20Ph%C3%BA%20H%C3%B2a%20-%20Nguy%E1%BB%85n%20Vi%E1%BA%BFt%20C%C6%B0%E1%BB%9Dng.mp3",
+        "duration": "5:12"
+    },
+    {
+        "id": 107,
+        "title": "Đêm Thành Đạo",
+        "artist": "Bảo Phúc",
+        "src": "https://archive.org/download/list_nhac_web_3/%C4%90%C3%AAm%20Th%C3%A0nh%20%C4%90%E1%BA%A1o%20-%20B%E1%BA%A3o%20Ph%C3%BAc.mp3",
+        "duration": "5:25"
+    },
+    {
+        "id": 115,
+        "title": "Đêm Xuất Gia",
+        "artist": "Thiên Trang",
+        "src": "https://archive.org/download/list_nhac_web_3/%C4%90%C3%AAm%20Xu%E1%BA%A5t%20Gia%20-%20Thi%C3%AAn%20Trang.mp3",
+        "duration": "3:43"
+    },
+    {
         "id": 36,
         "title": "Đóa Sen",
         "artist": "Võ Hân",
@@ -490,11 +1120,32 @@
         "duration": "2:19"
     },
     {
+        "id": 164,
+        "title": "Đón Mừng Ánh Đạo",
+        "artist": "Đình Nguyên",
+        "src": "https://archive.org/download/list_nhac_web_3/%C4%90%C3%B3n%20M%E1%BB%ABng%20%C3%81nh%20%C4%90%E1%BA%A1o%20-%20%C4%90%C3%ACnh%20Nguy%C3%AAn.mp3",
+        "duration": "3:23"
+    },
+    {
         "id": 71,
         "title": "Đường Lam",
         "artist": "Chúc Linh",
         "src": "https://archive.org/download/list_nhac_web_3/%C4%90%C6%B0%E1%BB%9Dng%20Lam%20-%20Ch%C3%BAc%20Linh.mp3",
         "duration": "4:31"
+    },
+    {
+        "id": 109,
+        "title": "Đắc Đạo",
+        "artist": "Bảo Yến",
+        "src": "https://archive.org/download/list_nhac_web_3/%C4%90%E1%BA%AFc%20%C4%90%E1%BA%A1o%20-%20B%E1%BA%A3o%20Y%E1%BA%BFn.mp3",
+        "duration": "3:39"
+    },
+    {
+        "id": 82,
+        "title": "Đồng Ca Kết Đoàn",
+        "artist": "Nhạc GĐPT",
+        "src": "https://archive.org/download/list_nhac_web_3/%C4%90%E1%BB%93ng%20Ca%20K%E1%BA%BFt%20%C4%90o%C3%A0n%20-%20Nh%E1%BA%A1c%20G%C4%90PT.mp3",
+        "duration": "1:04"
     },
     {
         "id": 72,
