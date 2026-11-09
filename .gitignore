@@ -16,6 +16,10 @@ desktop.ini
 *.zip
 temp_music/
 temp_music_batch2/
+temp_ingest/
+
+# CodeGraph
+.codegraph/
 
 # Auth database (sensitive — never commit)
 data/auth.db
