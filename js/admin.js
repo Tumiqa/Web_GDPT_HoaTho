@@ -1403,7 +1403,11 @@
   function getItemMeta(module, item) {
     switch (module) {
       case "sinhhoat": return `${item.year || ""} · ${item.date || ""} · ${(item.images || []).length} ảnh · ${(item.videos || []).length} video`;
-      case "nhac": return `${item.artist || "Nhạc GĐPT"} · ${item.duration || ""}`;
+      case "nhac": {
+        const cat = item.category ? `[${item.category}] ` : "";
+        const lyr = item.lyrics && item.lyrics.trim() ? " · 📜 Có lời" : "";
+        return `${cat}${item.artist || "Nhạc GĐPT"} · ${item.duration || ""}${lyr}`;
+      }
       case "tailieu": {
         const nganh = item.nganh || item.category || "Tài liệu chung";
         const bac = item.bac ? ` · ${item.bac}` : "";
@@ -1443,9 +1447,21 @@
       case "nhac":
         fields.push(
           { type: "text", id: "title", label: "Tên bài hát", placeholder: "Ví dụ: Hồn Lửa Thiêng", value: item.title, required: true },
-          { type: "text", id: "artist", label: "Nghệ sĩ / Thể loại", placeholder: "Nhạc GĐPT", value: item.artist || "Nhạc GĐPT" },
-          { type: "text", id: "src", label: "Link MP3", placeholder: "https://archive.org/download/...", value: item.src || "", hint: "Archive.org, Google Drive hoặc URL MP3 trực tiếp" },
-          { type: "text", id: "duration", label: "Thời lượng", placeholder: "3:45", value: item.duration || "" },
+          { type: "row", children: [
+            { type: "text", id: "artist", label: "Nghệ sĩ / Tác giả", placeholder: "Nhạc GĐPT", value: item.artist || "Nhạc GĐPT" },
+            { type: "select", id: "category", label: "Thể loại", value: item.category || "Nhạc Sinh Hoạt", options: [
+              "Nhạc Sinh Hoạt",
+              "Nhạc Văn Nghệ",
+              "Nhạc Phật Giáo",
+              "Nhạc Vu Lan",
+              "Nhạc Phật Đản",
+              "Nhạc Lễ",
+              "Nhạc Lửa Trại",
+              "Khác"
+            ]},
+          ]},
+          { type: "text", id: "src", label: "Link MP3 (Thời lượng nhận diện tự động từ file)", placeholder: "https://archive.org/download/...", value: item.src || "", hint: "Archive.org, Google Drive hoặc URL MP3 trực tiếp. Thời lượng gốc sẽ tự động xác định." },
+          { type: "textarea", id: "lyrics", label: "Lời bài hát (Lyrics)", placeholder: "Nhập lời bài hát tại đây...\nMỗi đoạn cách nhau một dòng trống.", value: item.lyrics || "", rows: 7, hint: "Lời ca hiển thị trên trang nghe nhạc cho độc giả" },
         );
         break;
       case "tailieu":
@@ -1784,15 +1800,42 @@
         };
         if (item.content === "<p><br></p>") item.content = "";
         break;
-      case "nhac":
+      case "nhac": {
+        const existingDuration = (index >= 0 && items[index].duration) ? items[index].duration : "";
+        const titleVal = document.getElementById("form-title").value.trim();
+        const artistVal = document.getElementById("form-artist").value.trim() || "Nhạc GĐPT";
+        const catVal = document.getElementById("form-category") ? document.getElementById("form-category").value : (index >= 0 ? items[index].category : "Nhạc Sinh Hoạt");
+        const srcVal = document.getElementById("form-src").value.trim();
+        const lyricsVal = document.getElementById("form-lyrics") ? document.getElementById("form-lyrics").value.trim() : (index >= 0 ? items[index].lyrics || "" : "");
+
         item = {
           id: index >= 0 ? items[index].id : items.length + 1,
-          title: document.getElementById("form-title").value,
-          artist: document.getElementById("form-artist").value,
-          src: document.getElementById("form-src").value,
-          duration: document.getElementById("form-duration").value,
+          title: titleVal,
+          artist: artistVal,
+          category: catVal,
+          src: srcVal,
+          duration: existingDuration || "03:00",
+          lyrics: lyricsVal,
         };
+
+        // Auto-detect audio duration if new song or src changed
+        if (srcVal && (!existingDuration || (index >= 0 && items[index].src !== srcVal))) {
+          try {
+            const probeAudio = new Audio();
+            probeAudio.preload = "metadata";
+            probeAudio.src = srcVal;
+            probeAudio.addEventListener("loadedmetadata", () => {
+              if (probeAudio.duration && !isNaN(probeAudio.duration)) {
+                const m = Math.floor(probeAudio.duration / 60);
+                const s = Math.floor(probeAudio.duration % 60);
+                item.duration = `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+                DataService.save("nhac", items);
+              }
+            });
+          } catch(e) {}
+        }
         break;
+      }
       case "tailieu": {
         const attachType = document.getElementById("form-attachmentType").value;
         let fileUrl = '';

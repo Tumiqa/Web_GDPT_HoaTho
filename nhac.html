@@ -298,6 +298,33 @@
                 </a>
               </div>
             </div>
+
+            <!-- ===== LYRICS DISPLAY (LỜI BÀI HÁT) ===== -->
+            <div class="player-lyrics-card" id="player-lyrics-card">
+              <div class="lyrics-card-header">
+                <div class="lyrics-title-wrapper">
+                  <span class="lyrics-icon">📜</span>
+                  <div>
+                    <h3 class="lyrics-heading">Lời Bài Hát</h3>
+                    <p class="lyrics-subheading" id="lyrics-subheading">Đang tải bài hát...</p>
+                  </div>
+                </div>
+                <div class="lyrics-actions">
+                  <button class="lyrics-action-btn" id="lyrics-copy-btn" title="Sao chép lời ca" aria-label="Sao chép lời">
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    <span class="lyrics-action-text" id="lyrics-copy-text">Sao chép</span>
+                  </button>
+                </div>
+              </div>
+              <div class="lyrics-card-body" id="lyrics-card-body">
+                <div class="lyrics-text" id="lyrics-text">
+                  <!-- Populated dynamically by JS -->
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- RIGHT COLUMN: PLAYLIST -->
@@ -318,6 +345,42 @@
                   <span>Tải tất cả</span>
                 </a>
               </div>
+            </div>
+
+            <!-- Category Filter Pills -->
+            <div class="playlist-categories" id="playlist-categories">
+              <button class="cat-pill active" data-category="all">
+                <span class="cat-pill-name">Tất Cả</span>
+                <span class="cat-pill-count" id="count-all">0</span>
+              </button>
+              <button class="cat-pill" data-category="Nhạc Sinh Hoạt">
+                <span class="cat-pill-name">Sinh Hoạt</span>
+                <span class="cat-pill-count" id="count-sh">0</span>
+              </button>
+              <button class="cat-pill" data-category="Nhạc Văn Nghệ">
+                <span class="cat-pill-name">Văn Nghệ</span>
+                <span class="cat-pill-count" id="count-vn">0</span>
+              </button>
+              <button class="cat-pill" data-category="Nhạc Phật Giáo">
+                <span class="cat-pill-name">Phật Giáo</span>
+                <span class="cat-pill-count" id="count-pg">0</span>
+              </button>
+              <button class="cat-pill" data-category="Nhạc Vu Lan">
+                <span class="cat-pill-name">Vu Lan</span>
+                <span class="cat-pill-count" id="count-vl">0</span>
+              </button>
+              <button class="cat-pill" data-category="Nhạc Phật Đản">
+                <span class="cat-pill-name">Phật Đản</span>
+                <span class="cat-pill-count" id="count-pd">0</span>
+              </button>
+              <button class="cat-pill" data-category="Nhạc Lễ">
+                <span class="cat-pill-name">Nhạc Lễ</span>
+                <span class="cat-pill-count" id="count-le">0</span>
+              </button>
+              <button class="cat-pill" data-category="Nhạc Lửa Trại">
+                <span class="cat-pill-name">Lửa Trại</span>
+                <span class="cat-pill-count" id="count-lt">0</span>
+              </button>
             </div>
 
             <!-- Search Bar -->
@@ -408,7 +471,6 @@
     <script defer src="js/admin.js?v=3.0.0_20260726"></script>
 
     <!-- Music Player JS -->
-    <script defer src="js/meme-dance.js?v=3.0.0_20260803"></script>
     <script defer src="js/nhac.js?v=3.0.0_20260726"></script>
   </body>
 </html>

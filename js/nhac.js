@@ -1,6 +1,7 @@
 /* ============================================================
    NHẠC GĐPT — Music Player JavaScript
    Streams audio from Archive.org
+   Includes Category Filter & Lyrics Display
    ============================================================ */
 
 (function () {
@@ -14,6 +15,7 @@
   let isPlaying = false;
   let isShuffle = false;
   let repeatMode = 0; // 0 = off, 1 = all, 2 = one
+  let currentCategory = "all";
   let audio = new Audio();
   audio.preload = "metadata";
   audio.volume = 0.8;
@@ -40,12 +42,18 @@
   const playlistCount = document.getElementById("playlist-count");
   const visualizerContainer = document.getElementById("player-visualizer");
 
+  // Lyrics Elements
+  const lyricsSubheadingEl = document.getElementById("lyrics-subheading");
+  const lyricsTextEl = document.getElementById("lyrics-text");
+  const lyricsCopyBtn = document.getElementById("lyrics-copy-btn");
+  const lyricsCopyText = document.getElementById("lyrics-copy-text");
+
   // ===== VISUALIZER BARS =====
   const BAR_COUNT = 40;
   let visualizerBars = [];
 
   function createVisualizer() {
-    // Insert bars before the overlay
+    if (!visualizerContainer) return;
     for (let i = 0; i < BAR_COUNT; i++) {
       const bar = document.createElement("div");
       bar.classList.add("visualizer-bar");
@@ -60,7 +68,7 @@
   function startVisualizer() {
     if (visualizerInterval) return;
     visualizerInterval = setInterval(() => {
-      visualizerBars.forEach((bar, i) => {
+      visualizerBars.forEach((bar) => {
         const height = Math.random() * 80 + 10;
         bar.style.height = height + "%";
         bar.style.opacity = 0.4 + Math.random() * 0.6;
@@ -73,7 +81,6 @@
       clearInterval(visualizerInterval);
       visualizerInterval = null;
     }
-    // Reset bars
     visualizerBars.forEach((bar) => {
       bar.style.height = "4px";
       bar.style.opacity = "0.6";
@@ -98,14 +105,14 @@
     }
   }
 
-  // ===== SEARCH =====
+  // ===== SEARCH & FILTER =====
   const searchInput = document.getElementById("search-input");
   const searchClear = document.getElementById("search-clear");
   const searchNoResults = document.getElementById("search-no-results");
   let searchTerm = "";
 
-  // Remove Vietnamese diacritics for fuzzy search
   function removeDiacritics(str) {
+    if (!str) return "";
     return str
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
@@ -114,30 +121,129 @@
       .toLowerCase();
   }
 
-  function filterPlaylist(query) {
-    if (!query) return PLAYLIST.map((t, i) => ({ track: t, originalIndex: i }));
-    const q = removeDiacritics(query);
-    return PLAYLIST
-      .map((track, i) => ({ track, originalIndex: i }))
-      .filter(({ track }) => {
-        const title = removeDiacritics(track.title);
-        const artist = removeDiacritics(track.artist);
-        return title.includes(q) || artist.includes(q);
+  function filterPlaylist(query, category) {
+    let list = PLAYLIST.map((t, i) => ({ track: t, originalIndex: i }));
+
+    // Filter by Category
+    if (category && category !== "all") {
+      list = list.filter(({ track }) => track.category === category);
+    }
+
+    // Filter by Search Term
+    if (query && query.trim()) {
+      const q = removeDiacritics(query.trim());
+      list = list.filter(({ track }) => {
+        const title = removeDiacritics(track.title || "");
+        const artist = removeDiacritics(track.artist || "");
+        const cat = removeDiacritics(track.category || "");
+        return title.includes(q) || artist.includes(q) || cat.includes(q);
       });
+    }
+
+    return list;
+  }
+
+  // ===== CATEGORY COUNTS =====
+  function updateCategoryCounts() {
+    const counts = { all: PLAYLIST.length };
+    PLAYLIST.forEach((t) => {
+      const c = t.category || "Khác";
+      counts[c] = (counts[c] || 0) + 1;
+    });
+
+    const setEl = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = val || 0;
+    };
+
+    setEl("count-all", counts.all);
+    setEl("count-sh", counts["Nhạc Sinh Hoạt"]);
+    setEl("count-vn", counts["Nhạc Văn Nghệ"]);
+    setEl("count-pg", counts["Nhạc Phật Giáo"]);
+    setEl("count-vl", counts["Nhạc Vu Lan"]);
+    setEl("count-pd", counts["Nhạc Phật Đản"]);
+    setEl("count-le", counts["Nhạc Lễ"]);
+    setEl("count-lt", counts["Nhạc Lửa Trại"]);
+  }
+
+  function initCategoryFilters() {
+    const pills = document.querySelectorAll(".cat-pill");
+    pills.forEach((pill) => {
+      pill.addEventListener("click", () => {
+        pills.forEach((p) => p.classList.remove("active"));
+        pill.classList.add("active");
+        currentCategory = pill.dataset.category || "all";
+        renderPlaylist(searchTerm);
+      });
+    });
+  }
+
+  // ===== LYRICS DISPLAY =====
+  function updateLyrics(track) {
+    if (!lyricsTextEl) return;
+
+    if (lyricsSubheadingEl) {
+      const catText = track.category ? ` · ${track.category}` : "";
+      lyricsSubheadingEl.textContent = `${track.title} · ${track.artist || "Nhạc GĐPT"}${catText}`;
+    }
+
+    if (track.lyrics && track.lyrics.trim().length > 0) {
+      // Split into verses by double newline
+      const verses = track.lyrics.trim().split(/\n\s*\n/);
+      lyricsTextEl.innerHTML = verses
+        .map((verse) => {
+          const formatted = verse.trim().replace(/\n/g, "<br>");
+          return `<div class="lyrics-verse">${formatted}</div>`;
+        })
+        .join("");
+
+      if (lyricsCopyBtn) lyricsCopyBtn.style.display = "inline-flex";
+    } else {
+      lyricsTextEl.innerHTML = `
+        <div class="lyrics-empty">
+          <div class="lyrics-empty-icon">🪷</div>
+          <div class="lyrics-empty-title">Lời bài hát đang được cập nhật</div>
+          <p class="lyrics-empty-desc">Lời ca cho bài hát "${track.title}" đang được ban biên tập sưu tầm và cập nhật.</p>
+        </div>
+      `;
+      if (lyricsCopyBtn) lyricsCopyBtn.style.display = "none";
+    }
+
+    // Scroll to top of lyrics container
+    const bodyEl = document.getElementById("lyrics-card-body");
+    if (bodyEl) bodyEl.scrollTop = 0;
+  }
+
+  function initLyricsCopy() {
+    if (!lyricsCopyBtn) return;
+    lyricsCopyBtn.addEventListener("click", () => {
+      const track = PLAYLIST[currentIndex];
+      if (!track || !track.lyrics) return;
+      const textToCopy = `${track.title} - ${track.artist || "GĐPT"}\n\n${track.lyrics}`;
+      navigator.clipboard
+        .writeText(textToCopy)
+        .then(() => {
+          if (lyricsCopyText) lyricsCopyText.textContent = "Đã chép!";
+          setTimeout(() => {
+            if (lyricsCopyText) lyricsCopyText.textContent = "Sao chép";
+          }, 2000);
+        })
+        .catch(() => {});
+    });
   }
 
   // ===== RENDER PLAYLIST =====
   function renderPlaylist(query) {
     if (!playlistList) return;
 
-    const filtered = filterPlaylist(query);
+    const filtered = filterPlaylist(query, currentCategory);
     playlistList.innerHTML = "";
 
     if (playlistCount) {
-      if (query && filtered.length !== PLAYLIST.length) {
-        playlistCount.textContent = filtered.length + " / " + PLAYLIST.length + " bài hát";
+      if ((query && query.trim()) || currentCategory !== "all") {
+        playlistCount.textContent = `${filtered.length} / ${PLAYLIST.length} bài hát`;
       } else {
-        playlistCount.textContent = PLAYLIST.length + " bài hát";
+        playlistCount.textContent = `${PLAYLIST.length} bài hát`;
       }
     }
 
@@ -153,6 +259,14 @@
       if (originalIndex === currentIndex && isPlaying) item.classList.add("is-playing");
       item.setAttribute("data-index", originalIndex);
       item.id = "playlist-item-" + originalIndex;
+
+      const hasLyricsBadge = track.lyrics && track.lyrics.trim().length > 0 
+        ? `<span class="has-lyrics-badge" title="Có lời bài hát">📜</span>` 
+        : "";
+
+      const categoryBadge = track.category 
+        ? `<span class="playlist-item-cat">${track.category}</span>` 
+        : "";
 
       item.innerHTML = `
         <div class="playlist-item-number">
@@ -170,10 +284,13 @@
           </div>
         </div>
         <div class="playlist-item-info">
-          <div class="playlist-item-title">${track.title}</div>
-          <div class="playlist-item-meta">${track.artist}</div>
+          <div class="playlist-item-title">${track.title} ${hasLyricsBadge}</div>
+          <div class="playlist-item-meta">
+            <span>${track.artist || "Nhạc GĐPT"}</span>
+            ${categoryBadge}
+          </div>
         </div>
-        <div class="playlist-item-duration">${track.duration}</div>
+        <div class="playlist-item-duration">${track.duration || "--:--"}</div>
         <a class="playlist-item-download" href="${track.src}" download title="Tải về ${track.title}" aria-label="Tải về ${track.title}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -183,9 +300,7 @@
         </a>
       `;
 
-      // Click on row (but not on download) to play
       item.addEventListener("click", (e) => {
-        // Don't trigger play if clicking download
         if (e.target.closest(".playlist-item-download")) return;
         if (currentIndex === originalIndex && isPlaying) {
           pauseTrack();
@@ -211,18 +326,21 @@
     // Update player UI
     if (trackNumberEl) trackNumberEl.textContent = "TRACK " + String(currentIndex + 1).padStart(2, "0");
     if (trackTitleEl) trackTitleEl.textContent = track.title;
-    if (trackArtistEl) trackArtistEl.textContent = track.artist;
+    if (trackArtistEl) trackArtistEl.textContent = track.artist || "Nhạc GĐPT";
 
     // Reset progress
     if (progressFill) progressFill.style.width = "0%";
     if (currentTimeEl) currentTimeEl.textContent = "0:00";
-    if (totalTimeEl) totalTimeEl.textContent = track.duration;
+    if (totalTimeEl) totalTimeEl.textContent = track.duration || "--:--";
 
     // Update download button
     if (playerDownloadBtn) {
       playerDownloadBtn.href = track.src;
       playerDownloadBtn.title = "Tải về: " + track.title;
     }
+
+    // Update Lyrics
+    updateLyrics(track);
 
     // Update playlist active state
     updatePlaylistUI();
@@ -238,9 +356,6 @@
     playerContainer?.classList.add("playing");
     startVisualizer();
     updatePlaylistUI();
-
-    // Show Dance Floor GIF memes
-    if (window.MemeDanceFloor) window.MemeDanceFloor.show();
   }
 
   function pauseTrack() {
@@ -250,9 +365,6 @@
     playerContainer?.classList.remove("playing");
     stopVisualizer();
     updatePlaylistUI();
-
-    // Hide Dance Floor GIF memes
-    if (window.MemeDanceFloor) window.MemeDanceFloor.hide();
   }
 
   function togglePlayPause() {
@@ -289,7 +401,6 @@
   }
 
   function prevTrack() {
-    // If more than 3 seconds in, restart current track
     if (audio.currentTime > 3) {
       audio.currentTime = 0;
       return;
@@ -306,190 +417,152 @@
     playTrack();
   }
 
-  // ===== SHUFFLE & REPEAT =====
-  function toggleShuffle() {
-    isShuffle = !isShuffle;
-    if (btnShuffle) {
-      btnShuffle.style.color = isShuffle ? "var(--brand-primary)" : "";
-    }
-  }
-
-  function toggleRepeat() {
-    repeatMode = (repeatMode + 1) % 3;
-    if (btnRepeat) {
-      switch (repeatMode) {
-        case 0:
-          btnRepeat.style.color = "";
-          btnRepeat.title = "Lặp lại: Tắt";
-          break;
-        case 1:
-          btnRepeat.style.color = "var(--brand-primary)";
-          btnRepeat.title = "Lặp lại: Tất cả";
-          break;
-        case 2:
-          btnRepeat.style.color = "#fff";
-          btnRepeat.title = "Lặp lại: 1 bài";
-          break;
-      }
-    }
-  }
-
-  // ===== PROGRESS =====
-  function updateProgress() {
-    if (!audio.duration) return;
-
-    const percent = (audio.currentTime / audio.duration) * 100;
-    if (progressFill) progressFill.style.width = percent + "%";
-    if (currentTimeEl) currentTimeEl.textContent = formatTime(audio.currentTime);
-  }
-
-  function seekTo(e) {
-    if (!audio.duration) return;
-    const rect = progressWrapper.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const percent = clickX / rect.width;
-    audio.currentTime = percent * audio.duration;
-  }
-
-  // ===== VOLUME =====
-  function changeVolume(e) {
-    const val = e.target.value / 100;
-    audio.volume = val;
-
-    // Update volume icon
-    const volumeIcon = document.getElementById("volume-icon");
-    if (volumeIcon) {
-      if (val === 0) {
-        volumeIcon.innerHTML = `
-          <line x1="23" y1="1" x2="1" y2="23"/>
-          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-        `;
-      } else if (val < 0.5) {
-        volumeIcon.innerHTML = `
-          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
-        `;
-      } else {
-        volumeIcon.innerHTML = `
-          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
-          <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
-        `;
-      }
-    }
-  }
-
-  // ===== UPDATE PLAYLIST UI =====
+  // ===== PLAYLIST ACTIVE UI =====
   function updatePlaylistUI() {
-    const items = document.querySelectorAll(".playlist-item");
-    items.forEach((item) => {
-      const idx = parseInt(item.getAttribute("data-index"));
-      item.classList.remove("active", "is-playing");
+    document.querySelectorAll(".playlist-item").forEach((item) => {
+      const idx = parseInt(item.getAttribute("data-index"), 10);
       if (idx === currentIndex) {
         item.classList.add("active");
-        if (isPlaying) item.classList.add("is-playing");
+        if (isPlaying) {
+          item.classList.add("is-playing");
+        } else {
+          item.classList.remove("is-playing");
+        }
+      } else {
+        item.classList.remove("active", "is-playing");
       }
     });
+
+    // Auto scroll active item into view smoothly
+    const activeEl = document.getElementById("playlist-item-" + currentIndex);
+    if (activeEl) {
+      activeEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
   }
 
-  // ===== FORMAT TIME =====
+  // ===== TIME FORMAT =====
   function formatTime(seconds) {
     if (isNaN(seconds)) return "0:00";
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
-    return mins + ":" + String(secs).padStart(2, "0");
+    return mins + ":" + (secs < 10 ? "0" : "") + secs;
   }
 
-  // ===== AUDIO EVENTS =====
-  audio.addEventListener("timeupdate", updateProgress);
+  // ===== EVENTS =====
+  function initEvents() {
+    btnPlay?.addEventListener("click", togglePlayPause);
+    btnNext?.addEventListener("click", nextTrack);
+    btnPrev?.addEventListener("click", prevTrack);
 
-  audio.addEventListener("loadedmetadata", () => {
-    if (totalTimeEl) totalTimeEl.textContent = formatTime(audio.duration);
-  });
+    btnShuffle?.addEventListener("click", () => {
+      isShuffle = !isShuffle;
+      btnShuffle.classList.toggle("active", isShuffle);
+    });
 
-  audio.addEventListener("ended", () => {
-    if (repeatMode === 2) {
-      // Repeat one
-      audio.currentTime = 0;
-      playTrack();
-    } else if (repeatMode === 1) {
-      // Repeat all
-      nextTrack();
-    } else {
-      // No repeat — stop at end of playlist
-      if (currentIndex < PLAYLIST.length - 1) {
+    btnRepeat?.addEventListener("click", () => {
+      repeatMode = (repeatMode + 1) % 3;
+      btnRepeat.classList.toggle("active", repeatMode > 0);
+      if (repeatMode === 2) {
+        btnRepeat.setAttribute("title", "Lặp lại 1 bài");
+      } else if (repeatMode === 1) {
+        btnRepeat.setAttribute("title", "Lặp lại tất cả");
+      } else {
+        btnRepeat.setAttribute("title", "Lặp lại");
+      }
+    });
+
+    audio.addEventListener("timeupdate", () => {
+      if (audio.duration) {
+        const pct = (audio.currentTime / audio.duration) * 100;
+        if (progressFill) progressFill.style.width = pct + "%";
+        if (currentTimeEl) currentTimeEl.textContent = formatTime(audio.currentTime);
+      }
+    });
+
+    audio.addEventListener("loadedmetadata", () => {
+      if (totalTimeEl && audio.duration) {
+        totalTimeEl.textContent = formatTime(audio.duration);
+      }
+    });
+
+    audio.addEventListener("ended", () => {
+      if (repeatMode === 2) {
+        audio.currentTime = 0;
+        playTrack();
+      } else if (repeatMode === 1 || currentIndex < PLAYLIST.length - 1) {
         nextTrack();
       } else {
         pauseTrack();
       }
+    });
+
+    // Progress Bar Scrubbing
+    if (progressWrapper) {
+      let isDragging = false;
+
+      const seek = (e) => {
+        const rect = progressWrapper.getBoundingClientRect();
+        const pos = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        if (audio.duration) {
+          audio.currentTime = pos * audio.duration;
+        }
+      };
+
+      progressWrapper.addEventListener("mousedown", (e) => {
+        isDragging = true;
+        seek(e);
+      });
+
+      window.addEventListener("mousemove", (e) => {
+        if (isDragging) seek(e);
+      });
+
+      window.addEventListener("mouseup", () => {
+        isDragging = false;
+      });
+
+      // Touch for mobile
+      progressWrapper.addEventListener("touchstart", (e) => {
+        const touch = e.touches[0];
+        const rect = progressWrapper.getBoundingClientRect();
+        const pos = Math.max(0, Math.min(1, (touch.clientX - rect.left) / rect.width));
+        if (audio.duration) audio.currentTime = pos * audio.duration;
+      }, { passive: true });
     }
-  });
 
-  // ===== EVENT LISTENERS =====
-  if (btnPlay) btnPlay.addEventListener("click", togglePlayPause);
-  if (btnNext) btnNext.addEventListener("click", nextTrack);
-  if (btnPrev) btnPrev.addEventListener("click", prevTrack);
-  if (btnShuffle) btnShuffle.addEventListener("click", toggleShuffle);
-  if (btnRepeat) btnRepeat.addEventListener("click", toggleRepeat);
-  if (progressWrapper) progressWrapper.addEventListener("click", seekTo);
-  if (volumeSlider) volumeSlider.addEventListener("input", changeVolume);
+    // Volume Slider
+    if (volumeSlider) {
+      volumeSlider.addEventListener("input", (e) => {
+        audio.volume = e.target.value / 100;
+      });
+    }
 
-  // Keyboard shortcuts
-  document.addEventListener("keydown", (e) => {
-    // Don't intercept if user is typing in an input
-    if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+    // Keyboard Shortcuts (Space to Play/Pause, Left/Right for Seek)
+    window.addEventListener("keydown", (e) => {
+      // Don't intercept if typing in an input/textarea
+      if (["INPUT", "TEXTAREA"].includes(e.target.tagName)) return;
 
-    switch (e.code) {
-      case "Space":
+      if (e.code === "Space") {
         e.preventDefault();
         togglePlayPause();
-        break;
-      case "ArrowRight":
-        if (e.shiftKey) {
-          nextTrack();
-        } else {
-          audio.currentTime = Math.min(audio.currentTime + 5, audio.duration || 0);
-        }
-        break;
-      case "ArrowLeft":
-        if (e.shiftKey) {
-          prevTrack();
-        } else {
-          audio.currentTime = Math.max(audio.currentTime - 5, 0);
-        }
-        break;
-      case "ArrowUp":
-        e.preventDefault();
-        audio.volume = Math.min(audio.volume + 0.1, 1);
-        if (volumeSlider) volumeSlider.value = audio.volume * 100;
-        break;
-      case "ArrowDown":
-        e.preventDefault();
-        audio.volume = Math.max(audio.volume - 0.1, 0);
-        if (volumeSlider) volumeSlider.value = audio.volume * 100;
-        break;
-    }
-  });
+      } else if (e.code === "ArrowRight") {
+        audio.currentTime = Math.min(audio.currentTime + 5, audio.duration || 0);
+      } else if (e.code === "ArrowLeft") {
+        audio.currentTime = Math.max(audio.currentTime - 5, 0);
+      }
+    });
+  }
 
-  // ===== SEARCH INIT =====
+  // ===== SEARCH INITIALIZATION =====
   function initSearch() {
     if (!searchInput) return;
 
-    let debounceTimer = null;
-
     searchInput.addEventListener("input", (e) => {
-      searchTerm = e.target.value.trim();
-
-      // Show/hide clear button
+      searchTerm = e.target.value;
       if (searchClear) {
-        searchClear.style.display = searchTerm ? "flex" : "none";
+        searchClear.style.display = searchTerm ? "block" : "none";
       }
-
-      // Debounce search
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => {
-        renderPlaylist(searchTerm);
-      }, 200);
+      renderPlaylist(searchTerm);
     });
 
     if (searchClear) {
@@ -509,7 +582,7 @@
       const res = await fetch("data/nhac.json");
       if (res.ok) {
         const rawData = await res.json();
-        PLAYLIST = rawData.map(track => {
+        PLAYLIST = rawData.map((track) => {
           let src = track.src || "";
           const match = src.match(/archive\.org\/details\/([^\/?#]+)/);
           if (match) {
@@ -518,7 +591,7 @@
           }
           return { ...track, src };
         });
-        // Sắp xếp danh sách bài hát theo bảng chữ cái tiếng Việt (alpha beta)
+        // Vietnamese title collation
         PLAYLIST.sort((a, b) => a.title.localeCompare(b.title, "vi", { sensitivity: "accent" }));
       }
     } catch (e) {
@@ -527,11 +600,18 @@
 
     createVisualizer();
     createMusicNotes();
+    updateCategoryCounts();
+    initCategoryFilters();
+    initLyricsCopy();
+    initEvents();
+
     if (PLAYLIST.length > 0) {
       renderPlaylist();
       loadTrack(0);
     } else {
-      if (playlistList) playlistList.innerHTML = '<div class="playlist-item" style="text-align: center; color: var(--text-dark);">Chưa có bài nhạc nào.</div>';
+      if (playlistList) {
+        playlistList.innerHTML = '<div class="playlist-item" style="text-align: center; color: var(--text-dark);">Chưa có bài nhạc nào.</div>';
+      }
       if (playlistCount) playlistCount.textContent = "0 bài hát";
     }
     initSearch();
